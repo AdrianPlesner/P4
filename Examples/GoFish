@@ -7,25 +7,23 @@ Setup{
 		Lasse(false),
 		Oliver(false),
 		Rikke(false)
-}
-//Definer deck
-Decks{
-	//Almindeligt sæt spillekort uden jokere
-	Deck = GetStdDeck(0);
-}
-
+    }
+    //Definer deck
+    Decks{
+	    //Almindeligt sæt spillekort uden jokere
+	    Deck = GetStdDeck(0);
+    }
 	//public er “spillepladen” (tilgængelig for alle spillere).
-public{
-	// Der er en bunke i spillet, trækbunken til når man fisker
-	Pile += new pile(Deck)
-
-}
-// private er en players hånd.
-private{
-	// Alle spillere starter med 7 kort hver, fra bunken.
-hand = pile.draw(7);
-score = 0;
-}
+    public{
+        // Der er en bunke i spillet, trækbunken til når man fisker
+        Pile += new pile(Deck)
+    }
+    // private er en players hånd.
+    private{
+	    // Alle spillere starter med 7 kort hver, fra bunken.
+    hand = pile.draw(7);
+    score = 0;
+    }
 }
 Rules{
 
@@ -36,38 +34,37 @@ Rules{
 	// input = et kort ( fra egen hånd) og en anden spiller
 	Moves += new move ChooseMove(card, player){
 		// Tjek alle kort i den anden spiller hånd om de har samme værdi og
-//overræk dem der er til den spiller hvis tur det er
+        //overræk dem der er til den spiller hvis tur det er
 		foreach(Card Pcard in player.hand){
 			if(Pcard.value == card.value){
 				turn.player.hand.add(Pcard);
 			}
-}
-// Tjekker for stik..(not implemented)
-CheckForTrick(player.hand);
-//Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
-if(player.hand.count == 0){
-	player.hand = pile.draw(1);
-}
-}
+        }
+        // Tjekker for stik..(not implemented)
+        CheckForTrick(player.hand);
+        //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
+        if(player.hand.count == 0){
+	        player.hand = pile.draw(1);
+         }
+    }
 
-
+}
 // Definer en tur. Efter Setup vil denne kode loopes indtil endcondition
-	Turn{
-		int hand = 0;
+Turn{
+    int hand = 0;
 
-		// Hvis hånden størrelse ændres og ikke er 0, så går vi ikke videre.
-		repeat{
-hand = player.hand.count;
-			// Foretag et træk
-			player.ChooseMove(player.hand.choose(1),players.choose(num));
-} until(player.hand.count == 0 || hand == player.hand.count)
+    // Hvis hånden størrelse ændres og ikke er 0, så går vi ikke videre.
+    repeat{
+        hand = player.hand.count;
+        // Foretag et træk
+        player.ChooseMove(player.hand.choose(1),players.choose(num));
+    } until(player.hand.count == 0 || hand == player.hand.count)
 
-		// Hvis fisk eller man hvis man har 0 kort på hånden, så træk et kort fra
-// bunken.
-		player.hand += pile.draw(1);
-		//Giv turen videre til den spiller man sidst har spurgt
-		turn.player = playerChosen;
-	}
+    // Hvis fisk eller man hvis man har 0 kort på hånden, så træk et kort fra bunken.
+    player.hand += pile.draw(1);
+
+    //Giv turen videre til den spiller man sidst har spurgt
+    turn.player = playerChosen;
 }
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
