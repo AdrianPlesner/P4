@@ -11,12 +11,12 @@ Setup{
     //Definer deck
     Decks{
 	    //Almindeligt sæt spillekort uden jokere
-	    Deck = GetStdDeck(0);
+	    Deck = GetStdDeck(0)
     }
 	//public er “spillepladen” (tilgængelig for alle spillere)
     public{
         // Der er en bunke i spillet, trækbunken til når man fisker
-        Pile = new pile(Deck);
+        List<Card> Pile = new List<Card>(Deck);
     }
     // private er en players hånd.
     private{
@@ -58,4 +58,5 @@ EndCondition{
 	foreach(player)
 		player.hand.count == (0);
 	// Vinderen(e) er de(n) spiller(e) med flest point
+
 }
