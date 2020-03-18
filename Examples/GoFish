@@ -1,14 +1,14 @@
 Setup{
-// Definer spillere
+// Definer spillere, initaliserer en List<Player> Players
 	Players{
-		Adrian(false),
-		Frederik(false),
-		Johan(false),
-		Lasse(false),
-		Oliver(false),
-		Rikke(false)
+		new Player("Adrian", false),
+		new Player("Frederik", false),
+		new Player("Johan", false),
+		new Player("Lasse", false),
+		new Player("Oliver", false),
+		nwe Player("Rikke", false)
     }
-    //Definer deck
+    //Definer deck, implicit er alle deck af typen List<Card>
     Decks{
 	    //Almindeligt sæt spillekort uden jokere
 	    Deck = GetStdDeck(0)
@@ -16,13 +16,13 @@ Setup{
 	//public er “spillepladen” (tilgængelig for alle spillere)
     public{
         // Der er en bunke i spillet, trækbunken til når man fisker
-        List<Card> Pile = new List<Card>(Deck);
+        List<Card> Pile = new List<Card>(Deck)
     }
     // private er en players hånd.
     private{
 	    // Alle spillere starter med 7 kort hver, fra bunken.
-        hand = pile.draw(7);
-        score = 0;
+        List<Card> hand = pile.draw(7),
+        int score = 0
     }
 }
 // Mulige træk
@@ -47,7 +47,7 @@ Moves{
 Turn{
     bool continue = true;
     player chosen;
-    while(player.hand.size > 0 && continue ){
+    while(player.hand.length > 0 && continue ){
         chosen = chooseFrom(players
         continue = ChooseMove(chooseFrom(player.hand).value,chosen;
     }
@@ -56,7 +56,6 @@ Turn{
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
 	foreach(player)
-		player.hand.count == (0);
+		player.hand.length == (0);
 	// Vinderen(e) er de(n) spiller(e) med flest point
-
 }
