@@ -1,4 +1,4 @@
-package P4.P4
+Package P4.P4;
 
 Helpers
     digit = ['0' .. '9'];
@@ -15,20 +15,20 @@ Tokens
     blank = blank;
     id = letter (letter |digit)*;
     comment = '//' not_cr_lf* eol;
-    boolLiteral = 'true'|'false';
-    addOp = '+' | '-';
-    multOp = '*' | '/' | '%';
-    intLiteral = digit*;
-    floatLiteral = ['1' .. '9'] digit*'.'digit*;
+    bool_literal = 'true'|'false';
+    add_op = '+' | '-';
+    mult_op = '*' | '/' | '%';
+    int_literal = digit*;
+    float_literal = ['1' .. '9'] digit*'.'digit*;
     string = ''' [not_cr_lf - ''']* ''';
-    boolOp = '||' | '&&';
-    relationOp = '<' | '>' | '<=' | '>=';
+    bool_op = '||' | '&&';
+    relation_op = '<' | '>' | '<=' | '>=';
     assign = '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=';
-    equalOp = '==' | '!=';
-    lParen = '(';
-    rParen = ')';
-    lBrack = '{';
-    rBrack = '}';
+    equal_op = '==' | '!=';
+    l_paren = '(';
+    r_paren = ')';
+    l_brack = '{';
+    r_brack = '}';
     setup = 'Setup';
     players = 'Players';
     decks = 'Decks';
@@ -38,8 +38,8 @@ Tokens
     separator = ',';
     dot = '.';
     moves = 'Moves';
-    lBox = '[';
-    rBox = ']';
+    l_box = '[';
+    r_box = ']';
     return = 'return';
     semi = ';';
     if = 'if';
@@ -52,61 +52,61 @@ Tokens
     for = 'for';
     foreach = 'foreach';
     turn = 'Turn';
-    endCon = 'EndCondition';
+    end_con = 'EndCondition';
     in = 'in';
     type = 'int' | 'float' | 'string' | 'bool' | 'Card' | 'Player' | 'void';
-    lArr = '<';
-    rArr = '>';
+    l_arr = '<';
+    r_arr = '>';
+    list = 'List';
 
 Ignored Tokens
-    blank;
+    blank,
     comment;
 
 Productions
-    prog = P.setup P.moves P.turn P.endCon;
-    setup = T.setup lBrack P.players P.decks P.public P.private rBrack;
-    players = T.players lBrack dclList rBrack;
-    decks = T.decks lBrack dclList rBrack;
-    public = T.Public lBrack dclList rBrack;
-    private = T.Private lBrack dclList rBrack;
-    dclList = dcl separator dclList |;
+    prog = P.setup P.moves P.turn P.end_con;
+    setup = T.setup l_brack P.players P.decks P.public P.private r_brack;
+    players = T.players l_brack dcl_list r_brack;
+    decks = T.decks l_brack dcl_list r_brack;
+    public = T.public l_brack dcl_list r_brack;
+    private = T.private l_brack dcl_list r_brack;
+    dcl_list = dcl separator dcl_list |;
     dcl = P.type id assign P.new expr semi;
     new = T.new |;
-    expr = equality boolOp expr | equality;
-    equality = relation equalOp equality | relation;
-    relation = addExpr relationOp relation | addExpr;
-    addExpr = term addOp addExpr | term;
-    term = factor multOp term | factor;
-    factor = lParen expr rParen | literal | var | callList;
-    literal = intLiteral | floatLiteral | string | boolLiteral;
-    var = id dot var | callList dot var | id;
-    callList = call dot callList | call,
-    call = id lParen paramList rParen;
-    paramList = expr separator paramList | expr;
-    moves = T.moves lBrack moveDclList rBrack;
-    moveDclList = methodDcl moveDclList;
-    methodDcl = P.type id lParen paramDclList rParen lBrack stmtList returnStmt rBrack;
-    paramDclList = paramDcl separator paramDclList |paramDcl;
-    paramDcl = P.Type id |;
+    expr = equality bool_op expr | equality;
+    equality = relation equal_op equality | relation;
+    relation = add_expr relation_op relation | add_expr;
+    add_expr = term add_op add_expr | term;
+    term = factor mult_op term | factor;
+    factor = l_paren expr r_paren | literal | var | call_list;
+    literal = int_literal | float_literal | string | bool_literal;
+    var = id dot var | call_list dot var | id;
+    call_list = call dot call_list | call;
+    call = id l_paren param_list r_paren;
+    param_list = expr separator param_list | expr;
+    moves = T.moves l_brack move_dcl_list r_brack;
+    move_dcl_list = method_dcl move_dcl_list;
+    method_dcl = P.type id l_paren param_dcl_list r_paren l_brack stmt_list return_stmt r_brack;
+    param_dcl_list = param_dcl separator param_dcl_list | param_dcl;
+    param_dcl = P.type id |;
     type = T.type | collection;
-    collection = array | list;
-    array = T.type lBrack rBrack;
-    list = List lArr T.type rArr;
-    stmtList = stmt stmtList |;
-    returnStmt = return expr |;
-    stmt = selectStmt | dcl | loopStmt | callList semi;
-    selectStmt = ifStmt | switchStmt;
-    ifStmt = if lParen expr rParen lBrack stmtList rBrack elseStmt;
-    elseStmt = else ifStmt | else lBrack stmtList rBrack |;
-    switchStmt = switch lParen var lBrack CaseList rBrack;
-    caseList = caseStmt caseList | defaultStmt;
-    caseStmt = case colon lBrack stmtList rBrack;
-    defaultStmt = default colon lBrack stmtList rBrack;
-    loopStmt = whileLoop | forLoop | forEachLoop;
-    whileLoop = while lParen expr rParen lBrack stmtList rBrack;
-    forLoop = for lParen expr semi expr semi expr rParen lBrack stmtList rBrack;
-    forEachLoop = foreach lParen P.type id in id rParen lBrack stmtList rBrack;
-    turn = T.turn lBrack stmtList rBrack;
-    endCon = T.endCon stmtList rBrack;
+    collection = array | P.list;
+    array = T.type l_brack r_brack;
+    list = T.list l_arr T.type r_arr;
+    stmt_list = stmt stmt_list |;
+    return_stmt = return expr |;
+    stmt = select_stmt | dcl | loop_stmt | call_list semi;
+    select_stmt = if_stmt | switch_stmt;
+    if_stmt = if l_paren expr r_paren l_brack stmt_list r_brack else_stmt;
+    else_stmt = else if_stmt | else l_brack stmt_list r_brack |;
+    switch_stmt = switch l_paren var l_brack case_list r_brack;
+    case_list = case_stmt case_list | default_stmt;
+    case_stmt = case colon l_brack stmt_list r_brack;
+    default_stmt = default colon l_brack stmt_list r_brack;
+    loop_stmt = while_loop | for_loop | for_each_loop;
+    while_loop = while l_paren expr r_paren l_brack stmt_list r_brack;
+    for_loop = for l_paren expr semi expr semi expr r_paren l_brack stmt_list r_brack;
+    for_each_loop = foreach l_paren P.type id in id r_paren l_brack stmt_list r_brack;
+    turn = T.turn l_brack stmt_list r_brack;
+    end_con = T.end_con stmt_list r_brack;
 
-//Abstract Syntax Tree
