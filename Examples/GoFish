@@ -1,13 +1,13 @@
 Setup{
 // Definer spillere, initaliserer en List<Player> Players
-	Players{
+	/*Players{
 		new Player("Adrian", false),
 		new Player("Frederik", false),
 		new Player("Johan", false),
 		new Player("Lasse", false),
 		new Player("Oliver", false),
-		nwe Player("Rikke", false)
-    }
+		new Player("Rikke", false)
+    }*/
     //Definer deck, implicit er alle deck af typen List<Card>
     Decks{
 	    //Almindeligt sæt spillekort uden jokere

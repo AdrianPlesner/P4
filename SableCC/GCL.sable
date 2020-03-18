@@ -1,11 +1,112 @@
 package P4.P4
 
 Helpers
+    digit = ['0' .. '9'];
+    letter = ['a' .. 'z'] |['A' .. 'Z'];
+    cr = 13;
+    lf = 10;
+    tab = 9;
+    eol = cr lf | cr | lf;
+    blank = (' ' | tab | eol)+;
+    all = [0 .. 0xFFFF];
+    not_cr_lf = [all - [cr + lf]];
 
 Tokens
+    blank = blank;
+    id = letter (letter |digit)*;
+    comment = '//' not_cr_lf* eol;
+    boolLiteral = 'true'|'false';
+    addOp = '+' | '-';
+    multOp = '*' | '/' | '%';
+    intLiteral = digit*;
+    floatLiteral = ['1' .. '9'] digit*'.'digit*;
+    string = ''' [not_cr_lf - ''']* ''';
+    boolOp = '||' | '&&';
+    relationOp = '<' | '>' | '<=' | '>=';
+    assign = '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=';
+    equalOp = '==' | '!=';
+    lParen = '(';
+    rParen = ')';
+    lBrack = '{';
+    rBrack = '}';
+    setup = 'Setup';
+    players = 'Players';
+    decks = 'Decks';
+    public = 'Public';
+    private = 'Private';
+    new = 'new';
+    separator = ',';
+    dot = '.';
+    moves = 'Moves';
+    lBox = '[';
+    rBox = ']';
+    return = 'return';
+    semi = ';';
+    if = 'if';
+    else = 'else';
+    switch = 'switch';
+    case = 'case';
+    default = 'default';
+    colon = ':';
+    while = 'while';
+    for = 'for';
+    foreach = 'foreach';
+    turn = 'Turn';
+    endCon = 'EndCondition';
+    in = 'in';
+    type = 'int' | 'float' | 'string' | 'bool' | 'Card' | 'Player' | 'void';
+    lArr = '<';
+    rArr = '>';
 
 Ignored Tokens
+    blank;
+    comment;
 
 Productions
+    prog = P.setup P.moves P.turn P.endCon;
+    setup = T.setup lBrack P.players P.decks P.public P.private rBrack;
+    players = T.players lBrack dclList rBrack;
+    decks = T.decks lBrack dclList rBrack;
+    public = T.Public lBrack dclList rBrack;
+    private = T.Private lBrack dclList rBrack;
+    dclList = dcl separator dclList |;
+    dcl = P.type id assign P.new expr semi;
+    new = T.new |;
+    expr = equality boolOp expr | equality;
+    equality = relation equalOp equality | relation;
+    relation = addExpr relationOp relation | addExpr;
+    addExpr = term addOp addExpr | term;
+    term = factor multOp term | factor;
+    factor = lParen expr rParen | literal | var | callList;
+    literal = intLiteral | floatLiteral | string | boolLiteral;
+    var = id dot var | callList dot var | id;
+    callList = call dot callList | call,
+    call = id lParen paramList rParen;
+    paramList = expr separator paramList | expr;
+    moves = T.moves lBrack moveDclList rBrack;
+    moveDclList = methodDcl moveDclList;
+    methodDcl = P.type id lParen paramDclList rParen lBrack stmtList returnStmt rBrack;
+    paramDclList = paramDcl separator paramDclList |paramDcl;
+    paramDcl = P.Type id |;
+    type = T.type | collection;
+    collection = array | list;
+    array = T.type lBrack rBrack;
+    list = List lArr T.type rArr;
+    stmtList = stmt stmtList |;
+    returnStmt = return expr |;
+    stmt = selectStmt | dcl | loopStmt | callList semi;
+    selectStmt = ifStmt | switchStmt;
+    ifStmt = if lParen expr rParen lBrack stmtList rBrack elseStmt;
+    elseStmt = else ifStmt | else lBrack stmtList rBrack |;
+    switchStmt = switch lParen var lBrack CaseList rBrack;
+    caseList = caseStmt caseList | defaultStmt;
+    caseStmt = case colon lBrack stmtList rBrack;
+    defaultStmt = default colon lBrack stmtList rBrack;
+    loopStmt = whileLoop | forLoop | forEachLoop;
+    whileLoop = while lParen expr rParen lBrack stmtList rBrack;
+    forLoop = for lParen expr semi expr semi expr rParen lBrack stmtList rBrack;
+    forEachLoop = foreach lParen P.type id in id rParen lBrack stmtList rBrack;
+    turn = T.turn lBrack stmtList rBrack;
+    endCon = T.endCon stmtList rBrack;
 
-Abstract Syntax Tree
+//Abstract Syntax Tree
