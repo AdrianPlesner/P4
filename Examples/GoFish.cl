@@ -22,7 +22,7 @@ Setup{
     Private{
 	    // Alle spillere starter med 7 kort hver, fra bunken.
         List typeof Card hand = deck.take(7);
-        int score;
+        int score = 0;
     }
 }
 // Mulige træk
@@ -30,27 +30,33 @@ Moves{
     // input = et kort ( fra egen hånd) og en anden spiller
     bool ChooseMove(Card c, Player player){
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
+        bool result = false;
         for(pCard in player.hand){
             if(pCard.value == c.val){
                 pCard.transfer(player, turn.player);
+                result = true;
             }
         }
         // Tjekker for stik..(not implemented)
         CheckForTrick(player.hand);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
-        if(player.hand.count == 0){
-            player.hand = pile.draw(1);
+        if(player.hand.length == 0){
+            player.hand = deck.take(1);
          }
+         return result;
     }
 }
 // Definer en tur. Efter Setup vil denne kode loopes indtil endcondition
 Turn{
     bool continue = true;
-    Player chosen;
-    while(player.hand.length > 0 && continue ){
+    Player chosen = null;
+    while( player.hand.length > 0 & continue ){
         chosen = chooseFrom(players);
         continue = ChooseMove(chooseFrom(player.hand),chosen);
     }
+    // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
+    // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
+    player.hand.add(deck.take(1));
     turn.player = chosen;
 }
 EndCondition{
