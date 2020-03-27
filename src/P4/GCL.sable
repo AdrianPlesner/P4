@@ -1,4 +1,4 @@
-Package P4.P4;
+Package P4.Sable;
 
 Helpers
     digit = ['0' .. '9'];
@@ -30,11 +30,8 @@ Tokens
     l_brack = '{';
     r_brack = '}';
     setup = 'Setup';
-    players = 'Players';
-    decks = 'Decks';
     public = 'Public';
     private = 'Private';
-    new = 'new';
     separator = ',';
     dot = '.';
     moves = 'Moves';
@@ -58,61 +55,60 @@ Tokens
     l_arr = '<';
     r_arr = '>';
     list = 'List';
+    typeof = 'typeof';
+    fun = 'Function';
 
 Ignored Tokens
     blank,
     comment;
 
 Productions
-    prog = P.setup P.moves P.turn P.end_con;
-    setup = T.setup l_brack P.players P.decks P.public P.private r_brack;
-    players = T.players dcl_block;
-    decks = T.decks dcl_block;
-    public = T.public dcl_block;
-    private = T.private dcl_block;
-    moves = T.moves dcl_block;
-    dcl_block = l_brack dcl_list r_brack;
-    dcl_list = {list} dcl separator dcl_list | {empty} ;
-    dcl = P.type id assign P.new expr semi;
-    new = {new} T.new | {empty};
+    prog = P.setup P.moves P.turn P.end_con move_dcl_list;
+    setup = T.setup l_brack stmt_list P.public P.private r_brack;
+    public = T.public block;
+    private = T.private block;
+    moves = T.moves move_dcl_list;
+    dcl_list = {expand} id init separator | {empty} ;
+    dcl = P.type dcl_list semi ;
+    init = {init} assign expr | {empty};
     expr = {expand} expr bool_op equality | {single} equality;
     equality = {expand} equality equal_op  relation  | {single} relation;
     relation = {expand} relation relation_op add_expr | {single} add_expr;
     add_expr = {expand} add_expr add_op term | {single} term;
     term = {expand} term mult_op factor | {factor} factor;
-    factor = {expand} parens | {literal} literal | {var} var | {call} call;
+    factor = {expand} parens | {literal} literal | {val} val | {init} init_list;
     parens = l_paren expr r_paren;
     literal = {int} int_literal | {float} float_literal | {string} string | {bool} bool_literal;
-    var = member_method_list id;
-    member_method_list = {expand} member_method* dot | {empty};
-    member_method = id method;
-    method = {method} param_list |{empty};
-    call = member_method_list param_list ;
+    init_list = l_brack element_list r_brack;
+    element_list = {expand} param_list separator element_list | {empty} ;
+    val = id call val_list;
+    val_list = {expand} dot val | {empty};
+    call = {call} id param_list | {empty} ;
     param_list = l_paren expr? param* r_paren;
     param = separator expr;
     move_dcl_list = method_dcl move_dcl_list;
-    method_dcl = P.type id l_paren param_dcl_list r_paren l_brack stmt_list return_stmt r_brack;
+    method_dcl = fun id l_paren param_dcl_list r_paren typeof P.type l_brack stmt_list return_stmt r_brack;
     param_dcl_list = {expand} param_dcl separator param_dcl_list | {single} param_dcl;
     param_dcl = {single} P.type id | {empty};
     type = {type} T.type | {collection} collection;
     collection = {array} array | {list} P.list;
-    array = T.type l_brack r_brack;
-    list = T.list l_arr T.type r_arr;
+    array = T.type l_box r_box;
+    list = T.list typeof T.type ;
     stmt_list = {expand} stmt stmt_list | {empty};
-    return_stmt = {single} return expr | {empty};
-    stmt = {select} select_stmt | {dcl} dcl | {loop} loop_stmt | {call} call semi;
+    return_stmt = {single} return expr semi | {empty};
+    stmt = {select} select_stmt | {dcl} dcl | {loop} loop_stmt | {call} val semi;
     select_stmt = {if} if_stmt | {switch} switch_stmt;
-    stmt_block = l_brack stmt_list r_brack;
-    if_stmt = if l_paren expr r_paren stmt_block else_stmt;
-    else_stmt = {elseif} else if_stmt | {else} else stmt_block |;
-    switch_stmt = switch l_paren var l_brack case_list r_brack;
+    block = l_brack stmt_list r_brack;
+    if_stmt = if expr block else_stmt;
+    else_stmt = {elseif} else if_stmt | {else} else block |;
+    switch_stmt = switch l_paren val l_brack case_list r_brack;
     case_list = {list} case_stmt case_list | {default} default_stmt |{empty};
-    case_stmt = case colon stmt_block;
-    default_stmt = default colon stmt_block;
-    loop_stmt = {while} while_loop | {for} for_loop | {foreach} for_each_loop;
-    while_loop = while l_paren expr r_paren stmt_block;
-    for_loop = for l_paren [init]:expr [a]:semi [condition]:expr [b]:semi [count]:expr r_paren stmt_block;
-    for_each_loop = foreach l_paren P.type [var]:id in [collection]:id r_paren stmt_block;
-    turn = T.turn stmt_block;
-    end_con = T.end_con stmt_block;
+    case_stmt = case colon block;
+    default_stmt = default colon block;
+    loop_stmt = {while} while_loop | {for} for_loop;
+    while_loop = while expr  block;
+    for_loop = for loop_expr block;
+    loop_expr = {foreach} P.type [var]:id in [collection]:id | {for} [init]:expr [a]:semi [condition]:expr [b]:semi [count]:expr;
+    turn = T.turn block;
+    end_con = T.end_con block;
 
