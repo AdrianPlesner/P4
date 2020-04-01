@@ -18,9 +18,10 @@ public interface Analysis extends Switch
     void caseAPrivate(APrivate node);
     void caseAMoves(AMoves node);
     void caseAExpandDclList(AExpandDclList node);
-    void caseAEmptyDclList(AEmptyDclList node);
+    void caseASingleDclList(ASingleDclList node);
     void caseADcl(ADcl node);
-    void caseAInitInit(AInitInit node);
+    void caseADclPre(ADclPre node);
+    void caseAValueInit(AValueInit node);
     void caseAEmptyInit(AEmptyInit node);
     void caseAExpandExpr(AExpandExpr node);
     void caseASingleExpr(ASingleExpr node);
@@ -44,6 +45,8 @@ public interface Analysis extends Switch
     void caseAInitList(AInitList node);
     void caseAExpandElementList(AExpandElementList node);
     void caseAEmptyElementList(AEmptyElementList node);
+    void caseAExpandElement(AExpandElement node);
+    void caseASingleElement(ASingleElement node);
     void caseAVal(AVal node);
     void caseAExpandValList(AExpandValList node);
     void caseAEmptyValList(AEmptyValList node);
@@ -51,17 +54,15 @@ public interface Analysis extends Switch
     void caseAEmptyCall(AEmptyCall node);
     void caseAParamList(AParamList node);
     void caseAParam(AParam node);
-    void caseAMoveDclList(AMoveDclList node);
+    void caseAExpandMoveDclList(AExpandMoveDclList node);
+    void caseAEmptyMoveDclList(AEmptyMoveDclList node);
     void caseAMethodDcl(AMethodDcl node);
     void caseAExpandParamDclList(AExpandParamDclList node);
     void caseASingleParamDclList(ASingleParamDclList node);
     void caseASingleParamDcl(ASingleParamDcl node);
     void caseAEmptyParamDcl(AEmptyParamDcl node);
     void caseATypeType(ATypeType node);
-    void caseACollectionType(ACollectionType node);
-    void caseAArrayCollection(AArrayCollection node);
-    void caseAListCollection(AListCollection node);
-    void caseAArray(AArray node);
+    void caseAListType(AListType node);
     void caseAList(AList node);
     void caseAExpandStmtList(AExpandStmtList node);
     void caseAEmptyStmtList(AEmptyStmtList node);
@@ -70,6 +71,7 @@ public interface Analysis extends Switch
     void caseASelectStmt(ASelectStmt node);
     void caseADclStmt(ADclStmt node);
     void caseALoopStmt(ALoopStmt node);
+    void caseAAssignStmt(AAssignStmt node);
     void caseACallStmt(ACallStmt node);
     void caseAIfSelectStmt(AIfSelectStmt node);
     void caseASwitchSelectStmt(ASwitchSelectStmt node);
@@ -90,11 +92,14 @@ public interface Analysis extends Switch
     void caseAForLoop(AForLoop node);
     void caseAForeachLoopExpr(AForeachLoopExpr node);
     void caseAForLoopExpr(AForLoopExpr node);
+    void caseADeclareInitLoop(ADeclareInitLoop node);
+    void caseAAssignInitLoop(AAssignInitLoop node);
+    void caseAAssignValue(AAssignValue node);
     void caseATurn(ATurn node);
     void caseAEndCon(AEndCon node);
+    void caseAEnd(AEnd node);
 
     void caseTBlank(TBlank node);
-    void caseTId(TId node);
     void caseTComment(TComment node);
     void caseTBoolLiteral(TBoolLiteral node);
     void caseTAddOp(TAddOp node);
@@ -138,6 +143,7 @@ public interface Analysis extends Switch
     void caseTList(TList node);
     void caseTTypeof(TTypeof node);
     void caseTFun(TFun node);
+    void caseTId(TId node);
     void caseEOF(EOF node);
     void caseInvalidToken(InvalidToken node);
 }

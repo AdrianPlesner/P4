@@ -5,46 +5,46 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class ACallCall extends PCall
+public final class AListType extends PType
 {
-    private PParamList _paramList_;
+    private PList _list_;
 
-    public ACallCall()
+    public AListType()
     {
         // Constructor
     }
 
-    public ACallCall(
-        @SuppressWarnings("hiding") PParamList _paramList_)
+    public AListType(
+        @SuppressWarnings("hiding") PList _list_)
     {
         // Constructor
-        setParamList(_paramList_);
+        setList(_list_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new ACallCall(
-            cloneNode(this._paramList_));
+        return new AListType(
+            cloneNode(this._list_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseACallCall(this);
+        ((Analysis) sw).caseAListType(this);
     }
 
-    public PParamList getParamList()
+    public PList getList()
     {
-        return this._paramList_;
+        return this._list_;
     }
 
-    public void setParamList(PParamList node)
+    public void setList(PList node)
     {
-        if(this._paramList_ != null)
+        if(this._list_ != null)
         {
-            this._paramList_.parent(null);
+            this._list_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class ACallCall extends PCall
             node.parent(this);
         }
 
-        this._paramList_ = node;
+        this._list_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._paramList_);
+            + toString(this._list_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._paramList_ == child)
+        if(this._list_ == child)
         {
-            this._paramList_ = null;
+            this._list_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class ACallCall extends PCall
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._paramList_ == oldChild)
+        if(this._list_ == oldChild)
         {
-            setParamList((PParamList) newChild);
+            setList((PList) newChild);
             return;
         }
 

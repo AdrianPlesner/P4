@@ -7,10 +7,9 @@ import P4.Sable.analysis.*;
 @SuppressWarnings("nls")
 public final class AForeachLoopExpr extends PLoopExpr
 {
-    private PType _type_;
-    private TId _var_;
+    private TId _id_;
     private TIn _in_;
-    private TId _collection_;
+    private PVal _val_;
 
     public AForeachLoopExpr()
     {
@@ -18,19 +17,16 @@ public final class AForeachLoopExpr extends PLoopExpr
     }
 
     public AForeachLoopExpr(
-        @SuppressWarnings("hiding") PType _type_,
-        @SuppressWarnings("hiding") TId _var_,
+        @SuppressWarnings("hiding") TId _id_,
         @SuppressWarnings("hiding") TIn _in_,
-        @SuppressWarnings("hiding") TId _collection_)
+        @SuppressWarnings("hiding") PVal _val_)
     {
         // Constructor
-        setType(_type_);
-
-        setVar(_var_);
+        setId(_id_);
 
         setIn(_in_);
 
-        setCollection(_collection_);
+        setVal(_val_);
 
     }
 
@@ -38,10 +34,9 @@ public final class AForeachLoopExpr extends PLoopExpr
     public Object clone()
     {
         return new AForeachLoopExpr(
-            cloneNode(this._type_),
-            cloneNode(this._var_),
+            cloneNode(this._id_),
             cloneNode(this._in_),
-            cloneNode(this._collection_));
+            cloneNode(this._val_));
     }
 
     @Override
@@ -50,16 +45,16 @@ public final class AForeachLoopExpr extends PLoopExpr
         ((Analysis) sw).caseAForeachLoopExpr(this);
     }
 
-    public PType getType()
+    public TId getId()
     {
-        return this._type_;
+        return this._id_;
     }
 
-    public void setType(PType node)
+    public void setId(TId node)
     {
-        if(this._type_ != null)
+        if(this._id_ != null)
         {
-            this._type_.parent(null);
+            this._id_.parent(null);
         }
 
         if(node != null)
@@ -72,32 +67,7 @@ public final class AForeachLoopExpr extends PLoopExpr
             node.parent(this);
         }
 
-        this._type_ = node;
-    }
-
-    public TId getVar()
-    {
-        return this._var_;
-    }
-
-    public void setVar(TId node)
-    {
-        if(this._var_ != null)
-        {
-            this._var_.parent(null);
-        }
-
-        if(node != null)
-        {
-            if(node.parent() != null)
-            {
-                node.parent().removeChild(node);
-            }
-
-            node.parent(this);
-        }
-
-        this._var_ = node;
+        this._id_ = node;
     }
 
     public TIn getIn()
@@ -125,16 +95,16 @@ public final class AForeachLoopExpr extends PLoopExpr
         this._in_ = node;
     }
 
-    public TId getCollection()
+    public PVal getVal()
     {
-        return this._collection_;
+        return this._val_;
     }
 
-    public void setCollection(TId node)
+    public void setVal(PVal node)
     {
-        if(this._collection_ != null)
+        if(this._val_ != null)
         {
-            this._collection_.parent(null);
+            this._val_.parent(null);
         }
 
         if(node != null)
@@ -147,32 +117,25 @@ public final class AForeachLoopExpr extends PLoopExpr
             node.parent(this);
         }
 
-        this._collection_ = node;
+        this._val_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._type_)
-            + toString(this._var_)
+            + toString(this._id_)
             + toString(this._in_)
-            + toString(this._collection_);
+            + toString(this._val_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._type_ == child)
+        if(this._id_ == child)
         {
-            this._type_ = null;
-            return;
-        }
-
-        if(this._var_ == child)
-        {
-            this._var_ = null;
+            this._id_ = null;
             return;
         }
 
@@ -182,9 +145,9 @@ public final class AForeachLoopExpr extends PLoopExpr
             return;
         }
 
-        if(this._collection_ == child)
+        if(this._val_ == child)
         {
-            this._collection_ = null;
+            this._val_ = null;
             return;
         }
 
@@ -195,15 +158,9 @@ public final class AForeachLoopExpr extends PLoopExpr
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._type_ == oldChild)
+        if(this._id_ == oldChild)
         {
-            setType((PType) newChild);
-            return;
-        }
-
-        if(this._var_ == oldChild)
-        {
-            setVar((TId) newChild);
+            setId((TId) newChild);
             return;
         }
 
@@ -213,9 +170,9 @@ public final class AForeachLoopExpr extends PLoopExpr
             return;
         }
 
-        if(this._collection_ == oldChild)
+        if(this._val_ == oldChild)
         {
-            setCollection((TId) newChild);
+            setVal((PVal) newChild);
             return;
         }
 

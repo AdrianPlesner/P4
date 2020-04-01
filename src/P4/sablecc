@@ -8,4 +8,6 @@
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 #
 # IMPORTANT: Put the absolute path to sablecc.jar below.
-java -jar  ~/Google_Drive/AAU/4.\ Semester/P4/src/P4/sablecc.jar GCL.sable $*
+java -jar  ~/Google_Drive/AAU/4._Semester/P4/src/P4/sablecc.jar GCL.sable $*
+mv ~/Google_Drive/AAU/4._Semester/P4/src/P4/P4/Sable ~/Google_Drive/AAU/4._Semester/P4/src/P4/Sable $*
+rm -r ~/Google_Drive/AAU/4._Semester/P4/src/P4/P4 $*

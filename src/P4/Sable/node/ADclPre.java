@@ -5,51 +5,51 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class ADcl extends PDcl
+public final class ADclPre extends PDclPre
 {
-    private PType _type_;
-    private PDclList _dclList_;
+    private TId _id_;
+    private PInit _init_;
 
-    public ADcl()
+    public ADclPre()
     {
         // Constructor
     }
 
-    public ADcl(
-        @SuppressWarnings("hiding") PType _type_,
-        @SuppressWarnings("hiding") PDclList _dclList_)
+    public ADclPre(
+        @SuppressWarnings("hiding") TId _id_,
+        @SuppressWarnings("hiding") PInit _init_)
     {
         // Constructor
-        setType(_type_);
+        setId(_id_);
 
-        setDclList(_dclList_);
+        setInit(_init_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new ADcl(
-            cloneNode(this._type_),
-            cloneNode(this._dclList_));
+        return new ADclPre(
+            cloneNode(this._id_),
+            cloneNode(this._init_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseADcl(this);
+        ((Analysis) sw).caseADclPre(this);
     }
 
-    public PType getType()
+    public TId getId()
     {
-        return this._type_;
+        return this._id_;
     }
 
-    public void setType(PType node)
+    public void setId(TId node)
     {
-        if(this._type_ != null)
+        if(this._id_ != null)
         {
-            this._type_.parent(null);
+            this._id_.parent(null);
         }
 
         if(node != null)
@@ -62,19 +62,19 @@ public final class ADcl extends PDcl
             node.parent(this);
         }
 
-        this._type_ = node;
+        this._id_ = node;
     }
 
-    public PDclList getDclList()
+    public PInit getInit()
     {
-        return this._dclList_;
+        return this._init_;
     }
 
-    public void setDclList(PDclList node)
+    public void setInit(PInit node)
     {
-        if(this._dclList_ != null)
+        if(this._init_ != null)
         {
-            this._dclList_.parent(null);
+            this._init_.parent(null);
         }
 
         if(node != null)
@@ -87,30 +87,30 @@ public final class ADcl extends PDcl
             node.parent(this);
         }
 
-        this._dclList_ = node;
+        this._init_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._type_)
-            + toString(this._dclList_);
+            + toString(this._id_)
+            + toString(this._init_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._type_ == child)
+        if(this._id_ == child)
         {
-            this._type_ = null;
+            this._id_ = null;
             return;
         }
 
-        if(this._dclList_ == child)
+        if(this._init_ == child)
         {
-            this._dclList_ = null;
+            this._init_ = null;
             return;
         }
 
@@ -121,15 +121,15 @@ public final class ADcl extends PDcl
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._type_ == oldChild)
+        if(this._id_ == oldChild)
         {
-            setType((PType) newChild);
+            setId((TId) newChild);
             return;
         }
 
-        if(this._dclList_ == oldChild)
+        if(this._init_ == oldChild)
         {
-            setDclList((PDclList) newChild);
+            setInit((PInit) newChild);
             return;
         }
 

@@ -10,12 +10,10 @@ public class Main {
     public static void main( String[] args){
         System.out.println("Compiling..");
         long start_time, stop_time; //times compilation
-
         if (args.length < 1) {
             System.out.println("Usage:");
             System.out.println(" java P4.Main <filename>");
         }
-
         try {
             start_time = System.currentTimeMillis();
 
@@ -29,12 +27,13 @@ public class Main {
 
             stop_time = System.currentTimeMillis();
 
-            System.out.println("Compilation took " + (stop_time-start_time)/1000 + " seconds" );
+            System.out.println("Compilation took " + (stop_time-start_time) + " milliseconds" );
         }
         catch (Exception e) {
             System.out.println(e);
         }
-
     }
 }
+
+
 

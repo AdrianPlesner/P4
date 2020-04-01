@@ -2,7 +2,7 @@
 
 package P4.Sable.node;
 
-public abstract class PArray extends Node
+public abstract class PDclPre extends Node
 {
     // Empty body
 }

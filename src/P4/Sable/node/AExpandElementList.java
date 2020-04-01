@@ -7,8 +7,8 @@ import P4.Sable.analysis.*;
 @SuppressWarnings("nls")
 public final class AExpandElementList extends PElementList
 {
-    private PParamList _paramList_;
-    private TSeparator _separator_;
+    private PElement _element_;
+    private TSemi _semi_;
     private PElementList _elementList_;
 
     public AExpandElementList()
@@ -17,14 +17,14 @@ public final class AExpandElementList extends PElementList
     }
 
     public AExpandElementList(
-        @SuppressWarnings("hiding") PParamList _paramList_,
-        @SuppressWarnings("hiding") TSeparator _separator_,
+        @SuppressWarnings("hiding") PElement _element_,
+        @SuppressWarnings("hiding") TSemi _semi_,
         @SuppressWarnings("hiding") PElementList _elementList_)
     {
         // Constructor
-        setParamList(_paramList_);
+        setElement(_element_);
 
-        setSeparator(_separator_);
+        setSemi(_semi_);
 
         setElementList(_elementList_);
 
@@ -34,8 +34,8 @@ public final class AExpandElementList extends PElementList
     public Object clone()
     {
         return new AExpandElementList(
-            cloneNode(this._paramList_),
-            cloneNode(this._separator_),
+            cloneNode(this._element_),
+            cloneNode(this._semi_),
             cloneNode(this._elementList_));
     }
 
@@ -45,16 +45,16 @@ public final class AExpandElementList extends PElementList
         ((Analysis) sw).caseAExpandElementList(this);
     }
 
-    public PParamList getParamList()
+    public PElement getElement()
     {
-        return this._paramList_;
+        return this._element_;
     }
 
-    public void setParamList(PParamList node)
+    public void setElement(PElement node)
     {
-        if(this._paramList_ != null)
+        if(this._element_ != null)
         {
-            this._paramList_.parent(null);
+            this._element_.parent(null);
         }
 
         if(node != null)
@@ -67,19 +67,19 @@ public final class AExpandElementList extends PElementList
             node.parent(this);
         }
 
-        this._paramList_ = node;
+        this._element_ = node;
     }
 
-    public TSeparator getSeparator()
+    public TSemi getSemi()
     {
-        return this._separator_;
+        return this._semi_;
     }
 
-    public void setSeparator(TSeparator node)
+    public void setSemi(TSemi node)
     {
-        if(this._separator_ != null)
+        if(this._semi_ != null)
         {
-            this._separator_.parent(null);
+            this._semi_.parent(null);
         }
 
         if(node != null)
@@ -92,7 +92,7 @@ public final class AExpandElementList extends PElementList
             node.parent(this);
         }
 
-        this._separator_ = node;
+        this._semi_ = node;
     }
 
     public PElementList getElementList()
@@ -124,8 +124,8 @@ public final class AExpandElementList extends PElementList
     public String toString()
     {
         return ""
-            + toString(this._paramList_)
-            + toString(this._separator_)
+            + toString(this._element_)
+            + toString(this._semi_)
             + toString(this._elementList_);
     }
 
@@ -133,15 +133,15 @@ public final class AExpandElementList extends PElementList
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._paramList_ == child)
+        if(this._element_ == child)
         {
-            this._paramList_ = null;
+            this._element_ = null;
             return;
         }
 
-        if(this._separator_ == child)
+        if(this._semi_ == child)
         {
-            this._separator_ = null;
+            this._semi_ = null;
             return;
         }
 
@@ -158,15 +158,15 @@ public final class AExpandElementList extends PElementList
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._paramList_ == oldChild)
+        if(this._element_ == oldChild)
         {
-            setParamList((PParamList) newChild);
+            setElement((PElement) newChild);
             return;
         }
 
-        if(this._separator_ == oldChild)
+        if(this._semi_ == oldChild)
         {
-            setSeparator((TSeparator) newChild);
+            setSemi((TSemi) newChild);
             return;
         }
 

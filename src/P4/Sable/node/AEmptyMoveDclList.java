@@ -5,10 +5,10 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AEmptyDclList extends PDclList
+public final class AEmptyMoveDclList extends PMoveDclList
 {
 
-    public AEmptyDclList()
+    public AEmptyMoveDclList()
     {
         // Constructor
     }
@@ -16,13 +16,13 @@ public final class AEmptyDclList extends PDclList
     @Override
     public Object clone()
     {
-        return new AEmptyDclList();
+        return new AEmptyMoveDclList();
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAEmptyDclList(this);
+        ((Analysis) sw).caseAEmptyMoveDclList(this);
     }
 
     @Override

@@ -111,7 +111,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAEmptyDclList(AEmptyDclList node)
+    public void caseASingleDclList(ASingleDclList node)
     {
         defaultCase(node);
     }
@@ -123,7 +123,13 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAInitInit(AInitInit node)
+    public void caseADclPre(ADclPre node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAValueInit(AValueInit node)
     {
         defaultCase(node);
     }
@@ -267,6 +273,18 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
+    public void caseAExpandElement(AExpandElement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseASingleElement(ASingleElement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
     public void caseAVal(AVal node)
     {
         defaultCase(node);
@@ -309,7 +327,13 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAMoveDclList(AMoveDclList node)
+    public void caseAExpandMoveDclList(AExpandMoveDclList node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAEmptyMoveDclList(AEmptyMoveDclList node)
     {
         defaultCase(node);
     }
@@ -351,25 +375,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseACollectionType(ACollectionType node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAArrayCollection(AArrayCollection node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAListCollection(AListCollection node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAArray(AArray node)
+    public void caseAListType(AListType node)
     {
         defaultCase(node);
     }
@@ -418,6 +424,12 @@ public class AnalysisAdapter implements Analysis
 
     @Override
     public void caseALoopStmt(ALoopStmt node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAAssignStmt(AAssignStmt node)
     {
         defaultCase(node);
     }
@@ -543,6 +555,24 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
+    public void caseADeclareInitLoop(ADeclareInitLoop node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAAssignInitLoop(AAssignInitLoop node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAAssignValue(AAssignValue node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
     public void caseATurn(ATurn node)
     {
         defaultCase(node);
@@ -555,13 +585,13 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseTBlank(TBlank node)
+    public void caseAEnd(AEnd node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseTId(TId node)
+    public void caseTBlank(TBlank node)
     {
         defaultCase(node);
     }
@@ -820,6 +850,12 @@ public class AnalysisAdapter implements Analysis
 
     @Override
     public void caseTFun(TFun node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseTId(TId node)
     {
         defaultCase(node);
     }

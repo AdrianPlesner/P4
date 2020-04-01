@@ -8,7 +8,9 @@ import P4.Sable.analysis.*;
 public final class AMoves extends PMoves
 {
     private TMoves _moves_;
+    private TLBrack _lBrack_;
     private PMoveDclList _moveDclList_;
+    private TRBrack _rBrack_;
 
     public AMoves()
     {
@@ -17,12 +19,18 @@ public final class AMoves extends PMoves
 
     public AMoves(
         @SuppressWarnings("hiding") TMoves _moves_,
-        @SuppressWarnings("hiding") PMoveDclList _moveDclList_)
+        @SuppressWarnings("hiding") TLBrack _lBrack_,
+        @SuppressWarnings("hiding") PMoveDclList _moveDclList_,
+        @SuppressWarnings("hiding") TRBrack _rBrack_)
     {
         // Constructor
         setMoves(_moves_);
 
+        setLBrack(_lBrack_);
+
         setMoveDclList(_moveDclList_);
+
+        setRBrack(_rBrack_);
 
     }
 
@@ -31,7 +39,9 @@ public final class AMoves extends PMoves
     {
         return new AMoves(
             cloneNode(this._moves_),
-            cloneNode(this._moveDclList_));
+            cloneNode(this._lBrack_),
+            cloneNode(this._moveDclList_),
+            cloneNode(this._rBrack_));
     }
 
     @Override
@@ -65,6 +75,31 @@ public final class AMoves extends PMoves
         this._moves_ = node;
     }
 
+    public TLBrack getLBrack()
+    {
+        return this._lBrack_;
+    }
+
+    public void setLBrack(TLBrack node)
+    {
+        if(this._lBrack_ != null)
+        {
+            this._lBrack_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._lBrack_ = node;
+    }
+
     public PMoveDclList getMoveDclList()
     {
         return this._moveDclList_;
@@ -90,12 +125,39 @@ public final class AMoves extends PMoves
         this._moveDclList_ = node;
     }
 
+    public TRBrack getRBrack()
+    {
+        return this._rBrack_;
+    }
+
+    public void setRBrack(TRBrack node)
+    {
+        if(this._rBrack_ != null)
+        {
+            this._rBrack_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._rBrack_ = node;
+    }
+
     @Override
     public String toString()
     {
         return ""
             + toString(this._moves_)
-            + toString(this._moveDclList_);
+            + toString(this._lBrack_)
+            + toString(this._moveDclList_)
+            + toString(this._rBrack_);
     }
 
     @Override
@@ -108,9 +170,21 @@ public final class AMoves extends PMoves
             return;
         }
 
+        if(this._lBrack_ == child)
+        {
+            this._lBrack_ = null;
+            return;
+        }
+
         if(this._moveDclList_ == child)
         {
             this._moveDclList_ = null;
+            return;
+        }
+
+        if(this._rBrack_ == child)
+        {
+            this._rBrack_ = null;
             return;
         }
 
@@ -127,9 +201,21 @@ public final class AMoves extends PMoves
             return;
         }
 
+        if(this._lBrack_ == oldChild)
+        {
+            setLBrack((TLBrack) newChild);
+            return;
+        }
+
         if(this._moveDclList_ == oldChild)
         {
             setMoveDclList((PMoveDclList) newChild);
+            return;
+        }
+
+        if(this._rBrack_ == oldChild)
+        {
+            setRBrack((TRBrack) newChild);
             return;
         }
 

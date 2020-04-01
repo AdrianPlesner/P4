@@ -7,11 +7,11 @@ import P4.Sable.analysis.*;
 @SuppressWarnings("nls")
 public final class AForLoopExpr extends PLoopExpr
 {
-    private PExpr _init_;
+    private PInitLoop _initLoop_;
     private TSemi _a_;
-    private PExpr _condition_;
+    private PExpr _expr_;
     private TSemi _b_;
-    private PExpr _count_;
+    private PAssignValue _assignValue_;
 
     public AForLoopExpr()
     {
@@ -19,22 +19,22 @@ public final class AForLoopExpr extends PLoopExpr
     }
 
     public AForLoopExpr(
-        @SuppressWarnings("hiding") PExpr _init_,
+        @SuppressWarnings("hiding") PInitLoop _initLoop_,
         @SuppressWarnings("hiding") TSemi _a_,
-        @SuppressWarnings("hiding") PExpr _condition_,
+        @SuppressWarnings("hiding") PExpr _expr_,
         @SuppressWarnings("hiding") TSemi _b_,
-        @SuppressWarnings("hiding") PExpr _count_)
+        @SuppressWarnings("hiding") PAssignValue _assignValue_)
     {
         // Constructor
-        setInit(_init_);
+        setInitLoop(_initLoop_);
 
         setA(_a_);
 
-        setCondition(_condition_);
+        setExpr(_expr_);
 
         setB(_b_);
 
-        setCount(_count_);
+        setAssignValue(_assignValue_);
 
     }
 
@@ -42,11 +42,11 @@ public final class AForLoopExpr extends PLoopExpr
     public Object clone()
     {
         return new AForLoopExpr(
-            cloneNode(this._init_),
+            cloneNode(this._initLoop_),
             cloneNode(this._a_),
-            cloneNode(this._condition_),
+            cloneNode(this._expr_),
             cloneNode(this._b_),
-            cloneNode(this._count_));
+            cloneNode(this._assignValue_));
     }
 
     @Override
@@ -55,16 +55,16 @@ public final class AForLoopExpr extends PLoopExpr
         ((Analysis) sw).caseAForLoopExpr(this);
     }
 
-    public PExpr getInit()
+    public PInitLoop getInitLoop()
     {
-        return this._init_;
+        return this._initLoop_;
     }
 
-    public void setInit(PExpr node)
+    public void setInitLoop(PInitLoop node)
     {
-        if(this._init_ != null)
+        if(this._initLoop_ != null)
         {
-            this._init_.parent(null);
+            this._initLoop_.parent(null);
         }
 
         if(node != null)
@@ -77,7 +77,7 @@ public final class AForLoopExpr extends PLoopExpr
             node.parent(this);
         }
 
-        this._init_ = node;
+        this._initLoop_ = node;
     }
 
     public TSemi getA()
@@ -105,16 +105,16 @@ public final class AForLoopExpr extends PLoopExpr
         this._a_ = node;
     }
 
-    public PExpr getCondition()
+    public PExpr getExpr()
     {
-        return this._condition_;
+        return this._expr_;
     }
 
-    public void setCondition(PExpr node)
+    public void setExpr(PExpr node)
     {
-        if(this._condition_ != null)
+        if(this._expr_ != null)
         {
-            this._condition_.parent(null);
+            this._expr_.parent(null);
         }
 
         if(node != null)
@@ -127,7 +127,7 @@ public final class AForLoopExpr extends PLoopExpr
             node.parent(this);
         }
 
-        this._condition_ = node;
+        this._expr_ = node;
     }
 
     public TSemi getB()
@@ -155,16 +155,16 @@ public final class AForLoopExpr extends PLoopExpr
         this._b_ = node;
     }
 
-    public PExpr getCount()
+    public PAssignValue getAssignValue()
     {
-        return this._count_;
+        return this._assignValue_;
     }
 
-    public void setCount(PExpr node)
+    public void setAssignValue(PAssignValue node)
     {
-        if(this._count_ != null)
+        if(this._assignValue_ != null)
         {
-            this._count_.parent(null);
+            this._assignValue_.parent(null);
         }
 
         if(node != null)
@@ -177,27 +177,27 @@ public final class AForLoopExpr extends PLoopExpr
             node.parent(this);
         }
 
-        this._count_ = node;
+        this._assignValue_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._init_)
+            + toString(this._initLoop_)
             + toString(this._a_)
-            + toString(this._condition_)
+            + toString(this._expr_)
             + toString(this._b_)
-            + toString(this._count_);
+            + toString(this._assignValue_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._init_ == child)
+        if(this._initLoop_ == child)
         {
-            this._init_ = null;
+            this._initLoop_ = null;
             return;
         }
 
@@ -207,9 +207,9 @@ public final class AForLoopExpr extends PLoopExpr
             return;
         }
 
-        if(this._condition_ == child)
+        if(this._expr_ == child)
         {
-            this._condition_ = null;
+            this._expr_ = null;
             return;
         }
 
@@ -219,9 +219,9 @@ public final class AForLoopExpr extends PLoopExpr
             return;
         }
 
-        if(this._count_ == child)
+        if(this._assignValue_ == child)
         {
-            this._count_ = null;
+            this._assignValue_ = null;
             return;
         }
 
@@ -232,9 +232,9 @@ public final class AForLoopExpr extends PLoopExpr
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._init_ == oldChild)
+        if(this._initLoop_ == oldChild)
         {
-            setInit((PExpr) newChild);
+            setInitLoop((PInitLoop) newChild);
             return;
         }
 
@@ -244,9 +244,9 @@ public final class AForLoopExpr extends PLoopExpr
             return;
         }
 
-        if(this._condition_ == oldChild)
+        if(this._expr_ == oldChild)
         {
-            setCondition((PExpr) newChild);
+            setExpr((PExpr) newChild);
             return;
         }
 
@@ -256,9 +256,9 @@ public final class AForLoopExpr extends PLoopExpr
             return;
         }
 
-        if(this._count_ == oldChild)
+        if(this._assignValue_ == oldChild)
         {
-            setCount((PExpr) newChild);
+            setAssignValue((PAssignValue) newChild);
             return;
         }
 

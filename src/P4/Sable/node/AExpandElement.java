@@ -5,56 +5,56 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AExpandDclList extends PDclList
+public final class AExpandElement extends PElement
 {
-    private PDclPre _dclPre_;
+    private PExpr _expr_;
     private TSeparator _separator_;
-    private PDclList _dclList_;
+    private PElement _element_;
 
-    public AExpandDclList()
+    public AExpandElement()
     {
         // Constructor
     }
 
-    public AExpandDclList(
-        @SuppressWarnings("hiding") PDclPre _dclPre_,
+    public AExpandElement(
+        @SuppressWarnings("hiding") PExpr _expr_,
         @SuppressWarnings("hiding") TSeparator _separator_,
-        @SuppressWarnings("hiding") PDclList _dclList_)
+        @SuppressWarnings("hiding") PElement _element_)
     {
         // Constructor
-        setDclPre(_dclPre_);
+        setExpr(_expr_);
 
         setSeparator(_separator_);
 
-        setDclList(_dclList_);
+        setElement(_element_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AExpandDclList(
-            cloneNode(this._dclPre_),
+        return new AExpandElement(
+            cloneNode(this._expr_),
             cloneNode(this._separator_),
-            cloneNode(this._dclList_));
+            cloneNode(this._element_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAExpandDclList(this);
+        ((Analysis) sw).caseAExpandElement(this);
     }
 
-    public PDclPre getDclPre()
+    public PExpr getExpr()
     {
-        return this._dclPre_;
+        return this._expr_;
     }
 
-    public void setDclPre(PDclPre node)
+    public void setExpr(PExpr node)
     {
-        if(this._dclPre_ != null)
+        if(this._expr_ != null)
         {
-            this._dclPre_.parent(null);
+            this._expr_.parent(null);
         }
 
         if(node != null)
@@ -67,7 +67,7 @@ public final class AExpandDclList extends PDclList
             node.parent(this);
         }
 
-        this._dclPre_ = node;
+        this._expr_ = node;
     }
 
     public TSeparator getSeparator()
@@ -95,16 +95,16 @@ public final class AExpandDclList extends PDclList
         this._separator_ = node;
     }
 
-    public PDclList getDclList()
+    public PElement getElement()
     {
-        return this._dclList_;
+        return this._element_;
     }
 
-    public void setDclList(PDclList node)
+    public void setElement(PElement node)
     {
-        if(this._dclList_ != null)
+        if(this._element_ != null)
         {
-            this._dclList_.parent(null);
+            this._element_.parent(null);
         }
 
         if(node != null)
@@ -117,25 +117,25 @@ public final class AExpandDclList extends PDclList
             node.parent(this);
         }
 
-        this._dclList_ = node;
+        this._element_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._dclPre_)
+            + toString(this._expr_)
             + toString(this._separator_)
-            + toString(this._dclList_);
+            + toString(this._element_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._dclPre_ == child)
+        if(this._expr_ == child)
         {
-            this._dclPre_ = null;
+            this._expr_ = null;
             return;
         }
 
@@ -145,9 +145,9 @@ public final class AExpandDclList extends PDclList
             return;
         }
 
-        if(this._dclList_ == child)
+        if(this._element_ == child)
         {
-            this._dclList_ = null;
+            this._element_ = null;
             return;
         }
 
@@ -158,9 +158,9 @@ public final class AExpandDclList extends PDclList
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._dclPre_ == oldChild)
+        if(this._expr_ == oldChild)
         {
-            setDclPre((PDclPre) newChild);
+            setExpr((PExpr) newChild);
             return;
         }
 
@@ -170,9 +170,9 @@ public final class AExpandDclList extends PDclList
             return;
         }
 
-        if(this._dclList_ == oldChild)
+        if(this._element_ == oldChild)
         {
-            setDclList((PDclList) newChild);
+            setElement((PElement) newChild);
             return;
         }
 

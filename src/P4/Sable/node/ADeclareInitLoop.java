@@ -5,46 +5,46 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AListCollection extends PCollection
+public final class ADeclareInitLoop extends PInitLoop
 {
-    private PList _list_;
+    private PDcl _dcl_;
 
-    public AListCollection()
+    public ADeclareInitLoop()
     {
         // Constructor
     }
 
-    public AListCollection(
-        @SuppressWarnings("hiding") PList _list_)
+    public ADeclareInitLoop(
+        @SuppressWarnings("hiding") PDcl _dcl_)
     {
         // Constructor
-        setList(_list_);
+        setDcl(_dcl_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AListCollection(
-            cloneNode(this._list_));
+        return new ADeclareInitLoop(
+            cloneNode(this._dcl_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAListCollection(this);
+        ((Analysis) sw).caseADeclareInitLoop(this);
     }
 
-    public PList getList()
+    public PDcl getDcl()
     {
-        return this._list_;
+        return this._dcl_;
     }
 
-    public void setList(PList node)
+    public void setDcl(PDcl node)
     {
-        if(this._list_ != null)
+        if(this._dcl_ != null)
         {
-            this._list_.parent(null);
+            this._dcl_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class AListCollection extends PCollection
             node.parent(this);
         }
 
-        this._list_ = node;
+        this._dcl_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._list_);
+            + toString(this._dcl_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._list_ == child)
+        if(this._dcl_ == child)
         {
-            this._list_ = null;
+            this._dcl_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class AListCollection extends PCollection
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._list_ == oldChild)
+        if(this._dcl_ == oldChild)
         {
-            setList((PList) newChild);
+            setDcl((PDcl) newChild);
             return;
         }
 

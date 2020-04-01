@@ -5,46 +5,46 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AArrayCollection extends PCollection
+public final class AAssignInitLoop extends PInitLoop
 {
-    private PArray _array_;
+    private PAssignValue _assignValue_;
 
-    public AArrayCollection()
+    public AAssignInitLoop()
     {
         // Constructor
     }
 
-    public AArrayCollection(
-        @SuppressWarnings("hiding") PArray _array_)
+    public AAssignInitLoop(
+        @SuppressWarnings("hiding") PAssignValue _assignValue_)
     {
         // Constructor
-        setArray(_array_);
+        setAssignValue(_assignValue_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AArrayCollection(
-            cloneNode(this._array_));
+        return new AAssignInitLoop(
+            cloneNode(this._assignValue_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAArrayCollection(this);
+        ((Analysis) sw).caseAAssignInitLoop(this);
     }
 
-    public PArray getArray()
+    public PAssignValue getAssignValue()
     {
-        return this._array_;
+        return this._assignValue_;
     }
 
-    public void setArray(PArray node)
+    public void setAssignValue(PAssignValue node)
     {
-        if(this._array_ != null)
+        if(this._assignValue_ != null)
         {
-            this._array_.parent(null);
+            this._assignValue_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class AArrayCollection extends PCollection
             node.parent(this);
         }
 
-        this._array_ = node;
+        this._assignValue_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._array_);
+            + toString(this._assignValue_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._array_ == child)
+        if(this._assignValue_ == child)
         {
-            this._array_ = null;
+            this._assignValue_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class AArrayCollection extends PCollection
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._array_ == oldChild)
+        if(this._assignValue_ == oldChild)
         {
-            setArray((PArray) newChild);
+            setAssignValue((PAssignValue) newChild);
             return;
         }
 

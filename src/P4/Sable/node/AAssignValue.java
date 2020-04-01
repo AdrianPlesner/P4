@@ -5,56 +5,56 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AArray extends PArray
+public final class AAssignValue extends PAssignValue
 {
-    private TType _type_;
-    private TLBox _lBox_;
-    private TRBox _rBox_;
+    private PVal _val_;
+    private TAssign _assign_;
+    private PExpr _expr_;
 
-    public AArray()
+    public AAssignValue()
     {
         // Constructor
     }
 
-    public AArray(
-        @SuppressWarnings("hiding") TType _type_,
-        @SuppressWarnings("hiding") TLBox _lBox_,
-        @SuppressWarnings("hiding") TRBox _rBox_)
+    public AAssignValue(
+        @SuppressWarnings("hiding") PVal _val_,
+        @SuppressWarnings("hiding") TAssign _assign_,
+        @SuppressWarnings("hiding") PExpr _expr_)
     {
         // Constructor
-        setType(_type_);
+        setVal(_val_);
 
-        setLBox(_lBox_);
+        setAssign(_assign_);
 
-        setRBox(_rBox_);
+        setExpr(_expr_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AArray(
-            cloneNode(this._type_),
-            cloneNode(this._lBox_),
-            cloneNode(this._rBox_));
+        return new AAssignValue(
+            cloneNode(this._val_),
+            cloneNode(this._assign_),
+            cloneNode(this._expr_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAArray(this);
+        ((Analysis) sw).caseAAssignValue(this);
     }
 
-    public TType getType()
+    public PVal getVal()
     {
-        return this._type_;
+        return this._val_;
     }
 
-    public void setType(TType node)
+    public void setVal(PVal node)
     {
-        if(this._type_ != null)
+        if(this._val_ != null)
         {
-            this._type_.parent(null);
+            this._val_.parent(null);
         }
 
         if(node != null)
@@ -67,19 +67,19 @@ public final class AArray extends PArray
             node.parent(this);
         }
 
-        this._type_ = node;
+        this._val_ = node;
     }
 
-    public TLBox getLBox()
+    public TAssign getAssign()
     {
-        return this._lBox_;
+        return this._assign_;
     }
 
-    public void setLBox(TLBox node)
+    public void setAssign(TAssign node)
     {
-        if(this._lBox_ != null)
+        if(this._assign_ != null)
         {
-            this._lBox_.parent(null);
+            this._assign_.parent(null);
         }
 
         if(node != null)
@@ -92,19 +92,19 @@ public final class AArray extends PArray
             node.parent(this);
         }
 
-        this._lBox_ = node;
+        this._assign_ = node;
     }
 
-    public TRBox getRBox()
+    public PExpr getExpr()
     {
-        return this._rBox_;
+        return this._expr_;
     }
 
-    public void setRBox(TRBox node)
+    public void setExpr(PExpr node)
     {
-        if(this._rBox_ != null)
+        if(this._expr_ != null)
         {
-            this._rBox_.parent(null);
+            this._expr_.parent(null);
         }
 
         if(node != null)
@@ -117,37 +117,37 @@ public final class AArray extends PArray
             node.parent(this);
         }
 
-        this._rBox_ = node;
+        this._expr_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._type_)
-            + toString(this._lBox_)
-            + toString(this._rBox_);
+            + toString(this._val_)
+            + toString(this._assign_)
+            + toString(this._expr_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._type_ == child)
+        if(this._val_ == child)
         {
-            this._type_ = null;
+            this._val_ = null;
             return;
         }
 
-        if(this._lBox_ == child)
+        if(this._assign_ == child)
         {
-            this._lBox_ = null;
+            this._assign_ = null;
             return;
         }
 
-        if(this._rBox_ == child)
+        if(this._expr_ == child)
         {
-            this._rBox_ = null;
+            this._expr_ = null;
             return;
         }
 
@@ -158,21 +158,21 @@ public final class AArray extends PArray
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._type_ == oldChild)
+        if(this._val_ == oldChild)
         {
-            setType((TType) newChild);
+            setVal((PVal) newChild);
             return;
         }
 
-        if(this._lBox_ == oldChild)
+        if(this._assign_ == oldChild)
         {
-            setLBox((TLBox) newChild);
+            setAssign((TAssign) newChild);
             return;
         }
 
-        if(this._rBox_ == oldChild)
+        if(this._expr_ == oldChild)
         {
-            setRBox((TRBox) newChild);
+            setExpr((PExpr) newChild);
             return;
         }
 

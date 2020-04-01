@@ -8,6 +8,7 @@ import P4.Sable.analysis.*;
 public final class ADclStmt extends PStmt
 {
     private PDcl _dcl_;
+    private PEnd _end_;
 
     public ADclStmt()
     {
@@ -15,10 +16,13 @@ public final class ADclStmt extends PStmt
     }
 
     public ADclStmt(
-        @SuppressWarnings("hiding") PDcl _dcl_)
+        @SuppressWarnings("hiding") PDcl _dcl_,
+        @SuppressWarnings("hiding") PEnd _end_)
     {
         // Constructor
         setDcl(_dcl_);
+
+        setEnd(_end_);
 
     }
 
@@ -26,7 +30,8 @@ public final class ADclStmt extends PStmt
     public Object clone()
     {
         return new ADclStmt(
-            cloneNode(this._dcl_));
+            cloneNode(this._dcl_),
+            cloneNode(this._end_));
     }
 
     @Override
@@ -60,11 +65,37 @@ public final class ADclStmt extends PStmt
         this._dcl_ = node;
     }
 
+    public PEnd getEnd()
+    {
+        return this._end_;
+    }
+
+    public void setEnd(PEnd node)
+    {
+        if(this._end_ != null)
+        {
+            this._end_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._end_ = node;
+    }
+
     @Override
     public String toString()
     {
         return ""
-            + toString(this._dcl_);
+            + toString(this._dcl_)
+            + toString(this._end_);
     }
 
     @Override
@@ -74,6 +105,12 @@ public final class ADclStmt extends PStmt
         if(this._dcl_ == child)
         {
             this._dcl_ = null;
+            return;
+        }
+
+        if(this._end_ == child)
+        {
+            this._end_ = null;
             return;
         }
 
@@ -87,6 +124,12 @@ public final class ADclStmt extends PStmt
         if(this._dcl_ == oldChild)
         {
             setDcl((PDcl) newChild);
+            return;
+        }
+
+        if(this._end_ == oldChild)
+        {
+            setEnd((PEnd) newChild);
             return;
         }
 

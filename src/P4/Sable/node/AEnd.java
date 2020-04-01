@@ -5,46 +5,46 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class ACollectionType extends PType
+public final class AEnd extends PEnd
 {
-    private PCollection _collection_;
+    private TSemi _semi_;
 
-    public ACollectionType()
+    public AEnd()
     {
         // Constructor
     }
 
-    public ACollectionType(
-        @SuppressWarnings("hiding") PCollection _collection_)
+    public AEnd(
+        @SuppressWarnings("hiding") TSemi _semi_)
     {
         // Constructor
-        setCollection(_collection_);
+        setSemi(_semi_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new ACollectionType(
-            cloneNode(this._collection_));
+        return new AEnd(
+            cloneNode(this._semi_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseACollectionType(this);
+        ((Analysis) sw).caseAEnd(this);
     }
 
-    public PCollection getCollection()
+    public TSemi getSemi()
     {
-        return this._collection_;
+        return this._semi_;
     }
 
-    public void setCollection(PCollection node)
+    public void setSemi(TSemi node)
     {
-        if(this._collection_ != null)
+        if(this._semi_ != null)
         {
-            this._collection_.parent(null);
+            this._semi_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class ACollectionType extends PType
             node.parent(this);
         }
 
-        this._collection_ = node;
+        this._semi_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._collection_);
+            + toString(this._semi_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._collection_ == child)
+        if(this._semi_ == child)
         {
-            this._collection_ = null;
+            this._semi_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class ACollectionType extends PType
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._collection_ == oldChild)
+        if(this._semi_ == oldChild)
         {
-            setCollection((PCollection) newChild);
+            setSemi((TSemi) newChild);
             return;
         }
 

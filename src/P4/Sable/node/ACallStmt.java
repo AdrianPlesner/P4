@@ -8,7 +8,7 @@ import P4.Sable.analysis.*;
 public final class ACallStmt extends PStmt
 {
     private PVal _val_;
-    private TSemi _semi_;
+    private PEnd _end_;
 
     public ACallStmt()
     {
@@ -17,12 +17,12 @@ public final class ACallStmt extends PStmt
 
     public ACallStmt(
         @SuppressWarnings("hiding") PVal _val_,
-        @SuppressWarnings("hiding") TSemi _semi_)
+        @SuppressWarnings("hiding") PEnd _end_)
     {
         // Constructor
         setVal(_val_);
 
-        setSemi(_semi_);
+        setEnd(_end_);
 
     }
 
@@ -31,7 +31,7 @@ public final class ACallStmt extends PStmt
     {
         return new ACallStmt(
             cloneNode(this._val_),
-            cloneNode(this._semi_));
+            cloneNode(this._end_));
     }
 
     @Override
@@ -65,16 +65,16 @@ public final class ACallStmt extends PStmt
         this._val_ = node;
     }
 
-    public TSemi getSemi()
+    public PEnd getEnd()
     {
-        return this._semi_;
+        return this._end_;
     }
 
-    public void setSemi(TSemi node)
+    public void setEnd(PEnd node)
     {
-        if(this._semi_ != null)
+        if(this._end_ != null)
         {
-            this._semi_.parent(null);
+            this._end_.parent(null);
         }
 
         if(node != null)
@@ -87,7 +87,7 @@ public final class ACallStmt extends PStmt
             node.parent(this);
         }
 
-        this._semi_ = node;
+        this._end_ = node;
     }
 
     @Override
@@ -95,7 +95,7 @@ public final class ACallStmt extends PStmt
     {
         return ""
             + toString(this._val_)
-            + toString(this._semi_);
+            + toString(this._end_);
     }
 
     @Override
@@ -108,9 +108,9 @@ public final class ACallStmt extends PStmt
             return;
         }
 
-        if(this._semi_ == child)
+        if(this._end_ == child)
         {
-            this._semi_ = null;
+            this._end_ = null;
             return;
         }
 
@@ -127,9 +127,9 @@ public final class ACallStmt extends PStmt
             return;
         }
 
-        if(this._semi_ == oldChild)
+        if(this._end_ == oldChild)
         {
-            setSemi((TSemi) newChild);
+            setEnd((PEnd) newChild);
             return;
         }
 

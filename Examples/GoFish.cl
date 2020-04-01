@@ -9,6 +9,7 @@ Setup{
 		"Rikke", false;
     };
 
+    int a = 3+5;
     //Sæt start spiller
     turn.player = Players.find("Adrian");
 
@@ -28,7 +29,7 @@ Setup{
 // Mulige træk
 Moves{
     // input = et kort ( fra egen hånd) og en anden spiller
-    bool ChooseMove(Card c, Player player){
+    Function ChooseMove(Card c, Player player) typeof bool{
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
         for pCard in player.hand {
@@ -37,7 +38,9 @@ Moves{
                 result = true;
             }
         }
-        // Tjekker for stik..(not implemented)
+        for int i = 0; i < 10; i += 1 {
+            print (i);
+        }
         CheckForTrick(player.hand);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
         if(player.hand.length == 0){
@@ -61,16 +64,21 @@ Turn{
 }
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
-
+    bool end = true;
 	for p in Players {
-		p.hand.length == (0);
+		if p.hand.length == 0 {
+		    end &= true;
+		}
+		else {
+		    end &= false;
+		}
     }
 	// Vinderen(e) er de(n) spiller(e) med flest point
 }
 
-void CheckForTrick(Player p){
+Function CheckForTrick(Player p) typeof void{
     List typeof Card trick;
-    for int i = 1; i <= 13; i += 1 {
+    for int i = 1; i < 14 ; i += 1 {
         trick.clear();
         for c in p.hand {
             if i == c.value {

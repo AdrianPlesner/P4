@@ -5,17 +5,17 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AMoveDclList extends PMoveDclList
+public final class AExpandMoveDclList extends PMoveDclList
 {
     private PMethodDcl _methodDcl_;
     private PMoveDclList _moveDclList_;
 
-    public AMoveDclList()
+    public AExpandMoveDclList()
     {
         // Constructor
     }
 
-    public AMoveDclList(
+    public AExpandMoveDclList(
         @SuppressWarnings("hiding") PMethodDcl _methodDcl_,
         @SuppressWarnings("hiding") PMoveDclList _moveDclList_)
     {
@@ -29,7 +29,7 @@ public final class AMoveDclList extends PMoveDclList
     @Override
     public Object clone()
     {
-        return new AMoveDclList(
+        return new AExpandMoveDclList(
             cloneNode(this._methodDcl_),
             cloneNode(this._moveDclList_));
     }
@@ -37,7 +37,7 @@ public final class AMoveDclList extends PMoveDclList
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAMoveDclList(this);
+        ((Analysis) sw).caseAExpandMoveDclList(this);
     }
 
     public PMethodDcl getMethodDcl()

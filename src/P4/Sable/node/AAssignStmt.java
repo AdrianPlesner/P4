@@ -5,51 +5,51 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AInitInit extends PInit
+public final class AAssignStmt extends PStmt
 {
-    private TAssign _assign_;
-    private PExpr _expr_;
+    private PAssignValue _assignValue_;
+    private PEnd _end_;
 
-    public AInitInit()
+    public AAssignStmt()
     {
         // Constructor
     }
 
-    public AInitInit(
-        @SuppressWarnings("hiding") TAssign _assign_,
-        @SuppressWarnings("hiding") PExpr _expr_)
+    public AAssignStmt(
+        @SuppressWarnings("hiding") PAssignValue _assignValue_,
+        @SuppressWarnings("hiding") PEnd _end_)
     {
         // Constructor
-        setAssign(_assign_);
+        setAssignValue(_assignValue_);
 
-        setExpr(_expr_);
+        setEnd(_end_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AInitInit(
-            cloneNode(this._assign_),
-            cloneNode(this._expr_));
+        return new AAssignStmt(
+            cloneNode(this._assignValue_),
+            cloneNode(this._end_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAInitInit(this);
+        ((Analysis) sw).caseAAssignStmt(this);
     }
 
-    public TAssign getAssign()
+    public PAssignValue getAssignValue()
     {
-        return this._assign_;
+        return this._assignValue_;
     }
 
-    public void setAssign(TAssign node)
+    public void setAssignValue(PAssignValue node)
     {
-        if(this._assign_ != null)
+        if(this._assignValue_ != null)
         {
-            this._assign_.parent(null);
+            this._assignValue_.parent(null);
         }
 
         if(node != null)
@@ -62,19 +62,19 @@ public final class AInitInit extends PInit
             node.parent(this);
         }
 
-        this._assign_ = node;
+        this._assignValue_ = node;
     }
 
-    public PExpr getExpr()
+    public PEnd getEnd()
     {
-        return this._expr_;
+        return this._end_;
     }
 
-    public void setExpr(PExpr node)
+    public void setEnd(PEnd node)
     {
-        if(this._expr_ != null)
+        if(this._end_ != null)
         {
-            this._expr_.parent(null);
+            this._end_.parent(null);
         }
 
         if(node != null)
@@ -87,30 +87,30 @@ public final class AInitInit extends PInit
             node.parent(this);
         }
 
-        this._expr_ = node;
+        this._end_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._assign_)
-            + toString(this._expr_);
+            + toString(this._assignValue_)
+            + toString(this._end_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._assign_ == child)
+        if(this._assignValue_ == child)
         {
-            this._assign_ = null;
+            this._assignValue_ = null;
             return;
         }
 
-        if(this._expr_ == child)
+        if(this._end_ == child)
         {
-            this._expr_ = null;
+            this._end_ = null;
             return;
         }
 
@@ -121,15 +121,15 @@ public final class AInitInit extends PInit
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._assign_ == oldChild)
+        if(this._assignValue_ == oldChild)
         {
-            setAssign((TAssign) newChild);
+            setAssignValue((PAssignValue) newChild);
             return;
         }
 
-        if(this._expr_ == oldChild)
+        if(this._end_ == oldChild)
         {
-            setExpr((PExpr) newChild);
+            setEnd((PEnd) newChild);
             return;
         }
 

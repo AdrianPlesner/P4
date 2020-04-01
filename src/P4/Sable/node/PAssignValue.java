@@ -2,7 +2,7 @@
 
 package P4.Sable.node;
 
-public abstract class PCollection extends Node
+public abstract class PAssignValue extends Node
 {
     // Empty body
 }

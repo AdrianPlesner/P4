@@ -2,26 +2,25 @@ Package P4.Sable;
 
 Helpers
     digit = ['0' .. '9'];
-    letter = ['a' .. 'z'] |['A' .. 'Z'];
+    letter = ['a' .. 'z'] | ['A' .. 'Z'];
     cr = 13;
     lf = 10;
     tab = 9;
     eol = cr lf | cr | lf;
-    blank = (' ' | tab | eol)+;
+    blank_help = (' ' | tab | eol)+;
     all = [0 .. 0xFFFF];
     not_cr_lf = [all - [cr + lf]];
 
 Tokens
-    blank = blank;
-    id = letter (letter |digit)*;
+    blank = blank_help;
     comment = '//' not_cr_lf* eol;
     bool_literal = 'true'|'false';
     add_op = '+' | '-';
     mult_op = '*' | '/' | '%';
     int_literal = digit*;
     float_literal = ['1' .. '9'] digit*'.'digit*;
-    string = ''' [not_cr_lf - ''']* ''';
-    bool_op = '||' | '&&';
+    string = '"' [not_cr_lf - '"']* '"';
+    bool_op = '|' | '&';
     relation_op = '<' | '>' | '<=' | '>=';
     assign = '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=';
     equal_op = '==' | '!=';
@@ -57,22 +56,23 @@ Tokens
     list = 'List';
     typeof = 'typeof';
     fun = 'Function';
+    id = letter (letter |digit)*;
 
 Ignored Tokens
-    blank,
-    comment;
+    blank, comment;
 
 Productions
     prog = P.setup P.moves P.turn P.end_con move_dcl_list;
     setup = T.setup l_brack stmt_list P.public P.private r_brack;
     public = T.public block;
     private = T.private block;
-    moves = T.moves move_dcl_list;
-    dcl_list = {expand} id init separator | {empty} ;
-    dcl = P.type dcl_list semi ;
-    init = {init} assign expr | {empty};
+    moves = T.moves l_brack move_dcl_list r_brack;
+    dcl_list = {expand} dcl_pre separator dcl_list | {single} dcl_pre ;
+    dcl = P.type dcl_list ;
+    dcl_pre = id init;
+    init = {value} assign expr | {empty};
     expr = {expand} expr bool_op equality | {single} equality;
-    equality = {expand} equality equal_op  relation  | {single} relation;
+    equality = {expand} equality equal_op relation  | {single} relation;
     relation = {expand} relation relation_op add_expr | {single} add_expr;
     add_expr = {expand} add_expr add_op term | {single} term;
     term = {expand} term mult_op factor | {factor} factor;
@@ -80,23 +80,22 @@ Productions
     parens = l_paren expr r_paren;
     literal = {int} int_literal | {float} float_literal | {string} string | {bool} bool_literal;
     init_list = l_brack element_list r_brack;
-    element_list = {expand} param_list separator element_list | {empty} ;
+    element_list = {expand} element semi element_list | {empty} ;
+    element = {expand} expr separator element | {single} expr;
     val = id call val_list;
     val_list = {expand} dot val | {empty};
-    call = {call} id param_list | {empty} ;
+    call = {call} param_list | {empty} ;
     param_list = l_paren expr? param* r_paren;
     param = separator expr;
-    move_dcl_list = method_dcl move_dcl_list;
+    move_dcl_list = {expand} method_dcl move_dcl_list | {empty};
     method_dcl = fun id l_paren param_dcl_list r_paren typeof P.type l_brack stmt_list return_stmt r_brack;
     param_dcl_list = {expand} param_dcl separator param_dcl_list | {single} param_dcl;
     param_dcl = {single} P.type id | {empty};
-    type = {type} T.type | {collection} collection;
-    collection = {array} array | {list} P.list;
-    array = T.type l_box r_box;
+    type = {type} T.type | {list} P.list;
     list = T.list typeof T.type ;
     stmt_list = {expand} stmt stmt_list | {empty};
     return_stmt = {single} return expr semi | {empty};
-    stmt = {select} select_stmt | {dcl} dcl | {loop} loop_stmt | {call} val semi;
+    stmt = {select} select_stmt | {dcl} dcl end | {loop} loop_stmt | {assign} assign_value end | {call} val end;
     select_stmt = {if} if_stmt | {switch} switch_stmt;
     block = l_brack stmt_list r_brack;
     if_stmt = if expr block else_stmt;
@@ -108,7 +107,9 @@ Productions
     loop_stmt = {while} while_loop | {for} for_loop;
     while_loop = while expr  block;
     for_loop = for loop_expr block;
-    loop_expr = {foreach} P.type [var]:id in [collection]:id | {for} [init]:expr [a]:semi [condition]:expr [b]:semi [count]:expr;
+    loop_expr = {foreach} id in val | {for} init_loop [a]:semi expr [b]:semi assign_value;
+    init_loop = {declare} dcl | {assign} assign_value;
+    assign_value = val assign expr;
     turn = T.turn block;
     end_con = T.end_con block;
-
+    end = semi;
