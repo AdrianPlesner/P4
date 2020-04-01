@@ -73,6 +73,7 @@ EndCondition{
 		    end &= false;
 		}
     }
+    End = end;
 	// Vinderen(e) er de(n) spiller(e) med flest point
 }
 
@@ -92,7 +93,6 @@ Function CheckForTrick(Player p) typeof void{
             p.score += 1;
         }
     }
-
 }
 
 
