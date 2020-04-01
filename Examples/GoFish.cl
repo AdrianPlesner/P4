@@ -31,8 +31,8 @@ Moves{
     bool ChooseMove(Card c, Player player){
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
-        for(pCard in player.hand){
-            if(pCard.value == c.val){
+        for pCard in player.hand {
+            if pCard.value == c.val {
                 pCard.transfer(player, turn.player);
                 result = true;
             }
@@ -50,7 +50,7 @@ Moves{
 Turn{
     bool continue = true;
     Player chosen = null;
-    while( player.hand.length > 0 & continue ){
+    while player.hand.length > 0 & continue {
         chosen = chooseFrom(players);
         continue = ChooseMove(chooseFrom(player.hand),chosen);
     }
@@ -62,7 +62,7 @@ Turn{
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
 
-	for( p in Players) {
+	for p in Players {
 		p.hand.length == (0);
     }
 	// Vinderen(e) er de(n) spiller(e) med flest point
@@ -70,15 +70,15 @@ EndCondition{
 
 void CheckForTrick(Player p){
     List typeof Card trick;
-    for(int i = 1; i <= 13; i += 1 ){
+    for int i = 1; i <= 13; i += 1 {
         trick.clear();
-        for(c in p.hand){
-            if(i == c.value){
+        for c in p.hand {
+            if i == c.value {
                 trick.add(c);
             }
         }
-        if(trick.length == 4){
-            for(c in trick){
+        if trick.length == 4 {
+            for c in trick {
                 p.hand.remove(c);
             }
             p.score += 1;
