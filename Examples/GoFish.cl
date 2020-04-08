@@ -1,6 +1,43 @@
+include StdLib;
 Setup{
+    Card {
+        string name;
+        string description;
+        Subclass Spell {
+            Function CastSpell(card target) typeof void {
+                //Do something
+            }
+        }
+        Subclass Creature {
+            int attack;
+            int health;
+            List typeof string abilities;
+            Function Attack(card target) typeof void {
+            }
+            Function Merge(card merger) typeof card {
+            }
+            Function Sacrifice() typeof void{
+            }
+            Function UseAbility(string ability) typeof void{
+            }
+        }
+    }
+//public er “spillepladen” (tilgængelig for alle spillere)
+    Public{
+        // Der er en bunke i spillet, trækbunken til når man fisker
+        List typeof card Deck = GetStdDeck(0);
+
+    }
+// private er en players hånd.
+    Private{
+	    // Alle spillere starter med 7 kort hver, fra bunken.
+	    string name;
+	    bool ai = false;
+        List typeof card hand = deck.take(7);
+        int score = 0;
+    }
 // Definer spillere, initaliserer en List<Player> Players
-	List typeof Player Players = {
+	List typeof player Players = {
 		"Adrian", false;
 		"Frederik", false;
 		"Johan", false;
@@ -12,24 +49,11 @@ Setup{
     int a = 3+5;
     //Sæt start spiller
     turn.player = Players.find("Adrian");
-
-	//public er “spillepladen” (tilgængelig for alle spillere)
-    Public{
-        // Der er en bunke i spillet, trækbunken til når man fisker
-        List typeof Card Deck = GetStdDeck(0);
-
-    }
-    // private er en players hånd.
-    Private{
-	    // Alle spillere starter med 7 kort hver, fra bunken.
-        List typeof Card hand = deck.take(7);
-        int score = 0;
-    }
 }
 // Mulige træk
 Moves{
     // input = et kort ( fra egen hånd) og en anden spiller
-    Function ChooseMove(Card c, Player player) typeof bool{
+    Function ChooseMove(card c, player player) typeof bool{
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
         for pCard in player.hand {
@@ -52,7 +76,7 @@ Moves{
 // Definer en tur. Efter Setup vil denne kode loopes indtil endcondition
 Turn{
     bool continue = true;
-    Player chosen = null;
+    player chosen = null;
     while player.hand.length > 0 & continue {
         chosen = chooseFrom(players);
         continue = ChooseMove(chooseFrom(player.hand),chosen);
@@ -77,8 +101,8 @@ EndCondition{
 	// Vinderen(e) er de(n) spiller(e) med flest point
 }
 
-Function CheckForTrick(Player p) typeof void{
-    List typeof Card trick;
+Function CheckForTrick(player p) typeof void{
+    List typeof card trick;
     for int i = 1; i < 14 ; i += 1 {
         trick.clear();
         for c in p.hand {

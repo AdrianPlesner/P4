@@ -5,51 +5,51 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class APrivate extends PPrivate
+public final class AElementList extends PElementList
 {
-    private TPrivate _private_;
-    private PClassBody _classBody_;
+    private PElement _element_;
+    private TSemi _semi_;
 
-    public APrivate()
+    public AElementList()
     {
         // Constructor
     }
 
-    public APrivate(
-        @SuppressWarnings("hiding") TPrivate _private_,
-        @SuppressWarnings("hiding") PClassBody _classBody_)
+    public AElementList(
+        @SuppressWarnings("hiding") PElement _element_,
+        @SuppressWarnings("hiding") TSemi _semi_)
     {
         // Constructor
-        setPrivate(_private_);
+        setElement(_element_);
 
-        setClassBody(_classBody_);
+        setSemi(_semi_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new APrivate(
-            cloneNode(this._private_),
-            cloneNode(this._classBody_));
+        return new AElementList(
+            cloneNode(this._element_),
+            cloneNode(this._semi_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAPrivate(this);
+        ((Analysis) sw).caseAElementList(this);
     }
 
-    public TPrivate getPrivate()
+    public PElement getElement()
     {
-        return this._private_;
+        return this._element_;
     }
 
-    public void setPrivate(TPrivate node)
+    public void setElement(PElement node)
     {
-        if(this._private_ != null)
+        if(this._element_ != null)
         {
-            this._private_.parent(null);
+            this._element_.parent(null);
         }
 
         if(node != null)
@@ -62,19 +62,19 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._private_ = node;
+        this._element_ = node;
     }
 
-    public PClassBody getClassBody()
+    public TSemi getSemi()
     {
-        return this._classBody_;
+        return this._semi_;
     }
 
-    public void setClassBody(PClassBody node)
+    public void setSemi(TSemi node)
     {
-        if(this._classBody_ != null)
+        if(this._semi_ != null)
         {
-            this._classBody_.parent(null);
+            this._semi_.parent(null);
         }
 
         if(node != null)
@@ -87,30 +87,30 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._classBody_ = node;
+        this._semi_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._private_)
-            + toString(this._classBody_);
+            + toString(this._element_)
+            + toString(this._semi_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._private_ == child)
+        if(this._element_ == child)
         {
-            this._private_ = null;
+            this._element_ = null;
             return;
         }
 
-        if(this._classBody_ == child)
+        if(this._semi_ == child)
         {
-            this._classBody_ = null;
+            this._semi_ = null;
             return;
         }
 
@@ -121,15 +121,15 @@ public final class APrivate extends PPrivate
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._private_ == oldChild)
+        if(this._element_ == oldChild)
         {
-            setPrivate((TPrivate) newChild);
+            setElement((PElement) newChild);
             return;
         }
 
-        if(this._classBody_ == oldChild)
+        if(this._semi_ == oldChild)
         {
-            setClassBody((PClassBody) newChild);
+            setSemi((TSemi) newChild);
             return;
         }
 

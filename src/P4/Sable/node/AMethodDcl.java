@@ -2,6 +2,7 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
@@ -15,7 +16,7 @@ public final class AMethodDcl extends PMethodDcl
     private TTypeof _typeof_;
     private PType _type_;
     private TLBrack _lBrack_;
-    private PStmtList _stmtList_;
+    private final LinkedList<PStmt> _stmt_ = new LinkedList<PStmt>();
     private PReturnStmt _returnStmt_;
     private TRBrack _rBrack_;
 
@@ -33,7 +34,7 @@ public final class AMethodDcl extends PMethodDcl
         @SuppressWarnings("hiding") TTypeof _typeof_,
         @SuppressWarnings("hiding") PType _type_,
         @SuppressWarnings("hiding") TLBrack _lBrack_,
-        @SuppressWarnings("hiding") PStmtList _stmtList_,
+        @SuppressWarnings("hiding") List<?> _stmt_,
         @SuppressWarnings("hiding") PReturnStmt _returnStmt_,
         @SuppressWarnings("hiding") TRBrack _rBrack_)
     {
@@ -54,7 +55,7 @@ public final class AMethodDcl extends PMethodDcl
 
         setLBrack(_lBrack_);
 
-        setStmtList(_stmtList_);
+        setStmt(_stmt_);
 
         setReturnStmt(_returnStmt_);
 
@@ -74,7 +75,7 @@ public final class AMethodDcl extends PMethodDcl
             cloneNode(this._typeof_),
             cloneNode(this._type_),
             cloneNode(this._lBrack_),
-            cloneNode(this._stmtList_),
+            cloneList(this._stmt_),
             cloneNode(this._returnStmt_),
             cloneNode(this._rBrack_));
     }
@@ -285,29 +286,30 @@ public final class AMethodDcl extends PMethodDcl
         this._lBrack_ = node;
     }
 
-    public PStmtList getStmtList()
+    public LinkedList<PStmt> getStmt()
     {
-        return this._stmtList_;
+        return this._stmt_;
     }
 
-    public void setStmtList(PStmtList node)
+    public void setStmt(List<?> list)
     {
-        if(this._stmtList_ != null)
+        for(PStmt e : this._stmt_)
         {
-            this._stmtList_.parent(null);
+            e.parent(null);
         }
+        this._stmt_.clear();
 
-        if(node != null)
+        for(Object obj_e : list)
         {
-            if(node.parent() != null)
+            PStmt e = (PStmt) obj_e;
+            if(e.parent() != null)
             {
-                node.parent().removeChild(node);
+                e.parent().removeChild(e);
             }
 
-            node.parent(this);
+            e.parent(this);
+            this._stmt_.add(e);
         }
-
-        this._stmtList_ = node;
     }
 
     public PReturnStmt getReturnStmt()
@@ -372,7 +374,7 @@ public final class AMethodDcl extends PMethodDcl
             + toString(this._typeof_)
             + toString(this._type_)
             + toString(this._lBrack_)
-            + toString(this._stmtList_)
+            + toString(this._stmt_)
             + toString(this._returnStmt_)
             + toString(this._rBrack_);
     }
@@ -429,9 +431,8 @@ public final class AMethodDcl extends PMethodDcl
             return;
         }
 
-        if(this._stmtList_ == child)
+        if(this._stmt_.remove(child))
         {
-            this._stmtList_ = null;
             return;
         }
 
@@ -502,10 +503,22 @@ public final class AMethodDcl extends PMethodDcl
             return;
         }
 
-        if(this._stmtList_ == oldChild)
+        for(ListIterator<PStmt> i = this._stmt_.listIterator(); i.hasNext();)
         {
-            setStmtList((PStmtList) newChild);
-            return;
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PStmt) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         if(this._returnStmt_ == oldChild)

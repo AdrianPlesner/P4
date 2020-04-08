@@ -6,30 +6,34 @@ import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AMoves extends PMoves
+public final class AClassBody extends PClassBody
 {
-    private TMoves _moves_;
     private TLBrack _lBrack_;
+    private final LinkedList<PStmt> _stmt_ = new LinkedList<PStmt>();
     private final LinkedList<PMethodDcl> _methodDcl_ = new LinkedList<PMethodDcl>();
+    private final LinkedList<PSubclass> _subclass_ = new LinkedList<PSubclass>();
     private TRBrack _rBrack_;
 
-    public AMoves()
+    public AClassBody()
     {
         // Constructor
     }
 
-    public AMoves(
-        @SuppressWarnings("hiding") TMoves _moves_,
+    public AClassBody(
         @SuppressWarnings("hiding") TLBrack _lBrack_,
+        @SuppressWarnings("hiding") List<?> _stmt_,
         @SuppressWarnings("hiding") List<?> _methodDcl_,
+        @SuppressWarnings("hiding") List<?> _subclass_,
         @SuppressWarnings("hiding") TRBrack _rBrack_)
     {
         // Constructor
-        setMoves(_moves_);
-
         setLBrack(_lBrack_);
 
+        setStmt(_stmt_);
+
         setMethodDcl(_methodDcl_);
+
+        setSubclass(_subclass_);
 
         setRBrack(_rBrack_);
 
@@ -38,42 +42,18 @@ public final class AMoves extends PMoves
     @Override
     public Object clone()
     {
-        return new AMoves(
-            cloneNode(this._moves_),
+        return new AClassBody(
             cloneNode(this._lBrack_),
+            cloneList(this._stmt_),
             cloneList(this._methodDcl_),
+            cloneList(this._subclass_),
             cloneNode(this._rBrack_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAMoves(this);
-    }
-
-    public TMoves getMoves()
-    {
-        return this._moves_;
-    }
-
-    public void setMoves(TMoves node)
-    {
-        if(this._moves_ != null)
-        {
-            this._moves_.parent(null);
-        }
-
-        if(node != null)
-        {
-            if(node.parent() != null)
-            {
-                node.parent().removeChild(node);
-            }
-
-            node.parent(this);
-        }
-
-        this._moves_ = node;
+        ((Analysis) sw).caseAClassBody(this);
     }
 
     public TLBrack getLBrack()
@@ -101,6 +81,32 @@ public final class AMoves extends PMoves
         this._lBrack_ = node;
     }
 
+    public LinkedList<PStmt> getStmt()
+    {
+        return this._stmt_;
+    }
+
+    public void setStmt(List<?> list)
+    {
+        for(PStmt e : this._stmt_)
+        {
+            e.parent(null);
+        }
+        this._stmt_.clear();
+
+        for(Object obj_e : list)
+        {
+            PStmt e = (PStmt) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._stmt_.add(e);
+        }
+    }
+
     public LinkedList<PMethodDcl> getMethodDcl()
     {
         return this._methodDcl_;
@@ -124,6 +130,32 @@ public final class AMoves extends PMoves
 
             e.parent(this);
             this._methodDcl_.add(e);
+        }
+    }
+
+    public LinkedList<PSubclass> getSubclass()
+    {
+        return this._subclass_;
+    }
+
+    public void setSubclass(List<?> list)
+    {
+        for(PSubclass e : this._subclass_)
+        {
+            e.parent(null);
+        }
+        this._subclass_.clear();
+
+        for(Object obj_e : list)
+        {
+            PSubclass e = (PSubclass) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._subclass_.add(e);
         }
     }
 
@@ -156,9 +188,10 @@ public final class AMoves extends PMoves
     public String toString()
     {
         return ""
-            + toString(this._moves_)
             + toString(this._lBrack_)
+            + toString(this._stmt_)
             + toString(this._methodDcl_)
+            + toString(this._subclass_)
             + toString(this._rBrack_);
     }
 
@@ -166,19 +199,23 @@ public final class AMoves extends PMoves
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._moves_ == child)
-        {
-            this._moves_ = null;
-            return;
-        }
-
         if(this._lBrack_ == child)
         {
             this._lBrack_ = null;
             return;
         }
 
+        if(this._stmt_.remove(child))
+        {
+            return;
+        }
+
         if(this._methodDcl_.remove(child))
+        {
+            return;
+        }
+
+        if(this._subclass_.remove(child))
         {
             return;
         }
@@ -196,16 +233,28 @@ public final class AMoves extends PMoves
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._moves_ == oldChild)
-        {
-            setMoves((TMoves) newChild);
-            return;
-        }
-
         if(this._lBrack_ == oldChild)
         {
             setLBrack((TLBrack) newChild);
             return;
+        }
+
+        for(ListIterator<PStmt> i = this._stmt_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PStmt) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         for(ListIterator<PMethodDcl> i = this._methodDcl_.listIterator(); i.hasNext();)
@@ -215,6 +264,24 @@ public final class AMoves extends PMoves
                 if(newChild != null)
                 {
                     i.set((PMethodDcl) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
+        }
+
+        for(ListIterator<PSubclass> i = this._subclass_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PSubclass) newChild);
                     newChild.parent(this);
                     oldChild.parent(null);
                     return;

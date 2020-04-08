@@ -2,6 +2,7 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
@@ -9,7 +10,7 @@ public final class AVal extends PVal
 {
     private TId _id_;
     private PCall _call_;
-    private PValList _valList_;
+    private final LinkedList<PValList> _valList_ = new LinkedList<PValList>();
 
     public AVal()
     {
@@ -19,7 +20,7 @@ public final class AVal extends PVal
     public AVal(
         @SuppressWarnings("hiding") TId _id_,
         @SuppressWarnings("hiding") PCall _call_,
-        @SuppressWarnings("hiding") PValList _valList_)
+        @SuppressWarnings("hiding") List<?> _valList_)
     {
         // Constructor
         setId(_id_);
@@ -36,7 +37,7 @@ public final class AVal extends PVal
         return new AVal(
             cloneNode(this._id_),
             cloneNode(this._call_),
-            cloneNode(this._valList_));
+            cloneList(this._valList_));
     }
 
     @Override
@@ -95,29 +96,30 @@ public final class AVal extends PVal
         this._call_ = node;
     }
 
-    public PValList getValList()
+    public LinkedList<PValList> getValList()
     {
         return this._valList_;
     }
 
-    public void setValList(PValList node)
+    public void setValList(List<?> list)
     {
-        if(this._valList_ != null)
+        for(PValList e : this._valList_)
         {
-            this._valList_.parent(null);
+            e.parent(null);
         }
+        this._valList_.clear();
 
-        if(node != null)
+        for(Object obj_e : list)
         {
-            if(node.parent() != null)
+            PValList e = (PValList) obj_e;
+            if(e.parent() != null)
             {
-                node.parent().removeChild(node);
+                e.parent().removeChild(e);
             }
 
-            node.parent(this);
+            e.parent(this);
+            this._valList_.add(e);
         }
-
-        this._valList_ = node;
     }
 
     @Override
@@ -145,9 +147,8 @@ public final class AVal extends PVal
             return;
         }
 
-        if(this._valList_ == child)
+        if(this._valList_.remove(child))
         {
-            this._valList_ = null;
             return;
         }
 
@@ -170,10 +171,22 @@ public final class AVal extends PVal
             return;
         }
 
-        if(this._valList_ == oldChild)
+        for(ListIterator<PValList> i = this._valList_.listIterator(); i.hasNext();)
         {
-            setValList((PValList) newChild);
-            return;
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PValList) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         throw new RuntimeException("Not a child.");

@@ -2,13 +2,15 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
 public final class ADcl extends PDcl
 {
     private PType _type_;
-    private PDclList _dclList_;
+    private PSingleDcl _singleDcl_;
+    private final LinkedList<PDclList> _dclList_ = new LinkedList<PDclList>();
 
     public ADcl()
     {
@@ -17,10 +19,13 @@ public final class ADcl extends PDcl
 
     public ADcl(
         @SuppressWarnings("hiding") PType _type_,
-        @SuppressWarnings("hiding") PDclList _dclList_)
+        @SuppressWarnings("hiding") PSingleDcl _singleDcl_,
+        @SuppressWarnings("hiding") List<?> _dclList_)
     {
         // Constructor
         setType(_type_);
+
+        setSingleDcl(_singleDcl_);
 
         setDclList(_dclList_);
 
@@ -31,7 +36,8 @@ public final class ADcl extends PDcl
     {
         return new ADcl(
             cloneNode(this._type_),
-            cloneNode(this._dclList_));
+            cloneNode(this._singleDcl_),
+            cloneList(this._dclList_));
     }
 
     @Override
@@ -65,16 +71,16 @@ public final class ADcl extends PDcl
         this._type_ = node;
     }
 
-    public PDclList getDclList()
+    public PSingleDcl getSingleDcl()
     {
-        return this._dclList_;
+        return this._singleDcl_;
     }
 
-    public void setDclList(PDclList node)
+    public void setSingleDcl(PSingleDcl node)
     {
-        if(this._dclList_ != null)
+        if(this._singleDcl_ != null)
         {
-            this._dclList_.parent(null);
+            this._singleDcl_.parent(null);
         }
 
         if(node != null)
@@ -87,7 +93,33 @@ public final class ADcl extends PDcl
             node.parent(this);
         }
 
-        this._dclList_ = node;
+        this._singleDcl_ = node;
+    }
+
+    public LinkedList<PDclList> getDclList()
+    {
+        return this._dclList_;
+    }
+
+    public void setDclList(List<?> list)
+    {
+        for(PDclList e : this._dclList_)
+        {
+            e.parent(null);
+        }
+        this._dclList_.clear();
+
+        for(Object obj_e : list)
+        {
+            PDclList e = (PDclList) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._dclList_.add(e);
+        }
     }
 
     @Override
@@ -95,6 +127,7 @@ public final class ADcl extends PDcl
     {
         return ""
             + toString(this._type_)
+            + toString(this._singleDcl_)
             + toString(this._dclList_);
     }
 
@@ -108,9 +141,14 @@ public final class ADcl extends PDcl
             return;
         }
 
-        if(this._dclList_ == child)
+        if(this._singleDcl_ == child)
         {
-            this._dclList_ = null;
+            this._singleDcl_ = null;
+            return;
+        }
+
+        if(this._dclList_.remove(child))
+        {
             return;
         }
 
@@ -127,10 +165,28 @@ public final class ADcl extends PDcl
             return;
         }
 
-        if(this._dclList_ == oldChild)
+        if(this._singleDcl_ == oldChild)
         {
-            setDclList((PDclList) newChild);
+            setSingleDcl((PSingleDcl) newChild);
             return;
+        }
+
+        for(ListIterator<PDclList> i = this._dclList_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PDclList) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         throw new RuntimeException("Not a child.");

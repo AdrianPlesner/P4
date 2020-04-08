@@ -2,13 +2,14 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
 public final class ABlock extends PBlock
 {
     private TLBrack _lBrack_;
-    private PStmtList _stmtList_;
+    private final LinkedList<PStmt> _stmt_ = new LinkedList<PStmt>();
     private TRBrack _rBrack_;
 
     public ABlock()
@@ -18,13 +19,13 @@ public final class ABlock extends PBlock
 
     public ABlock(
         @SuppressWarnings("hiding") TLBrack _lBrack_,
-        @SuppressWarnings("hiding") PStmtList _stmtList_,
+        @SuppressWarnings("hiding") List<?> _stmt_,
         @SuppressWarnings("hiding") TRBrack _rBrack_)
     {
         // Constructor
         setLBrack(_lBrack_);
 
-        setStmtList(_stmtList_);
+        setStmt(_stmt_);
 
         setRBrack(_rBrack_);
 
@@ -35,7 +36,7 @@ public final class ABlock extends PBlock
     {
         return new ABlock(
             cloneNode(this._lBrack_),
-            cloneNode(this._stmtList_),
+            cloneList(this._stmt_),
             cloneNode(this._rBrack_));
     }
 
@@ -70,29 +71,30 @@ public final class ABlock extends PBlock
         this._lBrack_ = node;
     }
 
-    public PStmtList getStmtList()
+    public LinkedList<PStmt> getStmt()
     {
-        return this._stmtList_;
+        return this._stmt_;
     }
 
-    public void setStmtList(PStmtList node)
+    public void setStmt(List<?> list)
     {
-        if(this._stmtList_ != null)
+        for(PStmt e : this._stmt_)
         {
-            this._stmtList_.parent(null);
+            e.parent(null);
         }
+        this._stmt_.clear();
 
-        if(node != null)
+        for(Object obj_e : list)
         {
-            if(node.parent() != null)
+            PStmt e = (PStmt) obj_e;
+            if(e.parent() != null)
             {
-                node.parent().removeChild(node);
+                e.parent().removeChild(e);
             }
 
-            node.parent(this);
+            e.parent(this);
+            this._stmt_.add(e);
         }
-
-        this._stmtList_ = node;
     }
 
     public TRBrack getRBrack()
@@ -125,7 +127,7 @@ public final class ABlock extends PBlock
     {
         return ""
             + toString(this._lBrack_)
-            + toString(this._stmtList_)
+            + toString(this._stmt_)
             + toString(this._rBrack_);
     }
 
@@ -139,9 +141,8 @@ public final class ABlock extends PBlock
             return;
         }
 
-        if(this._stmtList_ == child)
+        if(this._stmt_.remove(child))
         {
-            this._stmtList_ = null;
             return;
         }
 
@@ -164,10 +165,22 @@ public final class ABlock extends PBlock
             return;
         }
 
-        if(this._stmtList_ == oldChild)
+        for(ListIterator<PStmt> i = this._stmt_.listIterator(); i.hasNext();)
         {
-            setStmtList((PStmtList) newChild);
-            return;
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PStmt) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         if(this._rBrack_ == oldChild)

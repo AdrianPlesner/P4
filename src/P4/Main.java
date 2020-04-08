@@ -22,7 +22,7 @@ public class Main {
 
                // parser program
             Parser parser = new Parser(lexer);
-
+            // Debug med System.out.println(this.token.getClass().getSimpleName() + ": [" + token.getText() + "]");
             Start ast = parser.parse();
 
             stop_time = System.currentTimeMillis();
@@ -34,6 +34,4 @@ public class Main {
         }
     }
 }
-
-
 

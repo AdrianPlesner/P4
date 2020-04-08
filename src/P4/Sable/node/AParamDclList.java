@@ -6,51 +6,51 @@ import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AParamList extends PParamList
+public final class AParamDclList extends PParamDclList
 {
-    private PExpr _expr_;
-    private final LinkedList<PParam> _param_ = new LinkedList<PParam>();
+    private PParamDcl _paramDcl_;
+    private final LinkedList<PExpandParam> _expandParam_ = new LinkedList<PExpandParam>();
 
-    public AParamList()
+    public AParamDclList()
     {
         // Constructor
     }
 
-    public AParamList(
-        @SuppressWarnings("hiding") PExpr _expr_,
-        @SuppressWarnings("hiding") List<?> _param_)
+    public AParamDclList(
+        @SuppressWarnings("hiding") PParamDcl _paramDcl_,
+        @SuppressWarnings("hiding") List<?> _expandParam_)
     {
         // Constructor
-        setExpr(_expr_);
+        setParamDcl(_paramDcl_);
 
-        setParam(_param_);
+        setExpandParam(_expandParam_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AParamList(
-            cloneNode(this._expr_),
-            cloneList(this._param_));
+        return new AParamDclList(
+            cloneNode(this._paramDcl_),
+            cloneList(this._expandParam_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAParamList(this);
+        ((Analysis) sw).caseAParamDclList(this);
     }
 
-    public PExpr getExpr()
+    public PParamDcl getParamDcl()
     {
-        return this._expr_;
+        return this._paramDcl_;
     }
 
-    public void setExpr(PExpr node)
+    public void setParamDcl(PParamDcl node)
     {
-        if(this._expr_ != null)
+        if(this._paramDcl_ != null)
         {
-            this._expr_.parent(null);
+            this._paramDcl_.parent(null);
         }
 
         if(node != null)
@@ -63,32 +63,32 @@ public final class AParamList extends PParamList
             node.parent(this);
         }
 
-        this._expr_ = node;
+        this._paramDcl_ = node;
     }
 
-    public LinkedList<PParam> getParam()
+    public LinkedList<PExpandParam> getExpandParam()
     {
-        return this._param_;
+        return this._expandParam_;
     }
 
-    public void setParam(List<?> list)
+    public void setExpandParam(List<?> list)
     {
-        for(PParam e : this._param_)
+        for(PExpandParam e : this._expandParam_)
         {
             e.parent(null);
         }
-        this._param_.clear();
+        this._expandParam_.clear();
 
         for(Object obj_e : list)
         {
-            PParam e = (PParam) obj_e;
+            PExpandParam e = (PExpandParam) obj_e;
             if(e.parent() != null)
             {
                 e.parent().removeChild(e);
             }
 
             e.parent(this);
-            this._param_.add(e);
+            this._expandParam_.add(e);
         }
     }
 
@@ -96,21 +96,21 @@ public final class AParamList extends PParamList
     public String toString()
     {
         return ""
-            + toString(this._expr_)
-            + toString(this._param_);
+            + toString(this._paramDcl_)
+            + toString(this._expandParam_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._expr_ == child)
+        if(this._paramDcl_ == child)
         {
-            this._expr_ = null;
+            this._paramDcl_ = null;
             return;
         }
 
-        if(this._param_.remove(child))
+        if(this._expandParam_.remove(child))
         {
             return;
         }
@@ -122,19 +122,19 @@ public final class AParamList extends PParamList
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._expr_ == oldChild)
+        if(this._paramDcl_ == oldChild)
         {
-            setExpr((PExpr) newChild);
+            setParamDcl((PParamDcl) newChild);
             return;
         }
 
-        for(ListIterator<PParam> i = this._param_.listIterator(); i.hasNext();)
+        for(ListIterator<PExpandParam> i = this._expandParam_.listIterator(); i.hasNext();)
         {
             if(i.next() == oldChild)
             {
                 if(newChild != null)
                 {
-                    i.set((PParam) newChild);
+                    i.set((PExpandParam) newChild);
                     newChild.parent(this);
                     oldChild.parent(null);
                     return;

@@ -9,7 +9,6 @@ public final class AList extends PList
 {
     private TList _list_;
     private TTypeof _typeof_;
-    private TType _type_;
 
     public AList()
     {
@@ -18,15 +17,12 @@ public final class AList extends PList
 
     public AList(
         @SuppressWarnings("hiding") TList _list_,
-        @SuppressWarnings("hiding") TTypeof _typeof_,
-        @SuppressWarnings("hiding") TType _type_)
+        @SuppressWarnings("hiding") TTypeof _typeof_)
     {
         // Constructor
         setList(_list_);
 
         setTypeof(_typeof_);
-
-        setType(_type_);
 
     }
 
@@ -35,8 +31,7 @@ public final class AList extends PList
     {
         return new AList(
             cloneNode(this._list_),
-            cloneNode(this._typeof_),
-            cloneNode(this._type_));
+            cloneNode(this._typeof_));
     }
 
     @Override
@@ -95,38 +90,12 @@ public final class AList extends PList
         this._typeof_ = node;
     }
 
-    public TType getType()
-    {
-        return this._type_;
-    }
-
-    public void setType(TType node)
-    {
-        if(this._type_ != null)
-        {
-            this._type_.parent(null);
-        }
-
-        if(node != null)
-        {
-            if(node.parent() != null)
-            {
-                node.parent().removeChild(node);
-            }
-
-            node.parent(this);
-        }
-
-        this._type_ = node;
-    }
-
     @Override
     public String toString()
     {
         return ""
             + toString(this._list_)
-            + toString(this._typeof_)
-            + toString(this._type_);
+            + toString(this._typeof_);
     }
 
     @Override
@@ -142,12 +111,6 @@ public final class AList extends PList
         if(this._typeof_ == child)
         {
             this._typeof_ = null;
-            return;
-        }
-
-        if(this._type_ == child)
-        {
-            this._type_ = null;
             return;
         }
 
@@ -167,12 +130,6 @@ public final class AList extends PList
         if(this._typeof_ == oldChild)
         {
             setTypeof((TTypeof) newChild);
-            return;
-        }
-
-        if(this._type_ == oldChild)
-        {
-            setType((TType) newChild);
             return;
         }
 

@@ -2,16 +2,16 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
 public final class ASwitchStmt extends PSwitchStmt
 {
     private TSwitch _switch_;
-    private TLParen _lParen_;
     private PVal _val_;
     private TLBrack _lBrack_;
-    private PCaseList _caseList_;
+    private final LinkedList<PCase> _case_ = new LinkedList<PCase>();
     private TRBrack _rBrack_;
 
     public ASwitchStmt()
@@ -21,22 +21,19 @@ public final class ASwitchStmt extends PSwitchStmt
 
     public ASwitchStmt(
         @SuppressWarnings("hiding") TSwitch _switch_,
-        @SuppressWarnings("hiding") TLParen _lParen_,
         @SuppressWarnings("hiding") PVal _val_,
         @SuppressWarnings("hiding") TLBrack _lBrack_,
-        @SuppressWarnings("hiding") PCaseList _caseList_,
+        @SuppressWarnings("hiding") List<?> _case_,
         @SuppressWarnings("hiding") TRBrack _rBrack_)
     {
         // Constructor
         setSwitch(_switch_);
 
-        setLParen(_lParen_);
-
         setVal(_val_);
 
         setLBrack(_lBrack_);
 
-        setCaseList(_caseList_);
+        setCase(_case_);
 
         setRBrack(_rBrack_);
 
@@ -47,10 +44,9 @@ public final class ASwitchStmt extends PSwitchStmt
     {
         return new ASwitchStmt(
             cloneNode(this._switch_),
-            cloneNode(this._lParen_),
             cloneNode(this._val_),
             cloneNode(this._lBrack_),
-            cloneNode(this._caseList_),
+            cloneList(this._case_),
             cloneNode(this._rBrack_));
     }
 
@@ -83,31 +79,6 @@ public final class ASwitchStmt extends PSwitchStmt
         }
 
         this._switch_ = node;
-    }
-
-    public TLParen getLParen()
-    {
-        return this._lParen_;
-    }
-
-    public void setLParen(TLParen node)
-    {
-        if(this._lParen_ != null)
-        {
-            this._lParen_.parent(null);
-        }
-
-        if(node != null)
-        {
-            if(node.parent() != null)
-            {
-                node.parent().removeChild(node);
-            }
-
-            node.parent(this);
-        }
-
-        this._lParen_ = node;
     }
 
     public PVal getVal()
@@ -160,29 +131,30 @@ public final class ASwitchStmt extends PSwitchStmt
         this._lBrack_ = node;
     }
 
-    public PCaseList getCaseList()
+    public LinkedList<PCase> getCase()
     {
-        return this._caseList_;
+        return this._case_;
     }
 
-    public void setCaseList(PCaseList node)
+    public void setCase(List<?> list)
     {
-        if(this._caseList_ != null)
+        for(PCase e : this._case_)
         {
-            this._caseList_.parent(null);
+            e.parent(null);
         }
+        this._case_.clear();
 
-        if(node != null)
+        for(Object obj_e : list)
         {
-            if(node.parent() != null)
+            PCase e = (PCase) obj_e;
+            if(e.parent() != null)
             {
-                node.parent().removeChild(node);
+                e.parent().removeChild(e);
             }
 
-            node.parent(this);
+            e.parent(this);
+            this._case_.add(e);
         }
-
-        this._caseList_ = node;
     }
 
     public TRBrack getRBrack()
@@ -215,10 +187,9 @@ public final class ASwitchStmt extends PSwitchStmt
     {
         return ""
             + toString(this._switch_)
-            + toString(this._lParen_)
             + toString(this._val_)
             + toString(this._lBrack_)
-            + toString(this._caseList_)
+            + toString(this._case_)
             + toString(this._rBrack_);
     }
 
@@ -229,12 +200,6 @@ public final class ASwitchStmt extends PSwitchStmt
         if(this._switch_ == child)
         {
             this._switch_ = null;
-            return;
-        }
-
-        if(this._lParen_ == child)
-        {
-            this._lParen_ = null;
             return;
         }
 
@@ -250,9 +215,8 @@ public final class ASwitchStmt extends PSwitchStmt
             return;
         }
 
-        if(this._caseList_ == child)
+        if(this._case_.remove(child))
         {
-            this._caseList_ = null;
             return;
         }
 
@@ -275,12 +239,6 @@ public final class ASwitchStmt extends PSwitchStmt
             return;
         }
 
-        if(this._lParen_ == oldChild)
-        {
-            setLParen((TLParen) newChild);
-            return;
-        }
-
         if(this._val_ == oldChild)
         {
             setVal((PVal) newChild);
@@ -293,10 +251,22 @@ public final class ASwitchStmt extends PSwitchStmt
             return;
         }
 
-        if(this._caseList_ == oldChild)
+        for(ListIterator<PCase> i = this._case_.listIterator(); i.hasNext();)
         {
-            setCaseList((PCaseList) newChild);
-            return;
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PCase) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         if(this._rBrack_ == oldChild)

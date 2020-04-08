@@ -2,6 +2,7 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
@@ -9,9 +10,10 @@ public final class ASetup extends PSetup
 {
     private TSetup _setup_;
     private TLBrack _lBrack_;
-    private PStmtList _stmtList_;
+    private PCard _card_;
     private PPublic _public_;
     private PPrivate _private_;
+    private final LinkedList<PStmt> _stmt_ = new LinkedList<PStmt>();
     private TRBrack _rBrack_;
 
     public ASetup()
@@ -22,9 +24,10 @@ public final class ASetup extends PSetup
     public ASetup(
         @SuppressWarnings("hiding") TSetup _setup_,
         @SuppressWarnings("hiding") TLBrack _lBrack_,
-        @SuppressWarnings("hiding") PStmtList _stmtList_,
+        @SuppressWarnings("hiding") PCard _card_,
         @SuppressWarnings("hiding") PPublic _public_,
         @SuppressWarnings("hiding") PPrivate _private_,
+        @SuppressWarnings("hiding") List<?> _stmt_,
         @SuppressWarnings("hiding") TRBrack _rBrack_)
     {
         // Constructor
@@ -32,11 +35,13 @@ public final class ASetup extends PSetup
 
         setLBrack(_lBrack_);
 
-        setStmtList(_stmtList_);
+        setCard(_card_);
 
         setPublic(_public_);
 
         setPrivate(_private_);
+
+        setStmt(_stmt_);
 
         setRBrack(_rBrack_);
 
@@ -48,9 +53,10 @@ public final class ASetup extends PSetup
         return new ASetup(
             cloneNode(this._setup_),
             cloneNode(this._lBrack_),
-            cloneNode(this._stmtList_),
+            cloneNode(this._card_),
             cloneNode(this._public_),
             cloneNode(this._private_),
+            cloneList(this._stmt_),
             cloneNode(this._rBrack_));
     }
 
@@ -110,16 +116,16 @@ public final class ASetup extends PSetup
         this._lBrack_ = node;
     }
 
-    public PStmtList getStmtList()
+    public PCard getCard()
     {
-        return this._stmtList_;
+        return this._card_;
     }
 
-    public void setStmtList(PStmtList node)
+    public void setCard(PCard node)
     {
-        if(this._stmtList_ != null)
+        if(this._card_ != null)
         {
-            this._stmtList_.parent(null);
+            this._card_.parent(null);
         }
 
         if(node != null)
@@ -132,7 +138,7 @@ public final class ASetup extends PSetup
             node.parent(this);
         }
 
-        this._stmtList_ = node;
+        this._card_ = node;
     }
 
     public PPublic getPublic()
@@ -185,6 +191,32 @@ public final class ASetup extends PSetup
         this._private_ = node;
     }
 
+    public LinkedList<PStmt> getStmt()
+    {
+        return this._stmt_;
+    }
+
+    public void setStmt(List<?> list)
+    {
+        for(PStmt e : this._stmt_)
+        {
+            e.parent(null);
+        }
+        this._stmt_.clear();
+
+        for(Object obj_e : list)
+        {
+            PStmt e = (PStmt) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._stmt_.add(e);
+        }
+    }
+
     public TRBrack getRBrack()
     {
         return this._rBrack_;
@@ -216,9 +248,10 @@ public final class ASetup extends PSetup
         return ""
             + toString(this._setup_)
             + toString(this._lBrack_)
-            + toString(this._stmtList_)
+            + toString(this._card_)
             + toString(this._public_)
             + toString(this._private_)
+            + toString(this._stmt_)
             + toString(this._rBrack_);
     }
 
@@ -238,9 +271,9 @@ public final class ASetup extends PSetup
             return;
         }
 
-        if(this._stmtList_ == child)
+        if(this._card_ == child)
         {
-            this._stmtList_ = null;
+            this._card_ = null;
             return;
         }
 
@@ -253,6 +286,11 @@ public final class ASetup extends PSetup
         if(this._private_ == child)
         {
             this._private_ = null;
+            return;
+        }
+
+        if(this._stmt_.remove(child))
+        {
             return;
         }
 
@@ -281,9 +319,9 @@ public final class ASetup extends PSetup
             return;
         }
 
-        if(this._stmtList_ == oldChild)
+        if(this._card_ == oldChild)
         {
-            setStmtList((PStmtList) newChild);
+            setCard((PCard) newChild);
             return;
         }
 
@@ -297,6 +335,24 @@ public final class ASetup extends PSetup
         {
             setPrivate((PPrivate) newChild);
             return;
+        }
+
+        for(ListIterator<PStmt> i = this._stmt_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PStmt) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         if(this._rBrack_ == oldChild)

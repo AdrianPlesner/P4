@@ -5,51 +5,51 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class APrivate extends PPrivate
+public final class AParamDcl extends PParamDcl
 {
-    private TPrivate _private_;
-    private PClassBody _classBody_;
+    private PType _type_;
+    private TId _id_;
 
-    public APrivate()
+    public AParamDcl()
     {
         // Constructor
     }
 
-    public APrivate(
-        @SuppressWarnings("hiding") TPrivate _private_,
-        @SuppressWarnings("hiding") PClassBody _classBody_)
+    public AParamDcl(
+        @SuppressWarnings("hiding") PType _type_,
+        @SuppressWarnings("hiding") TId _id_)
     {
         // Constructor
-        setPrivate(_private_);
+        setType(_type_);
 
-        setClassBody(_classBody_);
+        setId(_id_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new APrivate(
-            cloneNode(this._private_),
-            cloneNode(this._classBody_));
+        return new AParamDcl(
+            cloneNode(this._type_),
+            cloneNode(this._id_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAPrivate(this);
+        ((Analysis) sw).caseAParamDcl(this);
     }
 
-    public TPrivate getPrivate()
+    public PType getType()
     {
-        return this._private_;
+        return this._type_;
     }
 
-    public void setPrivate(TPrivate node)
+    public void setType(PType node)
     {
-        if(this._private_ != null)
+        if(this._type_ != null)
         {
-            this._private_.parent(null);
+            this._type_.parent(null);
         }
 
         if(node != null)
@@ -62,19 +62,19 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._private_ = node;
+        this._type_ = node;
     }
 
-    public PClassBody getClassBody()
+    public TId getId()
     {
-        return this._classBody_;
+        return this._id_;
     }
 
-    public void setClassBody(PClassBody node)
+    public void setId(TId node)
     {
-        if(this._classBody_ != null)
+        if(this._id_ != null)
         {
-            this._classBody_.parent(null);
+            this._id_.parent(null);
         }
 
         if(node != null)
@@ -87,30 +87,30 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._classBody_ = node;
+        this._id_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._private_)
-            + toString(this._classBody_);
+            + toString(this._type_)
+            + toString(this._id_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._private_ == child)
+        if(this._type_ == child)
         {
-            this._private_ = null;
+            this._type_ = null;
             return;
         }
 
-        if(this._classBody_ == child)
+        if(this._id_ == child)
         {
-            this._classBody_ = null;
+            this._id_ = null;
             return;
         }
 
@@ -121,15 +121,15 @@ public final class APrivate extends PPrivate
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._private_ == oldChild)
+        if(this._type_ == oldChild)
         {
-            setPrivate((TPrivate) newChild);
+            setType((PType) newChild);
             return;
         }
 
-        if(this._classBody_ == oldChild)
+        if(this._id_ == oldChild)
         {
-            setClassBody((PClassBody) newChild);
+            setId((TId) newChild);
             return;
         }
 

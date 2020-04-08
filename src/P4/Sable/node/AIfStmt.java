@@ -2,6 +2,7 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
@@ -10,6 +11,7 @@ public final class AIfStmt extends PIfStmt
     private TIf _if_;
     private PExpr _expr_;
     private PBlock _block_;
+    private final LinkedList<PElseIf> _elseIf_ = new LinkedList<PElseIf>();
     private PElseStmt _elseStmt_;
 
     public AIfStmt()
@@ -21,6 +23,7 @@ public final class AIfStmt extends PIfStmt
         @SuppressWarnings("hiding") TIf _if_,
         @SuppressWarnings("hiding") PExpr _expr_,
         @SuppressWarnings("hiding") PBlock _block_,
+        @SuppressWarnings("hiding") List<?> _elseIf_,
         @SuppressWarnings("hiding") PElseStmt _elseStmt_)
     {
         // Constructor
@@ -29,6 +32,8 @@ public final class AIfStmt extends PIfStmt
         setExpr(_expr_);
 
         setBlock(_block_);
+
+        setElseIf(_elseIf_);
 
         setElseStmt(_elseStmt_);
 
@@ -41,6 +46,7 @@ public final class AIfStmt extends PIfStmt
             cloneNode(this._if_),
             cloneNode(this._expr_),
             cloneNode(this._block_),
+            cloneList(this._elseIf_),
             cloneNode(this._elseStmt_));
     }
 
@@ -125,6 +131,32 @@ public final class AIfStmt extends PIfStmt
         this._block_ = node;
     }
 
+    public LinkedList<PElseIf> getElseIf()
+    {
+        return this._elseIf_;
+    }
+
+    public void setElseIf(List<?> list)
+    {
+        for(PElseIf e : this._elseIf_)
+        {
+            e.parent(null);
+        }
+        this._elseIf_.clear();
+
+        for(Object obj_e : list)
+        {
+            PElseIf e = (PElseIf) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._elseIf_.add(e);
+        }
+    }
+
     public PElseStmt getElseStmt()
     {
         return this._elseStmt_;
@@ -157,6 +189,7 @@ public final class AIfStmt extends PIfStmt
             + toString(this._if_)
             + toString(this._expr_)
             + toString(this._block_)
+            + toString(this._elseIf_)
             + toString(this._elseStmt_);
     }
 
@@ -179,6 +212,11 @@ public final class AIfStmt extends PIfStmt
         if(this._block_ == child)
         {
             this._block_ = null;
+            return;
+        }
+
+        if(this._elseIf_.remove(child))
+        {
             return;
         }
 
@@ -211,6 +249,24 @@ public final class AIfStmt extends PIfStmt
         {
             setBlock((PBlock) newChild);
             return;
+        }
+
+        for(ListIterator<PElseIf> i = this._elseIf_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PElseIf) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
         }
 
         if(this._elseStmt_ == oldChild)

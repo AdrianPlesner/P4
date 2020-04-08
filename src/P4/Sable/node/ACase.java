@@ -5,22 +5,26 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AElseStmt extends PElseStmt
+public final class ACase extends PCase
 {
-    private TElse _else_;
+    private PCaseStmt _caseStmt_;
+    private TColon _colon_;
     private PBlock _block_;
 
-    public AElseStmt()
+    public ACase()
     {
         // Constructor
     }
 
-    public AElseStmt(
-        @SuppressWarnings("hiding") TElse _else_,
+    public ACase(
+        @SuppressWarnings("hiding") PCaseStmt _caseStmt_,
+        @SuppressWarnings("hiding") TColon _colon_,
         @SuppressWarnings("hiding") PBlock _block_)
     {
         // Constructor
-        setElse(_else_);
+        setCaseStmt(_caseStmt_);
+
+        setColon(_colon_);
 
         setBlock(_block_);
 
@@ -29,27 +33,28 @@ public final class AElseStmt extends PElseStmt
     @Override
     public Object clone()
     {
-        return new AElseStmt(
-            cloneNode(this._else_),
+        return new ACase(
+            cloneNode(this._caseStmt_),
+            cloneNode(this._colon_),
             cloneNode(this._block_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAElseStmt(this);
+        ((Analysis) sw).caseACase(this);
     }
 
-    public TElse getElse()
+    public PCaseStmt getCaseStmt()
     {
-        return this._else_;
+        return this._caseStmt_;
     }
 
-    public void setElse(TElse node)
+    public void setCaseStmt(PCaseStmt node)
     {
-        if(this._else_ != null)
+        if(this._caseStmt_ != null)
         {
-            this._else_.parent(null);
+            this._caseStmt_.parent(null);
         }
 
         if(node != null)
@@ -62,7 +67,32 @@ public final class AElseStmt extends PElseStmt
             node.parent(this);
         }
 
-        this._else_ = node;
+        this._caseStmt_ = node;
+    }
+
+    public TColon getColon()
+    {
+        return this._colon_;
+    }
+
+    public void setColon(TColon node)
+    {
+        if(this._colon_ != null)
+        {
+            this._colon_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._colon_ = node;
     }
 
     public PBlock getBlock()
@@ -94,7 +124,8 @@ public final class AElseStmt extends PElseStmt
     public String toString()
     {
         return ""
-            + toString(this._else_)
+            + toString(this._caseStmt_)
+            + toString(this._colon_)
             + toString(this._block_);
     }
 
@@ -102,9 +133,15 @@ public final class AElseStmt extends PElseStmt
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._else_ == child)
+        if(this._caseStmt_ == child)
         {
-            this._else_ = null;
+            this._caseStmt_ = null;
+            return;
+        }
+
+        if(this._colon_ == child)
+        {
+            this._colon_ = null;
             return;
         }
 
@@ -121,9 +158,15 @@ public final class AElseStmt extends PElseStmt
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._else_ == oldChild)
+        if(this._caseStmt_ == oldChild)
         {
-            setElse((TElse) newChild);
+            setCaseStmt((PCaseStmt) newChild);
+            return;
+        }
+
+        if(this._colon_ == oldChild)
+        {
+            setColon((TColon) newChild);
             return;
         }
 

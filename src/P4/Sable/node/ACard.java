@@ -5,22 +5,22 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class APrivate extends PPrivate
+public final class ACard extends PCard
 {
-    private TPrivate _private_;
+    private TCard _card_;
     private PClassBody _classBody_;
 
-    public APrivate()
+    public ACard()
     {
         // Constructor
     }
 
-    public APrivate(
-        @SuppressWarnings("hiding") TPrivate _private_,
+    public ACard(
+        @SuppressWarnings("hiding") TCard _card_,
         @SuppressWarnings("hiding") PClassBody _classBody_)
     {
         // Constructor
-        setPrivate(_private_);
+        setCard(_card_);
 
         setClassBody(_classBody_);
 
@@ -29,27 +29,27 @@ public final class APrivate extends PPrivate
     @Override
     public Object clone()
     {
-        return new APrivate(
-            cloneNode(this._private_),
+        return new ACard(
+            cloneNode(this._card_),
             cloneNode(this._classBody_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAPrivate(this);
+        ((Analysis) sw).caseACard(this);
     }
 
-    public TPrivate getPrivate()
+    public TCard getCard()
     {
-        return this._private_;
+        return this._card_;
     }
 
-    public void setPrivate(TPrivate node)
+    public void setCard(TCard node)
     {
-        if(this._private_ != null)
+        if(this._card_ != null)
         {
-            this._private_.parent(null);
+            this._card_.parent(null);
         }
 
         if(node != null)
@@ -62,7 +62,7 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._private_ = node;
+        this._card_ = node;
     }
 
     public PClassBody getClassBody()
@@ -94,7 +94,7 @@ public final class APrivate extends PPrivate
     public String toString()
     {
         return ""
-            + toString(this._private_)
+            + toString(this._card_)
             + toString(this._classBody_);
     }
 
@@ -102,9 +102,9 @@ public final class APrivate extends PPrivate
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._private_ == child)
+        if(this._card_ == child)
         {
-            this._private_ = null;
+            this._card_ = null;
             return;
         }
 
@@ -121,9 +121,9 @@ public final class APrivate extends PPrivate
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._private_ == oldChild)
+        if(this._card_ == oldChild)
         {
-            setPrivate((TPrivate) newChild);
+            setCard((TCard) newChild);
             return;
         }
 

@@ -81,7 +81,31 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
+    public void caseAIncludes(AIncludes node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
     public void caseASetup(ASetup node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseACard(ACard node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAClassBody(AClassBody node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseASubclass(ASubclass node)
     {
         defaultCase(node);
     }
@@ -105,37 +129,25 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAExpandDclList(AExpandDclList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseASingleDclList(ASingleDclList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
     public void caseADcl(ADcl node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseADclPre(ADclPre node)
+    public void caseASingleDcl(ASingleDcl node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAValueInit(AValueInit node)
+    public void caseADclList(ADclList node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAEmptyInit(AEmptyInit node)
+    public void caseAInit(AInit node)
     {
         defaultCase(node);
     }
@@ -255,19 +267,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAInitList(AInitList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAExpandElementList(AExpandElementList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAEmptyElementList(AEmptyElementList node)
+    public void caseAElementList(AElementList node)
     {
         defaultCase(node);
     }
@@ -291,25 +291,13 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAExpandValList(AExpandValList node)
+    public void caseAValList(AValList node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAEmptyValList(AEmptyValList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseACallCall(ACallCall node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAEmptyCall(AEmptyCall node)
+    public void caseACall(ACall node)
     {
         defaultCase(node);
     }
@@ -327,55 +315,31 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAExpandMoveDclList(AExpandMoveDclList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAEmptyMoveDclList(AEmptyMoveDclList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
     public void caseAMethodDcl(AMethodDcl node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAExpandParamDclList(AExpandParamDclList node)
+    public void caseAParamDclList(AParamDclList node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseASingleParamDclList(ASingleParamDclList node)
+    public void caseAExpandParam(AExpandParam node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseASingleParamDcl(ASingleParamDcl node)
+    public void caseAParamDcl(AParamDcl node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAEmptyParamDcl(AEmptyParamDcl node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseATypeType(ATypeType node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAListType(AListType node)
+    public void caseAType(AType node)
     {
         defaultCase(node);
     }
@@ -387,25 +351,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAExpandStmtList(AExpandStmtList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAEmptyStmtList(AEmptyStmtList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseASingleReturnStmt(ASingleReturnStmt node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAEmptyReturnStmt(AEmptyReturnStmt node)
+    public void caseAReturnStmt(AReturnStmt node)
     {
         defaultCase(node);
     }
@@ -465,13 +411,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAElseifElseStmt(AElseifElseStmt node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseAElseElseStmt(AElseElseStmt node)
+    public void caseAElseIf(AElseIf node)
     {
         defaultCase(node);
     }
@@ -489,31 +429,19 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAListCaseList(AListCaseList node)
+    public void caseACase(ACase node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseADefaultCaseList(ADefaultCaseList node)
+    public void caseACaseCaseStmt(ACaseCaseStmt node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAEmptyCaseList(AEmptyCaseList node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseACaseStmt(ACaseStmt node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseADefaultStmt(ADefaultStmt node)
+    public void caseADefaultCaseStmt(ADefaultCaseStmt node)
     {
         defaultCase(node);
     }
@@ -819,7 +747,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseTType(TType node)
+    public void caseTCard(TCard node)
     {
         defaultCase(node);
     }
@@ -850,6 +778,18 @@ public class AnalysisAdapter implements Analysis
 
     @Override
     public void caseTFun(TFun node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseTInc(TInc node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseTSub(TSub node)
     {
         defaultCase(node);
     }

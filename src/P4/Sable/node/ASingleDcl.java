@@ -5,51 +5,51 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class APrivate extends PPrivate
+public final class ASingleDcl extends PSingleDcl
 {
-    private TPrivate _private_;
-    private PClassBody _classBody_;
+    private TId _id_;
+    private PInit _init_;
 
-    public APrivate()
+    public ASingleDcl()
     {
         // Constructor
     }
 
-    public APrivate(
-        @SuppressWarnings("hiding") TPrivate _private_,
-        @SuppressWarnings("hiding") PClassBody _classBody_)
+    public ASingleDcl(
+        @SuppressWarnings("hiding") TId _id_,
+        @SuppressWarnings("hiding") PInit _init_)
     {
         // Constructor
-        setPrivate(_private_);
+        setId(_id_);
 
-        setClassBody(_classBody_);
+        setInit(_init_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new APrivate(
-            cloneNode(this._private_),
-            cloneNode(this._classBody_));
+        return new ASingleDcl(
+            cloneNode(this._id_),
+            cloneNode(this._init_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAPrivate(this);
+        ((Analysis) sw).caseASingleDcl(this);
     }
 
-    public TPrivate getPrivate()
+    public TId getId()
     {
-        return this._private_;
+        return this._id_;
     }
 
-    public void setPrivate(TPrivate node)
+    public void setId(TId node)
     {
-        if(this._private_ != null)
+        if(this._id_ != null)
         {
-            this._private_.parent(null);
+            this._id_.parent(null);
         }
 
         if(node != null)
@@ -62,19 +62,19 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._private_ = node;
+        this._id_ = node;
     }
 
-    public PClassBody getClassBody()
+    public PInit getInit()
     {
-        return this._classBody_;
+        return this._init_;
     }
 
-    public void setClassBody(PClassBody node)
+    public void setInit(PInit node)
     {
-        if(this._classBody_ != null)
+        if(this._init_ != null)
         {
-            this._classBody_.parent(null);
+            this._init_.parent(null);
         }
 
         if(node != null)
@@ -87,30 +87,30 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._classBody_ = node;
+        this._init_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._private_)
-            + toString(this._classBody_);
+            + toString(this._id_)
+            + toString(this._init_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._private_ == child)
+        if(this._id_ == child)
         {
-            this._private_ = null;
+            this._id_ = null;
             return;
         }
 
-        if(this._classBody_ == child)
+        if(this._init_ == child)
         {
-            this._classBody_ = null;
+            this._init_ = null;
             return;
         }
 
@@ -121,15 +121,15 @@ public final class APrivate extends PPrivate
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._private_ == oldChild)
+        if(this._id_ == oldChild)
         {
-            setPrivate((TPrivate) newChild);
+            setId((TId) newChild);
             return;
         }
 
-        if(this._classBody_ == oldChild)
+        if(this._init_ == oldChild)
         {
-            setClassBody((PClassBody) newChild);
+            setInit((PInit) newChild);
             return;
         }
 

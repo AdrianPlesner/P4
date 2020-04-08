@@ -5,22 +5,30 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AElseStmt extends PElseStmt
+public final class AElseIf extends PElseIf
 {
     private TElse _else_;
+    private TIf _if_;
+    private PExpr _expr_;
     private PBlock _block_;
 
-    public AElseStmt()
+    public AElseIf()
     {
         // Constructor
     }
 
-    public AElseStmt(
+    public AElseIf(
         @SuppressWarnings("hiding") TElse _else_,
+        @SuppressWarnings("hiding") TIf _if_,
+        @SuppressWarnings("hiding") PExpr _expr_,
         @SuppressWarnings("hiding") PBlock _block_)
     {
         // Constructor
         setElse(_else_);
+
+        setIf(_if_);
+
+        setExpr(_expr_);
 
         setBlock(_block_);
 
@@ -29,15 +37,17 @@ public final class AElseStmt extends PElseStmt
     @Override
     public Object clone()
     {
-        return new AElseStmt(
+        return new AElseIf(
             cloneNode(this._else_),
+            cloneNode(this._if_),
+            cloneNode(this._expr_),
             cloneNode(this._block_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAElseStmt(this);
+        ((Analysis) sw).caseAElseIf(this);
     }
 
     public TElse getElse()
@@ -63,6 +73,56 @@ public final class AElseStmt extends PElseStmt
         }
 
         this._else_ = node;
+    }
+
+    public TIf getIf()
+    {
+        return this._if_;
+    }
+
+    public void setIf(TIf node)
+    {
+        if(this._if_ != null)
+        {
+            this._if_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._if_ = node;
+    }
+
+    public PExpr getExpr()
+    {
+        return this._expr_;
+    }
+
+    public void setExpr(PExpr node)
+    {
+        if(this._expr_ != null)
+        {
+            this._expr_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._expr_ = node;
     }
 
     public PBlock getBlock()
@@ -95,6 +155,8 @@ public final class AElseStmt extends PElseStmt
     {
         return ""
             + toString(this._else_)
+            + toString(this._if_)
+            + toString(this._expr_)
             + toString(this._block_);
     }
 
@@ -105,6 +167,18 @@ public final class AElseStmt extends PElseStmt
         if(this._else_ == child)
         {
             this._else_ = null;
+            return;
+        }
+
+        if(this._if_ == child)
+        {
+            this._if_ = null;
+            return;
+        }
+
+        if(this._expr_ == child)
+        {
+            this._expr_ = null;
             return;
         }
 
@@ -124,6 +198,18 @@ public final class AElseStmt extends PElseStmt
         if(this._else_ == oldChild)
         {
             setElse((TElse) newChild);
+            return;
+        }
+
+        if(this._if_ == oldChild)
+        {
+            setIf((TIf) newChild);
+            return;
+        }
+
+        if(this._expr_ == oldChild)
+        {
+            setExpr((PExpr) newChild);
             return;
         }
 

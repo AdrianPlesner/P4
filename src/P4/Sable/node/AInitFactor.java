@@ -2,12 +2,15 @@
 
 package P4.Sable.node;
 
+import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
 public final class AInitFactor extends PFactor
 {
-    private PInitList _initList_;
+    private TLBrack _lBrack_;
+    private final LinkedList<PElementList> _elementList_ = new LinkedList<PElementList>();
+    private TRBrack _rBrack_;
 
     public AInitFactor()
     {
@@ -15,10 +18,16 @@ public final class AInitFactor extends PFactor
     }
 
     public AInitFactor(
-        @SuppressWarnings("hiding") PInitList _initList_)
+        @SuppressWarnings("hiding") TLBrack _lBrack_,
+        @SuppressWarnings("hiding") List<?> _elementList_,
+        @SuppressWarnings("hiding") TRBrack _rBrack_)
     {
         // Constructor
-        setInitList(_initList_);
+        setLBrack(_lBrack_);
+
+        setElementList(_elementList_);
+
+        setRBrack(_rBrack_);
 
     }
 
@@ -26,7 +35,9 @@ public final class AInitFactor extends PFactor
     public Object clone()
     {
         return new AInitFactor(
-            cloneNode(this._initList_));
+            cloneNode(this._lBrack_),
+            cloneList(this._elementList_),
+            cloneNode(this._rBrack_));
     }
 
     @Override
@@ -35,16 +46,16 @@ public final class AInitFactor extends PFactor
         ((Analysis) sw).caseAInitFactor(this);
     }
 
-    public PInitList getInitList()
+    public TLBrack getLBrack()
     {
-        return this._initList_;
+        return this._lBrack_;
     }
 
-    public void setInitList(PInitList node)
+    public void setLBrack(TLBrack node)
     {
-        if(this._initList_ != null)
+        if(this._lBrack_ != null)
         {
-            this._initList_.parent(null);
+            this._lBrack_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +68,87 @@ public final class AInitFactor extends PFactor
             node.parent(this);
         }
 
-        this._initList_ = node;
+        this._lBrack_ = node;
+    }
+
+    public LinkedList<PElementList> getElementList()
+    {
+        return this._elementList_;
+    }
+
+    public void setElementList(List<?> list)
+    {
+        for(PElementList e : this._elementList_)
+        {
+            e.parent(null);
+        }
+        this._elementList_.clear();
+
+        for(Object obj_e : list)
+        {
+            PElementList e = (PElementList) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._elementList_.add(e);
+        }
+    }
+
+    public TRBrack getRBrack()
+    {
+        return this._rBrack_;
+    }
+
+    public void setRBrack(TRBrack node)
+    {
+        if(this._rBrack_ != null)
+        {
+            this._rBrack_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._rBrack_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._initList_);
+            + toString(this._lBrack_)
+            + toString(this._elementList_)
+            + toString(this._rBrack_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._initList_ == child)
+        if(this._lBrack_ == child)
         {
-            this._initList_ = null;
+            this._lBrack_ = null;
+            return;
+        }
+
+        if(this._elementList_.remove(child))
+        {
+            return;
+        }
+
+        if(this._rBrack_ == child)
+        {
+            this._rBrack_ = null;
             return;
         }
 
@@ -84,9 +159,33 @@ public final class AInitFactor extends PFactor
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._initList_ == oldChild)
+        if(this._lBrack_ == oldChild)
         {
-            setInitList((PInitList) newChild);
+            setLBrack((TLBrack) newChild);
+            return;
+        }
+
+        for(ListIterator<PElementList> i = this._elementList_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PElementList) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
+        }
+
+        if(this._rBrack_ == oldChild)
+        {
+            setRBrack((TRBrack) newChild);
             return;
         }
 

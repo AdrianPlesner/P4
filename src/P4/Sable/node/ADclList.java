@@ -5,51 +5,51 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class APrivate extends PPrivate
+public final class ADclList extends PDclList
 {
-    private TPrivate _private_;
-    private PClassBody _classBody_;
+    private TSeparator _separator_;
+    private PSingleDcl _singleDcl_;
 
-    public APrivate()
+    public ADclList()
     {
         // Constructor
     }
 
-    public APrivate(
-        @SuppressWarnings("hiding") TPrivate _private_,
-        @SuppressWarnings("hiding") PClassBody _classBody_)
+    public ADclList(
+        @SuppressWarnings("hiding") TSeparator _separator_,
+        @SuppressWarnings("hiding") PSingleDcl _singleDcl_)
     {
         // Constructor
-        setPrivate(_private_);
+        setSeparator(_separator_);
 
-        setClassBody(_classBody_);
+        setSingleDcl(_singleDcl_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new APrivate(
-            cloneNode(this._private_),
-            cloneNode(this._classBody_));
+        return new ADclList(
+            cloneNode(this._separator_),
+            cloneNode(this._singleDcl_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAPrivate(this);
+        ((Analysis) sw).caseADclList(this);
     }
 
-    public TPrivate getPrivate()
+    public TSeparator getSeparator()
     {
-        return this._private_;
+        return this._separator_;
     }
 
-    public void setPrivate(TPrivate node)
+    public void setSeparator(TSeparator node)
     {
-        if(this._private_ != null)
+        if(this._separator_ != null)
         {
-            this._private_.parent(null);
+            this._separator_.parent(null);
         }
 
         if(node != null)
@@ -62,19 +62,19 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._private_ = node;
+        this._separator_ = node;
     }
 
-    public PClassBody getClassBody()
+    public PSingleDcl getSingleDcl()
     {
-        return this._classBody_;
+        return this._singleDcl_;
     }
 
-    public void setClassBody(PClassBody node)
+    public void setSingleDcl(PSingleDcl node)
     {
-        if(this._classBody_ != null)
+        if(this._singleDcl_ != null)
         {
-            this._classBody_.parent(null);
+            this._singleDcl_.parent(null);
         }
 
         if(node != null)
@@ -87,30 +87,30 @@ public final class APrivate extends PPrivate
             node.parent(this);
         }
 
-        this._classBody_ = node;
+        this._singleDcl_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._private_)
-            + toString(this._classBody_);
+            + toString(this._separator_)
+            + toString(this._singleDcl_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._private_ == child)
+        if(this._separator_ == child)
         {
-            this._private_ = null;
+            this._separator_ = null;
             return;
         }
 
-        if(this._classBody_ == child)
+        if(this._singleDcl_ == child)
         {
-            this._classBody_ = null;
+            this._singleDcl_ = null;
             return;
         }
 
@@ -121,15 +121,15 @@ public final class APrivate extends PPrivate
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._private_ == oldChild)
+        if(this._separator_ == oldChild)
         {
-            setPrivate((TPrivate) newChild);
+            setSeparator((TSeparator) newChild);
             return;
         }
 
-        if(this._classBody_ == oldChild)
+        if(this._singleDcl_ == oldChild)
         {
-            setClassBody((PClassBody) newChild);
+            setSingleDcl((PSingleDcl) newChild);
             return;
         }
 
