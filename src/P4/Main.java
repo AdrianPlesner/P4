@@ -1,8 +1,8 @@
 package P4;
 
-import P4.Sable.parser.*;
+/*import P4.Sable.parser.*;
 import P4.Sable.lexer.*;
-import P4.Sable.node.*;
+import P4.Sable.node.*;*/
 
 import java.io.*;
 
@@ -18,12 +18,12 @@ public class Main {
             start_time = System.currentTimeMillis();
 
                // create lexer
-            Lexer lexer = new Lexer (new PushbackReader(new BufferedReader(new FileReader(args[0])), 1024));
+            /*Lexer lexer = new Lexer (new PushbackReader(new BufferedReader(new FileReader(args[0])), 1024));
 
                // parser program
             Parser parser = new Parser(lexer);
             // Debug med System.out.println(this.token.getClass().getSimpleName() + ": [" + token.getText() + "]");
-            Start ast = parser.parse();
+            Start ast = parser.parse();*/
 
             stop_time = System.currentTimeMillis();
 

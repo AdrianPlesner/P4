@@ -64,10 +64,10 @@ Ignored Tokens
     blank, comment;
 
 Productions
-    prog = includes* P.setup P.moves P.turn P.end_con method_dcl*;
-    includes = inc id semi;
-    setup = T.setup l_brack P.card P.public P.private stmt* r_brack;
-    card = T.card class_body;
+    prog = include* P.setup P.moves P.turn P.end_con method_dcl* {-> New prog([include.id], setup, moves, turn, end_con, [method_dcl])};
+    include{-> id} = inc id semi {-> id };
+    setup = T.setup l_brack P.card P.public P.private stmt* r_brack {-> New setup(card, public, private, [stmt])};
+    card = T.card class_body {-> New card([class_body.stmt], [class_body.method_dcl], [class_body.subclass])};
     class_body = l_brack stmt* method_dcl* subclass* r_brack;
     subclass = sub id class_body;
     public = T.public block;
@@ -117,3 +117,6 @@ Productions
     turn = T.turn block;
     end_con = T.end_con block;
     end = semi;
+
+Abstract Syntax Tree
+    prog = [includes]:id* P.setup P.moves P.turn P.end_con [methods]:method_dcl*;
