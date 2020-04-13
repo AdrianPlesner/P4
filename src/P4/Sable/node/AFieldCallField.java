@@ -5,46 +5,46 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class ABoolLiteral extends PLiteral
+public final class AFieldCallField extends PCallField
 {
-    private TBoolLiteral _value_;
+    private TId _id_;
 
-    public ABoolLiteral()
+    public AFieldCallField()
     {
         // Constructor
     }
 
-    public ABoolLiteral(
-        @SuppressWarnings("hiding") TBoolLiteral _value_)
+    public AFieldCallField(
+        @SuppressWarnings("hiding") TId _id_)
     {
         // Constructor
-        setValue(_value_);
+        setId(_id_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new ABoolLiteral(
-            cloneNode(this._value_));
+        return new AFieldCallField(
+            cloneNode(this._id_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseABoolLiteral(this);
+        ((Analysis) sw).caseAFieldCallField(this);
     }
 
-    public TBoolLiteral getValue()
+    public TId getId()
     {
-        return this._value_;
+        return this._id_;
     }
 
-    public void setValue(TBoolLiteral node)
+    public void setId(TId node)
     {
-        if(this._value_ != null)
+        if(this._id_ != null)
         {
-            this._value_.parent(null);
+            this._id_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class ABoolLiteral extends PLiteral
             node.parent(this);
         }
 
-        this._value_ = node;
+        this._id_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._value_);
+            + toString(this._id_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._value_ == child)
+        if(this._id_ == child)
         {
-            this._value_ = null;
+            this._id_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class ABoolLiteral extends PLiteral
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._value_ == oldChild)
+        if(this._id_ == oldChild)
         {
-            setValue((TBoolLiteral) newChild);
+            setId((TId) newChild);
             return;
         }
 

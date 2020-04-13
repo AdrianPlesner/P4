@@ -7,7 +7,7 @@ import P4.Sable.analysis.*;
 @SuppressWarnings("nls")
 public final class AIntLiteral extends PLiteral
 {
-    private TIntLiteral _intLiteral_;
+    private TIntLiteral _value_;
 
     public AIntLiteral()
     {
@@ -15,10 +15,10 @@ public final class AIntLiteral extends PLiteral
     }
 
     public AIntLiteral(
-        @SuppressWarnings("hiding") TIntLiteral _intLiteral_)
+        @SuppressWarnings("hiding") TIntLiteral _value_)
     {
         // Constructor
-        setIntLiteral(_intLiteral_);
+        setValue(_value_);
 
     }
 
@@ -26,7 +26,7 @@ public final class AIntLiteral extends PLiteral
     public Object clone()
     {
         return new AIntLiteral(
-            cloneNode(this._intLiteral_));
+            cloneNode(this._value_));
     }
 
     @Override
@@ -35,16 +35,16 @@ public final class AIntLiteral extends PLiteral
         ((Analysis) sw).caseAIntLiteral(this);
     }
 
-    public TIntLiteral getIntLiteral()
+    public TIntLiteral getValue()
     {
-        return this._intLiteral_;
+        return this._value_;
     }
 
-    public void setIntLiteral(TIntLiteral node)
+    public void setValue(TIntLiteral node)
     {
-        if(this._intLiteral_ != null)
+        if(this._value_ != null)
         {
-            this._intLiteral_.parent(null);
+            this._value_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class AIntLiteral extends PLiteral
             node.parent(this);
         }
 
-        this._intLiteral_ = node;
+        this._value_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._intLiteral_);
+            + toString(this._value_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._intLiteral_ == child)
+        if(this._value_ == child)
         {
-            this._intLiteral_ = null;
+            this._value_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class AIntLiteral extends PLiteral
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._intLiteral_ == oldChild)
+        if(this._value_ == oldChild)
         {
-            setIntLiteral((TIntLiteral) newChild);
+            setValue((TIntLiteral) newChild);
             return;
         }
 

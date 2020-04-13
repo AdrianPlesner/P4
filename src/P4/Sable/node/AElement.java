@@ -6,59 +6,59 @@ import java.util.*;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class AVal extends PVal
+public final class AElement extends PElement
 {
-    private final LinkedList<PCallField> _callField_ = new LinkedList<PCallField>();
+    private final LinkedList<PExpr> _values_ = new LinkedList<PExpr>();
 
-    public AVal()
+    public AElement()
     {
         // Constructor
     }
 
-    public AVal(
-        @SuppressWarnings("hiding") List<?> _callField_)
+    public AElement(
+        @SuppressWarnings("hiding") List<?> _values_)
     {
         // Constructor
-        setCallField(_callField_);
+        setValues(_values_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new AVal(
-            cloneList(this._callField_));
+        return new AElement(
+            cloneList(this._values_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseAVal(this);
+        ((Analysis) sw).caseAElement(this);
     }
 
-    public LinkedList<PCallField> getCallField()
+    public LinkedList<PExpr> getValues()
     {
-        return this._callField_;
+        return this._values_;
     }
 
-    public void setCallField(List<?> list)
+    public void setValues(List<?> list)
     {
-        for(PCallField e : this._callField_)
+        for(PExpr e : this._values_)
         {
             e.parent(null);
         }
-        this._callField_.clear();
+        this._values_.clear();
 
         for(Object obj_e : list)
         {
-            PCallField e = (PCallField) obj_e;
+            PExpr e = (PExpr) obj_e;
             if(e.parent() != null)
             {
                 e.parent().removeChild(e);
             }
 
             e.parent(this);
-            this._callField_.add(e);
+            this._values_.add(e);
         }
     }
 
@@ -66,14 +66,14 @@ public final class AVal extends PVal
     public String toString()
     {
         return ""
-            + toString(this._callField_);
+            + toString(this._values_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._callField_.remove(child))
+        if(this._values_.remove(child))
         {
             return;
         }
@@ -85,13 +85,13 @@ public final class AVal extends PVal
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        for(ListIterator<PCallField> i = this._callField_.listIterator(); i.hasNext();)
+        for(ListIterator<PExpr> i = this._values_.listIterator(); i.hasNext();)
         {
             if(i.next() == oldChild)
             {
                 if(newChild != null)
                 {
-                    i.set((PCallField) newChild);
+                    i.set((PExpr) newChild);
                     newChild.parent(this);
                     oldChild.parent(null);
                     return;

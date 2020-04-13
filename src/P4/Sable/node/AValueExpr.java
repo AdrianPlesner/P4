@@ -5,46 +5,46 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class ABoolLiteral extends PLiteral
+public final class AValueExpr extends PExpr
 {
-    private TBoolLiteral _value_;
+    private PVal _val_;
 
-    public ABoolLiteral()
+    public AValueExpr()
     {
         // Constructor
     }
 
-    public ABoolLiteral(
-        @SuppressWarnings("hiding") TBoolLiteral _value_)
+    public AValueExpr(
+        @SuppressWarnings("hiding") PVal _val_)
     {
         // Constructor
-        setValue(_value_);
+        setVal(_val_);
 
     }
 
     @Override
     public Object clone()
     {
-        return new ABoolLiteral(
-            cloneNode(this._value_));
+        return new AValueExpr(
+            cloneNode(this._val_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseABoolLiteral(this);
+        ((Analysis) sw).caseAValueExpr(this);
     }
 
-    public TBoolLiteral getValue()
+    public PVal getVal()
     {
-        return this._value_;
+        return this._val_;
     }
 
-    public void setValue(TBoolLiteral node)
+    public void setVal(PVal node)
     {
-        if(this._value_ != null)
+        if(this._val_ != null)
         {
-            this._value_.parent(null);
+            this._val_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class ABoolLiteral extends PLiteral
             node.parent(this);
         }
 
-        this._value_ = node;
+        this._val_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._value_);
+            + toString(this._val_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._value_ == child)
+        if(this._val_ == child)
         {
-            this._value_ = null;
+            this._val_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class ABoolLiteral extends PLiteral
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._value_ == oldChild)
+        if(this._val_ == oldChild)
         {
-            setValue((TBoolLiteral) newChild);
+            setVal((PVal) newChild);
             return;
         }
 

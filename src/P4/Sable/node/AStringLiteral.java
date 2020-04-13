@@ -7,7 +7,7 @@ import P4.Sable.analysis.*;
 @SuppressWarnings("nls")
 public final class AStringLiteral extends PLiteral
 {
-    private TString _string_;
+    private TString _value_;
 
     public AStringLiteral()
     {
@@ -15,10 +15,10 @@ public final class AStringLiteral extends PLiteral
     }
 
     public AStringLiteral(
-        @SuppressWarnings("hiding") TString _string_)
+        @SuppressWarnings("hiding") TString _value_)
     {
         // Constructor
-        setString(_string_);
+        setValue(_value_);
 
     }
 
@@ -26,7 +26,7 @@ public final class AStringLiteral extends PLiteral
     public Object clone()
     {
         return new AStringLiteral(
-            cloneNode(this._string_));
+            cloneNode(this._value_));
     }
 
     @Override
@@ -35,16 +35,16 @@ public final class AStringLiteral extends PLiteral
         ((Analysis) sw).caseAStringLiteral(this);
     }
 
-    public TString getString()
+    public TString getValue()
     {
-        return this._string_;
+        return this._value_;
     }
 
-    public void setString(TString node)
+    public void setValue(TString node)
     {
-        if(this._string_ != null)
+        if(this._value_ != null)
         {
-            this._string_.parent(null);
+            this._value_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class AStringLiteral extends PLiteral
             node.parent(this);
         }
 
-        this._string_ = node;
+        this._value_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._string_);
+            + toString(this._value_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._string_ == child)
+        if(this._value_ == child)
         {
-            this._string_ = null;
+            this._value_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class AStringLiteral extends PLiteral
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._string_ == oldChild)
+        if(this._value_ == oldChild)
         {
-            setString((TString) newChild);
+            setValue((TString) newChild);
             return;
         }
 

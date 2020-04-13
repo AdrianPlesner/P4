@@ -51,31 +51,8 @@ public class DepthFirstAdapter extends AnalysisAdapter
     {
         inAProg(node);
         {
-            List<PIncludes> copy = new ArrayList<PIncludes>(node.getIncludes());
-            for(PIncludes e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        if(node.getSetup() != null)
-        {
-            node.getSetup().apply(this);
-        }
-        if(node.getMoves() != null)
-        {
-            node.getMoves().apply(this);
-        }
-        if(node.getTurn() != null)
-        {
-            node.getTurn().apply(this);
-        }
-        if(node.getEndCon() != null)
-        {
-            node.getEndCon().apply(this);
-        }
-        {
-            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethodDcl());
-            for(PMethodDcl e : copy)
+            List<TId> copy = new ArrayList<TId>(node.getIncludes());
+            for(TId e : copy)
             {
                 e.apply(this);
             }
@@ -83,748 +60,215 @@ public class DepthFirstAdapter extends AnalysisAdapter
         outAProg(node);
     }
 
-    public void inAIncludes(AIncludes node)
+    public void inAListExpr(AListExpr node)
     {
         defaultIn(node);
     }
 
-    public void outAIncludes(AIncludes node)
+    public void outAListExpr(AListExpr node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAIncludes(AIncludes node)
+    public void caseAListExpr(AListExpr node)
     {
-        inAIncludes(node);
-        if(node.getInc() != null)
+        inAListExpr(node);
         {
-            node.getInc().apply(this);
-        }
-        if(node.getId() != null)
-        {
-            node.getId().apply(this);
-        }
-        if(node.getSemi() != null)
-        {
-            node.getSemi().apply(this);
-        }
-        outAIncludes(node);
-    }
-
-    public void inASetup(ASetup node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASetup(ASetup node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASetup(ASetup node)
-    {
-        inASetup(node);
-        if(node.getSetup() != null)
-        {
-            node.getSetup().apply(this);
-        }
-        if(node.getLBrack() != null)
-        {
-            node.getLBrack().apply(this);
-        }
-        if(node.getCard() != null)
-        {
-            node.getCard().apply(this);
-        }
-        if(node.getPublic() != null)
-        {
-            node.getPublic().apply(this);
-        }
-        if(node.getPrivate() != null)
-        {
-            node.getPrivate().apply(this);
-        }
-        {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getStmt());
-            for(PStmt e : copy)
+            List<PElement> copy = new ArrayList<PElement>(node.getElements());
+            for(PElement e : copy)
             {
                 e.apply(this);
             }
         }
-        if(node.getRBrack() != null)
-        {
-            node.getRBrack().apply(this);
-        }
-        outASetup(node);
+        outAListExpr(node);
     }
 
-    public void inACard(ACard node)
+    public void inAMultOpExpr(AMultOpExpr node)
     {
         defaultIn(node);
     }
 
-    public void outACard(ACard node)
+    public void outAMultOpExpr(AMultOpExpr node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseACard(ACard node)
+    public void caseAMultOpExpr(AMultOpExpr node)
     {
-        inACard(node);
-        if(node.getCard() != null)
+        inAMultOpExpr(node);
+        if(node.getL() != null)
         {
-            node.getCard().apply(this);
+            node.getL().apply(this);
         }
-        if(node.getClassBody() != null)
+        if(node.getOperator() != null)
         {
-            node.getClassBody().apply(this);
+            node.getOperator().apply(this);
         }
-        outACard(node);
+        if(node.getR() != null)
+        {
+            node.getR().apply(this);
+        }
+        outAMultOpExpr(node);
     }
 
-    public void inAClassBody(AClassBody node)
+    public void inALiteralExpr(ALiteralExpr node)
     {
         defaultIn(node);
     }
 
-    public void outAClassBody(AClassBody node)
+    public void outALiteralExpr(ALiteralExpr node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAClassBody(AClassBody node)
+    public void caseALiteralExpr(ALiteralExpr node)
     {
-        inAClassBody(node);
-        if(node.getLBrack() != null)
+        inALiteralExpr(node);
+        if(node.getValue() != null)
         {
-            node.getLBrack().apply(this);
+            node.getValue().apply(this);
         }
-        {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getStmt());
-            for(PStmt e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        {
-            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethodDcl());
-            for(PMethodDcl e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        {
-            List<PSubclass> copy = new ArrayList<PSubclass>(node.getSubclass());
-            for(PSubclass e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        if(node.getRBrack() != null)
-        {
-            node.getRBrack().apply(this);
-        }
-        outAClassBody(node);
+        outALiteralExpr(node);
     }
 
-    public void inASubclass(ASubclass node)
+    public void inAValueExpr(AValueExpr node)
     {
         defaultIn(node);
     }
 
-    public void outASubclass(ASubclass node)
+    public void outAValueExpr(AValueExpr node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseASubclass(ASubclass node)
+    public void caseAValueExpr(AValueExpr node)
     {
-        inASubclass(node);
-        if(node.getSub() != null)
-        {
-            node.getSub().apply(this);
-        }
-        if(node.getId() != null)
-        {
-            node.getId().apply(this);
-        }
-        if(node.getClassBody() != null)
-        {
-            node.getClassBody().apply(this);
-        }
-        outASubclass(node);
-    }
-
-    public void inAPublic(APublic node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAPublic(APublic node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAPublic(APublic node)
-    {
-        inAPublic(node);
-        if(node.getPublic() != null)
-        {
-            node.getPublic().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outAPublic(node);
-    }
-
-    public void inAPrivate(APrivate node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAPrivate(APrivate node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAPrivate(APrivate node)
-    {
-        inAPrivate(node);
-        if(node.getPrivate() != null)
-        {
-            node.getPrivate().apply(this);
-        }
-        if(node.getClassBody() != null)
-        {
-            node.getClassBody().apply(this);
-        }
-        outAPrivate(node);
-    }
-
-    public void inAMoves(AMoves node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAMoves(AMoves node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAMoves(AMoves node)
-    {
-        inAMoves(node);
-        if(node.getMoves() != null)
-        {
-            node.getMoves().apply(this);
-        }
-        if(node.getLBrack() != null)
-        {
-            node.getLBrack().apply(this);
-        }
-        {
-            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethodDcl());
-            for(PMethodDcl e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        if(node.getRBrack() != null)
-        {
-            node.getRBrack().apply(this);
-        }
-        outAMoves(node);
-    }
-
-    public void inADcl(ADcl node)
-    {
-        defaultIn(node);
-    }
-
-    public void outADcl(ADcl node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseADcl(ADcl node)
-    {
-        inADcl(node);
-        if(node.getType() != null)
-        {
-            node.getType().apply(this);
-        }
-        if(node.getSingleDcl() != null)
-        {
-            node.getSingleDcl().apply(this);
-        }
-        {
-            List<PDclList> copy = new ArrayList<PDclList>(node.getDclList());
-            for(PDclList e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        outADcl(node);
-    }
-
-    public void inASingleDcl(ASingleDcl node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASingleDcl(ASingleDcl node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASingleDcl(ASingleDcl node)
-    {
-        inASingleDcl(node);
-        if(node.getId() != null)
-        {
-            node.getId().apply(this);
-        }
-        if(node.getInit() != null)
-        {
-            node.getInit().apply(this);
-        }
-        outASingleDcl(node);
-    }
-
-    public void inADclList(ADclList node)
-    {
-        defaultIn(node);
-    }
-
-    public void outADclList(ADclList node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseADclList(ADclList node)
-    {
-        inADclList(node);
-        if(node.getSeparator() != null)
-        {
-            node.getSeparator().apply(this);
-        }
-        if(node.getSingleDcl() != null)
-        {
-            node.getSingleDcl().apply(this);
-        }
-        outADclList(node);
-    }
-
-    public void inAInit(AInit node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAInit(AInit node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAInit(AInit node)
-    {
-        inAInit(node);
-        if(node.getAssign() != null)
-        {
-            node.getAssign().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        outAInit(node);
-    }
-
-    public void inAExpandExpr(AExpandExpr node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandExpr(AExpandExpr node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandExpr(AExpandExpr node)
-    {
-        inAExpandExpr(node);
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        if(node.getBoolOp() != null)
-        {
-            node.getBoolOp().apply(this);
-        }
-        if(node.getEquality() != null)
-        {
-            node.getEquality().apply(this);
-        }
-        outAExpandExpr(node);
-    }
-
-    public void inASingleExpr(ASingleExpr node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASingleExpr(ASingleExpr node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASingleExpr(ASingleExpr node)
-    {
-        inASingleExpr(node);
-        if(node.getEquality() != null)
-        {
-            node.getEquality().apply(this);
-        }
-        outASingleExpr(node);
-    }
-
-    public void inAExpandEquality(AExpandEquality node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandEquality(AExpandEquality node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandEquality(AExpandEquality node)
-    {
-        inAExpandEquality(node);
-        if(node.getEquality() != null)
-        {
-            node.getEquality().apply(this);
-        }
-        if(node.getEqualOp() != null)
-        {
-            node.getEqualOp().apply(this);
-        }
-        if(node.getRelation() != null)
-        {
-            node.getRelation().apply(this);
-        }
-        outAExpandEquality(node);
-    }
-
-    public void inASingleEquality(ASingleEquality node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASingleEquality(ASingleEquality node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASingleEquality(ASingleEquality node)
-    {
-        inASingleEquality(node);
-        if(node.getRelation() != null)
-        {
-            node.getRelation().apply(this);
-        }
-        outASingleEquality(node);
-    }
-
-    public void inAExpandRelation(AExpandRelation node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandRelation(AExpandRelation node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandRelation(AExpandRelation node)
-    {
-        inAExpandRelation(node);
-        if(node.getRelation() != null)
-        {
-            node.getRelation().apply(this);
-        }
-        if(node.getRelationOp() != null)
-        {
-            node.getRelationOp().apply(this);
-        }
-        if(node.getAddExpr() != null)
-        {
-            node.getAddExpr().apply(this);
-        }
-        outAExpandRelation(node);
-    }
-
-    public void inASingleRelation(ASingleRelation node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASingleRelation(ASingleRelation node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASingleRelation(ASingleRelation node)
-    {
-        inASingleRelation(node);
-        if(node.getAddExpr() != null)
-        {
-            node.getAddExpr().apply(this);
-        }
-        outASingleRelation(node);
-    }
-
-    public void inAExpandAddExpr(AExpandAddExpr node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandAddExpr(AExpandAddExpr node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandAddExpr(AExpandAddExpr node)
-    {
-        inAExpandAddExpr(node);
-        if(node.getAddExpr() != null)
-        {
-            node.getAddExpr().apply(this);
-        }
-        if(node.getAddOp() != null)
-        {
-            node.getAddOp().apply(this);
-        }
-        if(node.getTerm() != null)
-        {
-            node.getTerm().apply(this);
-        }
-        outAExpandAddExpr(node);
-    }
-
-    public void inASingleAddExpr(ASingleAddExpr node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASingleAddExpr(ASingleAddExpr node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASingleAddExpr(ASingleAddExpr node)
-    {
-        inASingleAddExpr(node);
-        if(node.getTerm() != null)
-        {
-            node.getTerm().apply(this);
-        }
-        outASingleAddExpr(node);
-    }
-
-    public void inAExpandTerm(AExpandTerm node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandTerm(AExpandTerm node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandTerm(AExpandTerm node)
-    {
-        inAExpandTerm(node);
-        if(node.getTerm() != null)
-        {
-            node.getTerm().apply(this);
-        }
-        if(node.getMultOp() != null)
-        {
-            node.getMultOp().apply(this);
-        }
-        if(node.getFactor() != null)
-        {
-            node.getFactor().apply(this);
-        }
-        outAExpandTerm(node);
-    }
-
-    public void inAFactorTerm(AFactorTerm node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAFactorTerm(AFactorTerm node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAFactorTerm(AFactorTerm node)
-    {
-        inAFactorTerm(node);
-        if(node.getFactor() != null)
-        {
-            node.getFactor().apply(this);
-        }
-        outAFactorTerm(node);
-    }
-
-    public void inAExpandFactor(AExpandFactor node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandFactor(AExpandFactor node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandFactor(AExpandFactor node)
-    {
-        inAExpandFactor(node);
-        if(node.getParens() != null)
-        {
-            node.getParens().apply(this);
-        }
-        outAExpandFactor(node);
-    }
-
-    public void inALiteralFactor(ALiteralFactor node)
-    {
-        defaultIn(node);
-    }
-
-    public void outALiteralFactor(ALiteralFactor node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseALiteralFactor(ALiteralFactor node)
-    {
-        inALiteralFactor(node);
-        if(node.getLiteral() != null)
-        {
-            node.getLiteral().apply(this);
-        }
-        outALiteralFactor(node);
-    }
-
-    public void inAValFactor(AValFactor node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAValFactor(AValFactor node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAValFactor(AValFactor node)
-    {
-        inAValFactor(node);
+        inAValueExpr(node);
         if(node.getVal() != null)
         {
             node.getVal().apply(this);
         }
-        outAValFactor(node);
+        outAValueExpr(node);
     }
 
-    public void inAInitFactor(AInitFactor node)
+    public void inAAddOpExpr(AAddOpExpr node)
     {
         defaultIn(node);
     }
 
-    public void outAInitFactor(AInitFactor node)
+    public void outAAddOpExpr(AAddOpExpr node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAInitFactor(AInitFactor node)
+    public void caseAAddOpExpr(AAddOpExpr node)
     {
-        inAInitFactor(node);
-        if(node.getLBrack() != null)
+        inAAddOpExpr(node);
+        if(node.getL() != null)
         {
-            node.getLBrack().apply(this);
+            node.getL().apply(this);
         }
+        if(node.getOperator() != null)
         {
-            List<PElementList> copy = new ArrayList<PElementList>(node.getElementList());
-            for(PElementList e : copy)
-            {
-                e.apply(this);
-            }
+            node.getOperator().apply(this);
         }
-        if(node.getRBrack() != null)
+        if(node.getR() != null)
         {
-            node.getRBrack().apply(this);
+            node.getR().apply(this);
         }
-        outAInitFactor(node);
+        outAAddOpExpr(node);
     }
 
-    public void inAParens(AParens node)
+    public void inARelationExpr(ARelationExpr node)
     {
         defaultIn(node);
     }
 
-    public void outAParens(AParens node)
+    public void outARelationExpr(ARelationExpr node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAParens(AParens node)
+    public void caseARelationExpr(ARelationExpr node)
     {
-        inAParens(node);
-        if(node.getLParen() != null)
+        inARelationExpr(node);
+        if(node.getL() != null)
         {
-            node.getLParen().apply(this);
+            node.getL().apply(this);
         }
-        if(node.getExpr() != null)
+        if(node.getOperator() != null)
         {
-            node.getExpr().apply(this);
+            node.getOperator().apply(this);
         }
-        if(node.getRParen() != null)
+        if(node.getR() != null)
         {
-            node.getRParen().apply(this);
+            node.getR().apply(this);
         }
-        outAParens(node);
+        outARelationExpr(node);
+    }
+
+    public void inAEqualityExpr(AEqualityExpr node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEqualityExpr(AEqualityExpr node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEqualityExpr(AEqualityExpr node)
+    {
+        inAEqualityExpr(node);
+        if(node.getL() != null)
+        {
+            node.getL().apply(this);
+        }
+        if(node.getOperator() != null)
+        {
+            node.getOperator().apply(this);
+        }
+        if(node.getR() != null)
+        {
+            node.getR().apply(this);
+        }
+        outAEqualityExpr(node);
+    }
+
+    public void inABoolOpExpr(ABoolOpExpr node)
+    {
+        defaultIn(node);
+    }
+
+    public void outABoolOpExpr(ABoolOpExpr node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseABoolOpExpr(ABoolOpExpr node)
+    {
+        inABoolOpExpr(node);
+        if(node.getL() != null)
+        {
+            node.getL().apply(this);
+        }
+        if(node.getOperator() != null)
+        {
+            node.getOperator().apply(this);
+        }
+        if(node.getR() != null)
+        {
+            node.getR().apply(this);
+        }
+        outABoolOpExpr(node);
     }
 
     public void inAIntLiteral(AIntLiteral node)
@@ -841,9 +285,9 @@ public class DepthFirstAdapter extends AnalysisAdapter
     public void caseAIntLiteral(AIntLiteral node)
     {
         inAIntLiteral(node);
-        if(node.getIntLiteral() != null)
+        if(node.getValue() != null)
         {
-            node.getIntLiteral().apply(this);
+            node.getValue().apply(this);
         }
         outAIntLiteral(node);
     }
@@ -862,9 +306,9 @@ public class DepthFirstAdapter extends AnalysisAdapter
     public void caseAFloatLiteral(AFloatLiteral node)
     {
         inAFloatLiteral(node);
-        if(node.getFloatLiteral() != null)
+        if(node.getValue() != null)
         {
-            node.getFloatLiteral().apply(this);
+            node.getValue().apply(this);
         }
         outAFloatLiteral(node);
     }
@@ -883,9 +327,9 @@ public class DepthFirstAdapter extends AnalysisAdapter
     public void caseAStringLiteral(AStringLiteral node)
     {
         inAStringLiteral(node);
-        if(node.getString() != null)
+        if(node.getValue() != null)
         {
-            node.getString().apply(this);
+            node.getValue().apply(this);
         }
         outAStringLiteral(node);
     }
@@ -904,86 +348,35 @@ public class DepthFirstAdapter extends AnalysisAdapter
     public void caseABoolLiteral(ABoolLiteral node)
     {
         inABoolLiteral(node);
-        if(node.getBoolLiteral() != null)
+        if(node.getValue() != null)
         {
-            node.getBoolLiteral().apply(this);
+            node.getValue().apply(this);
         }
         outABoolLiteral(node);
     }
 
-    public void inAElementList(AElementList node)
+    public void inAElement(AElement node)
     {
         defaultIn(node);
     }
 
-    public void outAElementList(AElementList node)
+    public void outAElement(AElement node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAElementList(AElementList node)
+    public void caseAElement(AElement node)
     {
-        inAElementList(node);
-        if(node.getElement() != null)
+        inAElement(node);
         {
-            node.getElement().apply(this);
+            List<PExpr> copy = new ArrayList<PExpr>(node.getValues());
+            for(PExpr e : copy)
+            {
+                e.apply(this);
+            }
         }
-        if(node.getSemi() != null)
-        {
-            node.getSemi().apply(this);
-        }
-        outAElementList(node);
-    }
-
-    public void inAExpandElement(AExpandElement node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandElement(AExpandElement node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandElement(AExpandElement node)
-    {
-        inAExpandElement(node);
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        if(node.getSeparator() != null)
-        {
-            node.getSeparator().apply(this);
-        }
-        if(node.getElement() != null)
-        {
-            node.getElement().apply(this);
-        }
-        outAExpandElement(node);
-    }
-
-    public void inASingleElement(ASingleElement node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASingleElement(ASingleElement node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASingleElement(ASingleElement node)
-    {
-        inASingleElement(node);
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        outASingleElement(node);
+        outAElement(node);
     }
 
     public void inAVal(AVal node)
@@ -1000,17 +393,9 @@ public class DepthFirstAdapter extends AnalysisAdapter
     public void caseAVal(AVal node)
     {
         inAVal(node);
-        if(node.getId() != null)
         {
-            node.getId().apply(this);
-        }
-        if(node.getCall() != null)
-        {
-            node.getCall().apply(this);
-        }
-        {
-            List<PValList> copy = new ArrayList<PValList>(node.getValList());
-            for(PValList e : copy)
+            List<PCallField> copy = new ArrayList<PCallField>(node.getCallField());
+            for(PCallField e : copy)
             {
                 e.apply(this);
             }
@@ -1018,1043 +403,52 @@ public class DepthFirstAdapter extends AnalysisAdapter
         outAVal(node);
     }
 
-    public void inAValList(AValList node)
+    public void inAFieldCallField(AFieldCallField node)
     {
         defaultIn(node);
     }
 
-    public void outAValList(AValList node)
+    public void outAFieldCallField(AFieldCallField node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAValList(AValList node)
+    public void caseAFieldCallField(AFieldCallField node)
     {
-        inAValList(node);
-        if(node.getDot() != null)
-        {
-            node.getDot().apply(this);
-        }
+        inAFieldCallField(node);
         if(node.getId() != null)
         {
             node.getId().apply(this);
         }
-        if(node.getCall() != null)
-        {
-            node.getCall().apply(this);
-        }
-        outAValList(node);
+        outAFieldCallField(node);
     }
 
-    public void inACall(ACall node)
+    public void inACallCallField(ACallCallField node)
     {
         defaultIn(node);
     }
 
-    public void outACall(ACall node)
+    public void outACallCallField(ACallCallField node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseACall(ACall node)
+    public void caseACallCallField(ACallCallField node)
     {
-        inACall(node);
-        if(node.getLParen() != null)
-        {
-            node.getLParen().apply(this);
-        }
-        if(node.getParamList() != null)
-        {
-            node.getParamList().apply(this);
-        }
-        if(node.getRParen() != null)
-        {
-            node.getRParen().apply(this);
-        }
-        outACall(node);
-    }
-
-    public void inAParamList(AParamList node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAParamList(AParamList node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAParamList(AParamList node)
-    {
-        inAParamList(node);
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        {
-            List<PParam> copy = new ArrayList<PParam>(node.getParam());
-            for(PParam e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        outAParamList(node);
-    }
-
-    public void inAParam(AParam node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAParam(AParam node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAParam(AParam node)
-    {
-        inAParam(node);
-        if(node.getSeparator() != null)
-        {
-            node.getSeparator().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        outAParam(node);
-    }
-
-    public void inAMethodDcl(AMethodDcl node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAMethodDcl(AMethodDcl node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAMethodDcl(AMethodDcl node)
-    {
-        inAMethodDcl(node);
-        if(node.getFun() != null)
-        {
-            node.getFun().apply(this);
-        }
+        inACallCallField(node);
         if(node.getId() != null)
         {
             node.getId().apply(this);
         }
-        if(node.getLParen() != null)
         {
-            node.getLParen().apply(this);
-        }
-        if(node.getParamDclList() != null)
-        {
-            node.getParamDclList().apply(this);
-        }
-        if(node.getRParen() != null)
-        {
-            node.getRParen().apply(this);
-        }
-        if(node.getTypeof() != null)
-        {
-            node.getTypeof().apply(this);
-        }
-        if(node.getType() != null)
-        {
-            node.getType().apply(this);
-        }
-        if(node.getLBrack() != null)
-        {
-            node.getLBrack().apply(this);
-        }
-        {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getStmt());
-            for(PStmt e : copy)
+            List<PExpr> copy = new ArrayList<PExpr>(node.getParams());
+            for(PExpr e : copy)
             {
                 e.apply(this);
             }
         }
-        if(node.getReturnStmt() != null)
-        {
-            node.getReturnStmt().apply(this);
-        }
-        if(node.getRBrack() != null)
-        {
-            node.getRBrack().apply(this);
-        }
-        outAMethodDcl(node);
-    }
-
-    public void inAParamDclList(AParamDclList node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAParamDclList(AParamDclList node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAParamDclList(AParamDclList node)
-    {
-        inAParamDclList(node);
-        if(node.getParamDcl() != null)
-        {
-            node.getParamDcl().apply(this);
-        }
-        {
-            List<PExpandParam> copy = new ArrayList<PExpandParam>(node.getExpandParam());
-            for(PExpandParam e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        outAParamDclList(node);
-    }
-
-    public void inAExpandParam(AExpandParam node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAExpandParam(AExpandParam node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAExpandParam(AExpandParam node)
-    {
-        inAExpandParam(node);
-        if(node.getSeparator() != null)
-        {
-            node.getSeparator().apply(this);
-        }
-        if(node.getParamDcl() != null)
-        {
-            node.getParamDcl().apply(this);
-        }
-        outAExpandParam(node);
-    }
-
-    public void inAParamDcl(AParamDcl node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAParamDcl(AParamDcl node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAParamDcl(AParamDcl node)
-    {
-        inAParamDcl(node);
-        if(node.getType() != null)
-        {
-            node.getType().apply(this);
-        }
-        if(node.getId() != null)
-        {
-            node.getId().apply(this);
-        }
-        outAParamDcl(node);
-    }
-
-    public void inAType(AType node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAType(AType node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAType(AType node)
-    {
-        inAType(node);
-        if(node.getList() != null)
-        {
-            node.getList().apply(this);
-        }
-        if(node.getId() != null)
-        {
-            node.getId().apply(this);
-        }
-        outAType(node);
-    }
-
-    public void inAList(AList node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAList(AList node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAList(AList node)
-    {
-        inAList(node);
-        if(node.getList() != null)
-        {
-            node.getList().apply(this);
-        }
-        if(node.getTypeof() != null)
-        {
-            node.getTypeof().apply(this);
-        }
-        outAList(node);
-    }
-
-    public void inAReturnStmt(AReturnStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAReturnStmt(AReturnStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAReturnStmt(AReturnStmt node)
-    {
-        inAReturnStmt(node);
-        if(node.getReturn() != null)
-        {
-            node.getReturn().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        if(node.getSemi() != null)
-        {
-            node.getSemi().apply(this);
-        }
-        outAReturnStmt(node);
-    }
-
-    public void inASelectStmt(ASelectStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASelectStmt(ASelectStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASelectStmt(ASelectStmt node)
-    {
-        inASelectStmt(node);
-        if(node.getSelectStmt() != null)
-        {
-            node.getSelectStmt().apply(this);
-        }
-        outASelectStmt(node);
-    }
-
-    public void inADclStmt(ADclStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outADclStmt(ADclStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseADclStmt(ADclStmt node)
-    {
-        inADclStmt(node);
-        if(node.getDcl() != null)
-        {
-            node.getDcl().apply(this);
-        }
-        if(node.getEnd() != null)
-        {
-            node.getEnd().apply(this);
-        }
-        outADclStmt(node);
-    }
-
-    public void inALoopStmt(ALoopStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outALoopStmt(ALoopStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseALoopStmt(ALoopStmt node)
-    {
-        inALoopStmt(node);
-        if(node.getLoopStmt() != null)
-        {
-            node.getLoopStmt().apply(this);
-        }
-        outALoopStmt(node);
-    }
-
-    public void inAAssignStmt(AAssignStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAAssignStmt(AAssignStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAAssignStmt(AAssignStmt node)
-    {
-        inAAssignStmt(node);
-        if(node.getAssignValue() != null)
-        {
-            node.getAssignValue().apply(this);
-        }
-        if(node.getEnd() != null)
-        {
-            node.getEnd().apply(this);
-        }
-        outAAssignStmt(node);
-    }
-
-    public void inACallStmt(ACallStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outACallStmt(ACallStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseACallStmt(ACallStmt node)
-    {
-        inACallStmt(node);
-        if(node.getVal() != null)
-        {
-            node.getVal().apply(this);
-        }
-        if(node.getEnd() != null)
-        {
-            node.getEnd().apply(this);
-        }
-        outACallStmt(node);
-    }
-
-    public void inAIfSelectStmt(AIfSelectStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAIfSelectStmt(AIfSelectStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAIfSelectStmt(AIfSelectStmt node)
-    {
-        inAIfSelectStmt(node);
-        if(node.getIfStmt() != null)
-        {
-            node.getIfStmt().apply(this);
-        }
-        outAIfSelectStmt(node);
-    }
-
-    public void inASwitchSelectStmt(ASwitchSelectStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASwitchSelectStmt(ASwitchSelectStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASwitchSelectStmt(ASwitchSelectStmt node)
-    {
-        inASwitchSelectStmt(node);
-        if(node.getSwitchStmt() != null)
-        {
-            node.getSwitchStmt().apply(this);
-        }
-        outASwitchSelectStmt(node);
-    }
-
-    public void inABlock(ABlock node)
-    {
-        defaultIn(node);
-    }
-
-    public void outABlock(ABlock node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseABlock(ABlock node)
-    {
-        inABlock(node);
-        if(node.getLBrack() != null)
-        {
-            node.getLBrack().apply(this);
-        }
-        {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getStmt());
-            for(PStmt e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        if(node.getRBrack() != null)
-        {
-            node.getRBrack().apply(this);
-        }
-        outABlock(node);
-    }
-
-    public void inAIfStmt(AIfStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAIfStmt(AIfStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAIfStmt(AIfStmt node)
-    {
-        inAIfStmt(node);
-        if(node.getIf() != null)
-        {
-            node.getIf().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        {
-            List<PElseIf> copy = new ArrayList<PElseIf>(node.getElseIf());
-            for(PElseIf e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        if(node.getElseStmt() != null)
-        {
-            node.getElseStmt().apply(this);
-        }
-        outAIfStmt(node);
-    }
-
-    public void inAElseIf(AElseIf node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAElseIf(AElseIf node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAElseIf(AElseIf node)
-    {
-        inAElseIf(node);
-        if(node.getElse() != null)
-        {
-            node.getElse().apply(this);
-        }
-        if(node.getIf() != null)
-        {
-            node.getIf().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outAElseIf(node);
-    }
-
-    public void inAElseStmt(AElseStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAElseStmt(AElseStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAElseStmt(AElseStmt node)
-    {
-        inAElseStmt(node);
-        if(node.getElse() != null)
-        {
-            node.getElse().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outAElseStmt(node);
-    }
-
-    public void inASwitchStmt(ASwitchStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outASwitchStmt(ASwitchStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseASwitchStmt(ASwitchStmt node)
-    {
-        inASwitchStmt(node);
-        if(node.getSwitch() != null)
-        {
-            node.getSwitch().apply(this);
-        }
-        if(node.getVal() != null)
-        {
-            node.getVal().apply(this);
-        }
-        if(node.getLBrack() != null)
-        {
-            node.getLBrack().apply(this);
-        }
-        {
-            List<PCase> copy = new ArrayList<PCase>(node.getCase());
-            for(PCase e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        if(node.getRBrack() != null)
-        {
-            node.getRBrack().apply(this);
-        }
-        outASwitchStmt(node);
-    }
-
-    public void inACase(ACase node)
-    {
-        defaultIn(node);
-    }
-
-    public void outACase(ACase node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseACase(ACase node)
-    {
-        inACase(node);
-        if(node.getCaseStmt() != null)
-        {
-            node.getCaseStmt().apply(this);
-        }
-        if(node.getColon() != null)
-        {
-            node.getColon().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outACase(node);
-    }
-
-    public void inACaseCaseStmt(ACaseCaseStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outACaseCaseStmt(ACaseCaseStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseACaseCaseStmt(ACaseCaseStmt node)
-    {
-        inACaseCaseStmt(node);
-        if(node.getCase() != null)
-        {
-            node.getCase().apply(this);
-        }
-        outACaseCaseStmt(node);
-    }
-
-    public void inADefaultCaseStmt(ADefaultCaseStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outADefaultCaseStmt(ADefaultCaseStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseADefaultCaseStmt(ADefaultCaseStmt node)
-    {
-        inADefaultCaseStmt(node);
-        if(node.getDefault() != null)
-        {
-            node.getDefault().apply(this);
-        }
-        outADefaultCaseStmt(node);
-    }
-
-    public void inAWhileLoopStmt(AWhileLoopStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAWhileLoopStmt(AWhileLoopStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAWhileLoopStmt(AWhileLoopStmt node)
-    {
-        inAWhileLoopStmt(node);
-        if(node.getWhileLoop() != null)
-        {
-            node.getWhileLoop().apply(this);
-        }
-        outAWhileLoopStmt(node);
-    }
-
-    public void inAForLoopStmt(AForLoopStmt node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAForLoopStmt(AForLoopStmt node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAForLoopStmt(AForLoopStmt node)
-    {
-        inAForLoopStmt(node);
-        if(node.getForLoop() != null)
-        {
-            node.getForLoop().apply(this);
-        }
-        outAForLoopStmt(node);
-    }
-
-    public void inAWhileLoop(AWhileLoop node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAWhileLoop(AWhileLoop node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAWhileLoop(AWhileLoop node)
-    {
-        inAWhileLoop(node);
-        if(node.getWhile() != null)
-        {
-            node.getWhile().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outAWhileLoop(node);
-    }
-
-    public void inAForLoop(AForLoop node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAForLoop(AForLoop node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAForLoop(AForLoop node)
-    {
-        inAForLoop(node);
-        if(node.getFor() != null)
-        {
-            node.getFor().apply(this);
-        }
-        if(node.getLoopExpr() != null)
-        {
-            node.getLoopExpr().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outAForLoop(node);
-    }
-
-    public void inAForeachLoopExpr(AForeachLoopExpr node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAForeachLoopExpr(AForeachLoopExpr node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAForeachLoopExpr(AForeachLoopExpr node)
-    {
-        inAForeachLoopExpr(node);
-        if(node.getId() != null)
-        {
-            node.getId().apply(this);
-        }
-        if(node.getIn() != null)
-        {
-            node.getIn().apply(this);
-        }
-        if(node.getVal() != null)
-        {
-            node.getVal().apply(this);
-        }
-        outAForeachLoopExpr(node);
-    }
-
-    public void inAForLoopExpr(AForLoopExpr node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAForLoopExpr(AForLoopExpr node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAForLoopExpr(AForLoopExpr node)
-    {
-        inAForLoopExpr(node);
-        if(node.getInitLoop() != null)
-        {
-            node.getInitLoop().apply(this);
-        }
-        if(node.getA() != null)
-        {
-            node.getA().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        if(node.getB() != null)
-        {
-            node.getB().apply(this);
-        }
-        if(node.getAssignValue() != null)
-        {
-            node.getAssignValue().apply(this);
-        }
-        outAForLoopExpr(node);
-    }
-
-    public void inADeclareInitLoop(ADeclareInitLoop node)
-    {
-        defaultIn(node);
-    }
-
-    public void outADeclareInitLoop(ADeclareInitLoop node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseADeclareInitLoop(ADeclareInitLoop node)
-    {
-        inADeclareInitLoop(node);
-        if(node.getDcl() != null)
-        {
-            node.getDcl().apply(this);
-        }
-        outADeclareInitLoop(node);
-    }
-
-    public void inAAssignInitLoop(AAssignInitLoop node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAAssignInitLoop(AAssignInitLoop node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAAssignInitLoop(AAssignInitLoop node)
-    {
-        inAAssignInitLoop(node);
-        if(node.getAssignValue() != null)
-        {
-            node.getAssignValue().apply(this);
-        }
-        outAAssignInitLoop(node);
-    }
-
-    public void inAAssignValue(AAssignValue node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAAssignValue(AAssignValue node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAAssignValue(AAssignValue node)
-    {
-        inAAssignValue(node);
-        if(node.getVal() != null)
-        {
-            node.getVal().apply(this);
-        }
-        if(node.getAssign() != null)
-        {
-            node.getAssign().apply(this);
-        }
-        if(node.getExpr() != null)
-        {
-            node.getExpr().apply(this);
-        }
-        outAAssignValue(node);
-    }
-
-    public void inATurn(ATurn node)
-    {
-        defaultIn(node);
-    }
-
-    public void outATurn(ATurn node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseATurn(ATurn node)
-    {
-        inATurn(node);
-        if(node.getTurn() != null)
-        {
-            node.getTurn().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outATurn(node);
-    }
-
-    public void inAEndCon(AEndCon node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAEndCon(AEndCon node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAEndCon(AEndCon node)
-    {
-        inAEndCon(node);
-        if(node.getEndCon() != null)
-        {
-            node.getEndCon().apply(this);
-        }
-        if(node.getBlock() != null)
-        {
-            node.getBlock().apply(this);
-        }
-        outAEndCon(node);
-    }
-
-    public void inAEnd(AEnd node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAEnd(AEnd node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAEnd(AEnd node)
-    {
-        inAEnd(node);
-        if(node.getSemi() != null)
-        {
-            node.getSemi().apply(this);
-        }
-        outAEnd(node);
+        outACallCallField(node);
     }
 }

@@ -5,17 +5,17 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class ABoolLiteral extends PLiteral
+public final class ALiteralExpr extends PExpr
 {
-    private TBoolLiteral _value_;
+    private PLiteral _value_;
 
-    public ABoolLiteral()
+    public ALiteralExpr()
     {
         // Constructor
     }
 
-    public ABoolLiteral(
-        @SuppressWarnings("hiding") TBoolLiteral _value_)
+    public ALiteralExpr(
+        @SuppressWarnings("hiding") PLiteral _value_)
     {
         // Constructor
         setValue(_value_);
@@ -25,22 +25,22 @@ public final class ABoolLiteral extends PLiteral
     @Override
     public Object clone()
     {
-        return new ABoolLiteral(
+        return new ALiteralExpr(
             cloneNode(this._value_));
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseABoolLiteral(this);
+        ((Analysis) sw).caseALiteralExpr(this);
     }
 
-    public TBoolLiteral getValue()
+    public PLiteral getValue()
     {
         return this._value_;
     }
 
-    public void setValue(TBoolLiteral node)
+    public void setValue(PLiteral node)
     {
         if(this._value_ != null)
         {
@@ -86,7 +86,7 @@ public final class ABoolLiteral extends PLiteral
         // Replace child
         if(this._value_ == oldChild)
         {
-            setValue((TBoolLiteral) newChild);
+            setValue((PLiteral) newChild);
             return;
         }
 

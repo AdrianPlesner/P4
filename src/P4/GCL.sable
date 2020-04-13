@@ -64,59 +64,131 @@ Ignored Tokens
     blank, comment;
 
 Productions
-    prog = include* P.setup P.moves P.turn P.end_con method_dcl* {-> New prog([include.id], setup, moves, turn, end_con, [method_dcl])};
+    prog = include* P.setup P.moves P.turn P.end_con method_dcl* {-> New prog([include.id] /*, setup, moves, turn, end_con, [method_dcl]*/)};
+
     include{-> id} = inc id semi {-> id };
-    setup = T.setup l_brack P.card P.public P.private stmt* r_brack {-> New setup(card, public, private, [stmt])};
-    card = T.card class_body {-> New card([class_body.stmt], [class_body.method_dcl], [class_body.subclass])};
+
+    setup = T.setup l_brack P.card P.public P.private stmt* r_brack /*{-> New setup(card, public, private, [stmt])}*/;
+
+    card = T.card class_body /*{-> New card([class_body.stmt], [class_body.method_dcl], [class_body.subclass])}*/;
+
     class_body = l_brack stmt* method_dcl* subclass* r_brack;
+
     subclass = sub id class_body;
+
     public = T.public block;
+
     private = T.private class_body;
+
     moves = T.moves l_brack method_dcl* r_brack;
+
     dcl = type single_dcl dcl_list*;
+
     single_dcl = id init?;
+
     dcl_list = separator single_dcl;
+
     init = assign expr;
-    expr = {expand} expr bool_op equality | {single} equality;
-    equality = {expand} equality equal_op relation  | {single} relation;
-    relation = {expand} relation relation_op add_expr | {single} add_expr;
-    add_expr = {expand} add_expr add_op term | {single} term;
-    term = {expand} term mult_op factor | {factor} factor;
-    factor = {expand} parens | {literal} literal | {val} val | {init} l_brack element_list* r_brack;
-    parens = l_paren expr r_paren;
-    literal = {int} int_literal | {float} float_literal | {string} string | {bool} bool_literal;
-    element_list = element semi;
-    element = {expand} expr separator element | {single} expr;
-    val = id call? val_list*;
-    val_list = dot id call?;
-    call = l_paren param_list? r_paren;
-    param_list = expr param*;
-    param = separator expr;
+
+    expr = {expand} expr bool_op equality {-> New expr.bool_op(expr, bool_op, equality.expr)} | {single} equality {-> equality.expr};
+
+    equality{-> expr} = {expand} equality equal_op relation {-> New expr.equality(equality.expr, equal_op, relation.expr)} |
+    {single} relation {-> relation.expr};
+
+    relation{-> expr} = {expand} relation relation_op add_expr {-> New expr.relation(relation.expr, relation_op, add_expr.expr )} |
+    {single} add_expr {-> add_expr.expr};
+
+    add_expr{-> expr} = {expand} add_expr add_op term {-> New expr.add_op(add_expr.expr, add_op, term.expr)} | {single} term {-> term.expr};
+
+    term{-> expr} = {expand} term mult_op factor {-> New expr.mult_op(term.expr, mult_op, factor.expr)} | {factor} factor {-> factor.expr};
+
+    factor{-> expr} = {expand} parens {-> parens.expr} | {literal} literal {-> New expr.literal(literal)} | {val} val {-> New expr.value(val)} |
+    {init} l_brack element_list* r_brack {-> New expr.list([element_list.element])};
+
+    parens{-> expr} = l_paren expr r_paren {-> expr};
+
+    literal = {int} int_literal {-> New literal.int(int_literal)} | {float} float_literal {-> New literal.float(float_literal)} |
+    {string} string {-> New literal.string(string)} | {bool} bool_literal {-> New literal.bool(bool_literal)} ;
+
+    element_list{-> element} = element semi {-> element};
+
+    element = expr? element_expand* {-> New element([expr, element_expand.expr])};
+
+    element_expand{-> expr} = separator expr{-> expr};
+
+    val = call_field val_list* {-> New val([call_field, val_list.call_field])} ;
+
+    val_list{-> call_field} = dot call_field{-> call_field};
+
+    call_field = {field} id {-> New call_field.field(id)} | {call} id call {-> New call_field.call(id, [call.expr])};
+
+    call{-> expr*} = l_paren expr? param* r_paren {-> [expr, param.expr]};
+
+    param{-> expr} = separator expr {-> expr};
+
     method_dcl = fun id l_paren param_dcl_list? r_paren typeof type l_brack stmt* return_stmt? r_brack;
+
     param_dcl_list = param_dcl expand_param*;
+
     expand_param = separator param_dcl;
+
     param_dcl = type id;
+
     type = P.list? id;
+
     list = T.list typeof;
+
     return_stmt = return expr semi;
-    stmt = {select} select_stmt | {dcl} dcl end | {loop} loop_stmt | {assign} assign_value end | {call} val end;
+
+    stmt = {select} select_stmt | {dcl} dcl end | {loop} loop_stmt | {assign} assign_value end | {call} val end ;
+
     select_stmt = {if} if_stmt | {switch} switch_stmt;
-    block = l_brack stmt* r_brack;
+
+    block /*{-> stmt*}*/ = l_brack stmt* r_brack /*{-> [stmt]}*/;
+
     if_stmt = if expr block else_if* else_stmt?;
+
     else_if = else if expr block;
+
     else_stmt = else block;
+
     switch_stmt = switch val l_brack P.case+ r_brack;
+
     case = case_stmt colon block;
+
     case_stmt = {case} T.case | {default} default;
+
     loop_stmt = {while} while_loop | {for} for_loop;
+
     while_loop = while expr block;
+
     for_loop = for loop_expr block;
+
     loop_expr = {foreach} id in val | {for} init_loop [a]:semi expr [b]:semi assign_value;
+
     init_loop = {declare} dcl | {assign} assign_value;
+
     assign_value = val assign expr;
+
     turn = T.turn block;
-    end_con = T.end_con block;
+
+    end_con = T.end_con block /*{-> New end_con([block.stmt])}*/;
+
     end = semi;
 
 Abstract Syntax Tree
-    prog = [includes]:id* P.setup P.moves P.turn P.end_con [methods]:method_dcl*;
+    prog = [includes]:id* /*P.setup P.moves P.turn P.end_con [methods]:method_dcl* */;
+
+    expr = {list} [elements]:element* | {mult_op} [l]:expr [operator]:mult_op [r]:expr | {literal} [value]:literal | {value} val |
+    {add_op} [l]:expr [operator]:add_op [r]:expr | {relation} [l]:expr [operator]:relation_op [r]:expr |
+    {equality} [l]:expr [operator]:equal_op [r]:expr | {bool_op} [l]:expr [operator]:bool_op [r]:expr;
+
+    literal = {int} [value]:int_literal | {float} [value]:float_literal | {string} [value]:string | {bool} [value]:bool_literal;
+
+    element = [values]:expr*;
+
+    val = call_field*;
+
+    call_field = {field} id | {call} id [params]: expr*;
+
+    /*end_con = [stmts]:stmt*;*/

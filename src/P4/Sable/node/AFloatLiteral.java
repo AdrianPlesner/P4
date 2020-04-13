@@ -7,7 +7,7 @@ import P4.Sable.analysis.*;
 @SuppressWarnings("nls")
 public final class AFloatLiteral extends PLiteral
 {
-    private TFloatLiteral _floatLiteral_;
+    private TFloatLiteral _value_;
 
     public AFloatLiteral()
     {
@@ -15,10 +15,10 @@ public final class AFloatLiteral extends PLiteral
     }
 
     public AFloatLiteral(
-        @SuppressWarnings("hiding") TFloatLiteral _floatLiteral_)
+        @SuppressWarnings("hiding") TFloatLiteral _value_)
     {
         // Constructor
-        setFloatLiteral(_floatLiteral_);
+        setValue(_value_);
 
     }
 
@@ -26,7 +26,7 @@ public final class AFloatLiteral extends PLiteral
     public Object clone()
     {
         return new AFloatLiteral(
-            cloneNode(this._floatLiteral_));
+            cloneNode(this._value_));
     }
 
     @Override
@@ -35,16 +35,16 @@ public final class AFloatLiteral extends PLiteral
         ((Analysis) sw).caseAFloatLiteral(this);
     }
 
-    public TFloatLiteral getFloatLiteral()
+    public TFloatLiteral getValue()
     {
-        return this._floatLiteral_;
+        return this._value_;
     }
 
-    public void setFloatLiteral(TFloatLiteral node)
+    public void setValue(TFloatLiteral node)
     {
-        if(this._floatLiteral_ != null)
+        if(this._value_ != null)
         {
-            this._floatLiteral_.parent(null);
+            this._value_.parent(null);
         }
 
         if(node != null)
@@ -57,23 +57,23 @@ public final class AFloatLiteral extends PLiteral
             node.parent(this);
         }
 
-        this._floatLiteral_ = node;
+        this._value_ = node;
     }
 
     @Override
     public String toString()
     {
         return ""
-            + toString(this._floatLiteral_);
+            + toString(this._value_);
     }
 
     @Override
     void removeChild(@SuppressWarnings("unused") Node child)
     {
         // Remove child
-        if(this._floatLiteral_ == child)
+        if(this._value_ == child)
         {
-            this._floatLiteral_ = null;
+            this._value_ = null;
             return;
         }
 
@@ -84,9 +84,9 @@ public final class AFloatLiteral extends PLiteral
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        if(this._floatLiteral_ == oldChild)
+        if(this._value_ == oldChild)
         {
-            setFloatLiteral((TFloatLiteral) newChild);
+            setValue((TFloatLiteral) newChild);
             return;
         }
 
