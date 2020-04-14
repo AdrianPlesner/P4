@@ -13,6 +13,9 @@ public interface Analysis extends Switch
 
     void caseStart(Start node);
     void caseAProg(AProg node);
+    void caseASetup(ASetup node);
+    void caseAClassBody(AClassBody node);
+    void caseASubclass(ASubclass node);
     void caseAListExpr(AListExpr node);
     void caseAMultOpExpr(AMultOpExpr node);
     void caseALiteralExpr(ALiteralExpr node);
@@ -29,6 +32,23 @@ public interface Analysis extends Switch
     void caseAVal(AVal node);
     void caseAFieldCallField(AFieldCallField node);
     void caseACallCallField(ACallCallField node);
+    void caseASingleDcl(ASingleDcl node);
+    void caseAListType(AListType node);
+    void caseAVarType(AVarType node);
+    void caseAElseIf(AElseIf node);
+    void caseADclStmt(ADclStmt node);
+    void caseAAssignStmt(AAssignStmt node);
+    void caseACallStmt(ACallStmt node);
+    void caseAIfStmt(AIfStmt node);
+    void caseASwitchStmt(ASwitchStmt node);
+    void caseAForStmt(AForStmt node);
+    void caseAForeachStmt(AForeachStmt node);
+    void caseAWhileStmt(AWhileStmt node);
+    void caseAReturnStmt(AReturnStmt node);
+    void caseACaseCase(ACaseCase node);
+    void caseADefaultCase(ADefaultCase node);
+    void caseAMethodDcl(AMethodDcl node);
+    void caseAParamDcl(AParamDcl node);
 
     void caseTBlank(TBlank node);
     void caseTComment(TComment node);

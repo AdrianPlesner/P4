@@ -64,31 +64,33 @@ Ignored Tokens
     blank, comment;
 
 Productions
-    prog = include* P.setup P.moves P.turn P.end_con method_dcl* {-> New prog([include.id] /*, setup, moves, turn, end_con, [method_dcl]*/)};
+    prog = include* P.setup P.moves P.turn P.end_con method_dcl*
+    {-> New prog([include.id], setup, [moves.method_dcl], [turn.stmt], [end_con.stmt], [method_dcl])};
 
     include{-> id} = inc id semi {-> id };
 
-    setup = T.setup l_brack P.card P.public P.private stmt* r_brack /*{-> New setup(card, public, private, [stmt])}*/;
+    setup = T.setup l_brack P.card P.public P.private stmt* r_brack
+    {-> New setup(card.class_body, [public.stmt], private.class_body, [stmt])};
 
-    card = T.card class_body /*{-> New card([class_body.stmt], [class_body.method_dcl], [class_body.subclass])}*/;
+    card{-> class_body} = T.card class_body {-> class_body};
 
-    class_body = l_brack stmt* method_dcl* subclass* r_brack;
+    class_body = l_brack stmt* method_dcl* subclass* r_brack {-> New class_body([stmt], [method_dcl], [subclass])};
 
-    subclass = sub id class_body;
+    subclass = sub id class_body {-> New subclass(id, class_body)};
 
-    public = T.public block;
+    public{-> stmt*} = T.public block{-> [block.stmt]};
 
-    private = T.private class_body;
+    private{-> class_body} = T.private class_body {-> class_body};
 
-    moves = T.moves l_brack method_dcl* r_brack;
+    moves{-> method_dcl*} = T.moves l_brack method_dcl* r_brack {-> [method_dcl]};
 
-    dcl = type single_dcl dcl_list*;
+    dcl{-> stmt} = type single_dcl dcl_list* {-> New stmt.dcl(type, [single_dcl, dcl_list.single_dcl])};
 
-    single_dcl = id init?;
+    single_dcl = id init? {-> New single_dcl(id, init.expr)};
 
-    dcl_list = separator single_dcl;
+    dcl_list{-> single_dcl} = separator single_dcl {-> single_dcl};
 
-    init = assign expr;
+    init{-> expr} = assign expr {-> expr};
 
     expr = {expand} expr bool_op equality {-> New expr.bool_op(expr, bool_op, equality.expr)} | {single} equality {-> equality.expr};
 
@@ -126,58 +128,60 @@ Productions
 
     param{-> expr} = separator expr {-> expr};
 
-    method_dcl = fun id l_paren param_dcl_list? r_paren typeof type l_brack stmt* return_stmt? r_brack;
+    method_dcl = fun id l_paren param_dcl_list? r_paren typeof type l_brack stmt* return_stmt? r_brack
+    {-> New method_dcl(id, [param_dcl_list.param_dcl], type, [stmt])};
 
-    param_dcl_list = param_dcl expand_param*;
+    param_dcl_list{-> param_dcl*} = param_dcl expand_param* {-> [param_dcl, expand_param.param_dcl]};
 
-    expand_param = separator param_dcl;
+    expand_param{-> param_dcl} = separator param_dcl {-> param_dcl};
 
-    param_dcl = type id;
+    param_dcl = type id {-> New param_dcl(type, id)};
 
-    type = P.list? id;
+    type = {list} P.list id {-> New type.list(id)} | {var} id {-> New type.var(id)} ;
 
     list = T.list typeof;
 
-    return_stmt = return expr semi;
+    return_stmt{-> stmt} = return expr semi {-> New stmt.return(expr)};
 
-    stmt = {select} select_stmt | {dcl} dcl end | {loop} loop_stmt | {assign} assign_value end | {call} val end ;
+    stmt = {select} select_stmt {-> select_stmt.stmt} | {dcl} dcl semi {-> dcl.stmt} |
+    {loop} loop_stmt {-> loop_stmt.stmt} | {assign} assign_value semi {-> assign_value.stmt} |
+    {call} val semi {-> New stmt.call(val)} ;
 
-    select_stmt = {if} if_stmt | {switch} switch_stmt;
+    select_stmt{-> stmt} = {if} if_stmt {-> if_stmt.stmt} | {switch} switch_stmt {-> switch_stmt.stmt};
 
-    block /*{-> stmt*}*/ = l_brack stmt* r_brack /*{-> [stmt]}*/;
+    block {-> stmt*} = l_brack stmt* r_brack {-> [stmt]};
 
-    if_stmt = if expr block else_if* else_stmt?;
+    if_stmt{-> stmt} = if expr block else_if* else_stmt? {-> New stmt.if(expr, [block.stmt], [else_if], [else_stmt.stmt])};
 
-    else_if = else if expr block;
+    else_if = else if expr block {-> New else_if(expr, [block.stmt])};
 
-    else_stmt = else block;
+    else_stmt{-> stmt*} = else block{-> [block.stmt]};
 
-    switch_stmt = switch val l_brack P.case+ r_brack;
+    switch_stmt{-> stmt} = switch val l_brack P.case+ r_brack {-> New stmt.switch(val, [case])};
 
-    case = case_stmt colon block;
+    case = {case} T.case expr colon block {-> New case.case(expr, [block.stmt])} | {default} default colon block {-> New case.default([block.stmt])};
 
-    case_stmt = {case} T.case | {default} default;
+    loop_stmt{-> stmt} = {while} while expr block {-> New stmt.while(expr, [block.stmt])} |
+    {foreach} for id in val block {-> New stmt.foreach(id, val, [block.stmt])} |
+    {for} for init_loop [a]:semi expr [b]:semi assign_value block {-> New stmt.for(init_loop.stmt, expr, assign_value.stmt, [block.stmt])};
 
-    loop_stmt = {while} while_loop | {for} for_loop;
+    init_loop{-> stmt} = {declare} dcl {-> dcl.stmt} | {assign} assign_value {-> assign_value.stmt};
 
-    while_loop = while expr block;
+    assign_value{-> stmt} = val assign expr {-> New stmt.assign(val, assign, expr)};
 
-    for_loop = for loop_expr block;
+    turn{-> stmt*} = T.turn block {-> [block.stmt]};
 
-    loop_expr = {foreach} id in val | {for} init_loop [a]:semi expr [b]:semi assign_value;
+    end_con{-> stmt*} = T.end_con block {-> [block.stmt]};
 
-    init_loop = {declare} dcl | {assign} assign_value;
-
-    assign_value = val assign expr;
-
-    turn = T.turn block;
-
-    end_con = T.end_con block /*{-> New end_con([block.stmt])}*/;
-
-    end = semi;
 
 Abstract Syntax Tree
-    prog = [includes]:id* /*P.setup P.moves P.turn P.end_con [methods]:method_dcl* */;
+    prog = [includes]:id* P.setup [moves]:method_dcl* [turn]:stmt* [end_condition]:stmt* [methods]:method_dcl* ;
+
+    setup = [card]:class_body [public]:stmt* [private]:class_body [dcls]:stmt*;
+
+    class_body = [dcls]:stmt* [methods]:method_dcl* [subclasses]:subclass*;
+
+    subclass = [name]:id [body]:class_body;
 
     expr = {list} [elements]:element* | {mult_op} [l]:expr [operator]:mult_op [r]:expr | {literal} [value]:literal | {value} val |
     {add_op} [l]:expr [operator]:add_op [r]:expr | {relation} [l]:expr [operator]:relation_op [r]:expr |
@@ -191,4 +195,19 @@ Abstract Syntax Tree
 
     call_field = {field} id | {call} id [params]: expr*;
 
-    /*end_con = [stmts]:stmt*;*/
+    single_dcl = id expr?;
+
+    type = {list} [type]:id | {var} [type]:id;
+
+    else_if = [predicate]:expr [then]:stmt* ;
+
+    stmt = {dcl} type [dcls]:single_dcl* | {assign} [var]:val [operation]:assign expr | {call} val | {if} [predicate]:expr [then]:stmt* [elseifs]:else_if* [else]:stmt* |
+    {switch} [variable]:val [cases]:P.case+ | {for} [init]:stmt [predicate]:expr [update]:stmt [then]:stmt* |
+    {foreach} id [list]:val [then]:stmt* | {while} [predicate]:expr [then]:stmt* | {return} expr;
+
+    case = {case} [case]:expr [then]:stmt* | {default} [then]:stmt*;
+
+    method_dcl = [name]:id [params]:param_dcl* [returntype]:type [body]:stmt*;
+
+    param_dcl = type [name]:id;
+

@@ -9,6 +9,11 @@ import P4.Sable.analysis.*;
 public final class AProg extends PProg
 {
     private final LinkedList<TId> _includes_ = new LinkedList<TId>();
+    private PSetup _setup_;
+    private final LinkedList<PMethodDcl> _moves_ = new LinkedList<PMethodDcl>();
+    private final LinkedList<PStmt> _turn_ = new LinkedList<PStmt>();
+    private final LinkedList<PStmt> _endCondition_ = new LinkedList<PStmt>();
+    private final LinkedList<PMethodDcl> _methods_ = new LinkedList<PMethodDcl>();
 
     public AProg()
     {
@@ -16,10 +21,25 @@ public final class AProg extends PProg
     }
 
     public AProg(
-        @SuppressWarnings("hiding") List<?> _includes_)
+        @SuppressWarnings("hiding") List<?> _includes_,
+        @SuppressWarnings("hiding") PSetup _setup_,
+        @SuppressWarnings("hiding") List<?> _moves_,
+        @SuppressWarnings("hiding") List<?> _turn_,
+        @SuppressWarnings("hiding") List<?> _endCondition_,
+        @SuppressWarnings("hiding") List<?> _methods_)
     {
         // Constructor
         setIncludes(_includes_);
+
+        setSetup(_setup_);
+
+        setMoves(_moves_);
+
+        setTurn(_turn_);
+
+        setEndCondition(_endCondition_);
+
+        setMethods(_methods_);
 
     }
 
@@ -27,7 +47,12 @@ public final class AProg extends PProg
     public Object clone()
     {
         return new AProg(
-            cloneList(this._includes_));
+            cloneList(this._includes_),
+            cloneNode(this._setup_),
+            cloneList(this._moves_),
+            cloneList(this._turn_),
+            cloneList(this._endCondition_),
+            cloneList(this._methods_));
     }
 
     @Override
@@ -62,11 +87,145 @@ public final class AProg extends PProg
         }
     }
 
+    public PSetup getSetup()
+    {
+        return this._setup_;
+    }
+
+    public void setSetup(PSetup node)
+    {
+        if(this._setup_ != null)
+        {
+            this._setup_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._setup_ = node;
+    }
+
+    public LinkedList<PMethodDcl> getMoves()
+    {
+        return this._moves_;
+    }
+
+    public void setMoves(List<?> list)
+    {
+        for(PMethodDcl e : this._moves_)
+        {
+            e.parent(null);
+        }
+        this._moves_.clear();
+
+        for(Object obj_e : list)
+        {
+            PMethodDcl e = (PMethodDcl) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._moves_.add(e);
+        }
+    }
+
+    public LinkedList<PStmt> getTurn()
+    {
+        return this._turn_;
+    }
+
+    public void setTurn(List<?> list)
+    {
+        for(PStmt e : this._turn_)
+        {
+            e.parent(null);
+        }
+        this._turn_.clear();
+
+        for(Object obj_e : list)
+        {
+            PStmt e = (PStmt) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._turn_.add(e);
+        }
+    }
+
+    public LinkedList<PStmt> getEndCondition()
+    {
+        return this._endCondition_;
+    }
+
+    public void setEndCondition(List<?> list)
+    {
+        for(PStmt e : this._endCondition_)
+        {
+            e.parent(null);
+        }
+        this._endCondition_.clear();
+
+        for(Object obj_e : list)
+        {
+            PStmt e = (PStmt) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._endCondition_.add(e);
+        }
+    }
+
+    public LinkedList<PMethodDcl> getMethods()
+    {
+        return this._methods_;
+    }
+
+    public void setMethods(List<?> list)
+    {
+        for(PMethodDcl e : this._methods_)
+        {
+            e.parent(null);
+        }
+        this._methods_.clear();
+
+        for(Object obj_e : list)
+        {
+            PMethodDcl e = (PMethodDcl) obj_e;
+            if(e.parent() != null)
+            {
+                e.parent().removeChild(e);
+            }
+
+            e.parent(this);
+            this._methods_.add(e);
+        }
+    }
+
     @Override
     public String toString()
     {
         return ""
-            + toString(this._includes_);
+            + toString(this._includes_)
+            + toString(this._setup_)
+            + toString(this._moves_)
+            + toString(this._turn_)
+            + toString(this._endCondition_)
+            + toString(this._methods_);
     }
 
     @Override
@@ -74,6 +233,32 @@ public final class AProg extends PProg
     {
         // Remove child
         if(this._includes_.remove(child))
+        {
+            return;
+        }
+
+        if(this._setup_ == child)
+        {
+            this._setup_ = null;
+            return;
+        }
+
+        if(this._moves_.remove(child))
+        {
+            return;
+        }
+
+        if(this._turn_.remove(child))
+        {
+            return;
+        }
+
+        if(this._endCondition_.remove(child))
+        {
+            return;
+        }
+
+        if(this._methods_.remove(child))
         {
             return;
         }
@@ -92,6 +277,84 @@ public final class AProg extends PProg
                 if(newChild != null)
                 {
                     i.set((TId) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
+        }
+
+        if(this._setup_ == oldChild)
+        {
+            setSetup((PSetup) newChild);
+            return;
+        }
+
+        for(ListIterator<PMethodDcl> i = this._moves_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PMethodDcl) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
+        }
+
+        for(ListIterator<PStmt> i = this._turn_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PStmt) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
+        }
+
+        for(ListIterator<PStmt> i = this._endCondition_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PStmt) newChild);
+                    newChild.parent(this);
+                    oldChild.parent(null);
+                    return;
+                }
+
+                i.remove();
+                oldChild.parent(null);
+                return;
+            }
+        }
+
+        for(ListIterator<PMethodDcl> i = this._methods_.listIterator(); i.hasNext();)
+        {
+            if(i.next() == oldChild)
+            {
+                if(newChild != null)
+                {
+                    i.set((PMethodDcl) newChild);
                     newChild.parent(this);
                     oldChild.parent(null);
                     return;

@@ -51,6 +51,42 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     {
         inAProg(node);
         {
+            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethods());
+            Collections.reverse(copy);
+            for(PMethodDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getEndCondition());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getTurn());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMoves());
+            Collections.reverse(copy);
+            for(PMethodDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getSetup() != null)
+        {
+            node.getSetup().apply(this);
+        }
+        {
             List<TId> copy = new ArrayList<TId>(node.getIncludes());
             Collections.reverse(copy);
             for(TId e : copy)
@@ -59,6 +95,113 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
             }
         }
         outAProg(node);
+    }
+
+    public void inASetup(ASetup node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASetup(ASetup node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASetup(ASetup node)
+    {
+        inASetup(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getPrivate() != null)
+        {
+            node.getPrivate().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getPublic());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getCard() != null)
+        {
+            node.getCard().apply(this);
+        }
+        outASetup(node);
+    }
+
+    public void inAClassBody(AClassBody node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAClassBody(AClassBody node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAClassBody(AClassBody node)
+    {
+        inAClassBody(node);
+        {
+            List<PSubclass> copy = new ArrayList<PSubclass>(node.getSubclasses());
+            Collections.reverse(copy);
+            for(PSubclass e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethods());
+            Collections.reverse(copy);
+            for(PMethodDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAClassBody(node);
+    }
+
+    public void inASubclass(ASubclass node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASubclass(ASubclass node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASubclass(ASubclass node)
+    {
+        inASubclass(node);
+        if(node.getBody() != null)
+        {
+            node.getBody().apply(this);
+        }
+        if(node.getName() != null)
+        {
+            node.getName().apply(this);
+        }
+        outASubclass(node);
     }
 
     public void inAListExpr(AListExpr node)
@@ -455,5 +598,494 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
             node.getId().apply(this);
         }
         outACallCallField(node);
+    }
+
+    public void inASingleDcl(ASingleDcl node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASingleDcl(ASingleDcl node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASingleDcl(ASingleDcl node)
+    {
+        inASingleDcl(node);
+        if(node.getExpr() != null)
+        {
+            node.getExpr().apply(this);
+        }
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        outASingleDcl(node);
+    }
+
+    public void inAListType(AListType node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAListType(AListType node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAListType(AListType node)
+    {
+        inAListType(node);
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        outAListType(node);
+    }
+
+    public void inAVarType(AVarType node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAVarType(AVarType node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAVarType(AVarType node)
+    {
+        inAVarType(node);
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        outAVarType(node);
+    }
+
+    public void inAElseIf(AElseIf node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAElseIf(AElseIf node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAElseIf(AElseIf node)
+    {
+        inAElseIf(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        outAElseIf(node);
+    }
+
+    public void inADclStmt(ADclStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outADclStmt(ADclStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseADclStmt(ADclStmt node)
+    {
+        inADclStmt(node);
+        {
+            List<PSingleDcl> copy = new ArrayList<PSingleDcl>(node.getDcls());
+            Collections.reverse(copy);
+            for(PSingleDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        outADclStmt(node);
+    }
+
+    public void inAAssignStmt(AAssignStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAAssignStmt(AAssignStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAAssignStmt(AAssignStmt node)
+    {
+        inAAssignStmt(node);
+        if(node.getExpr() != null)
+        {
+            node.getExpr().apply(this);
+        }
+        if(node.getOperation() != null)
+        {
+            node.getOperation().apply(this);
+        }
+        if(node.getVar() != null)
+        {
+            node.getVar().apply(this);
+        }
+        outAAssignStmt(node);
+    }
+
+    public void inACallStmt(ACallStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outACallStmt(ACallStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseACallStmt(ACallStmt node)
+    {
+        inACallStmt(node);
+        if(node.getVal() != null)
+        {
+            node.getVal().apply(this);
+        }
+        outACallStmt(node);
+    }
+
+    public void inAIfStmt(AIfStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAIfStmt(AIfStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAIfStmt(AIfStmt node)
+    {
+        inAIfStmt(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getElse());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PElseIf> copy = new ArrayList<PElseIf>(node.getElseifs());
+            Collections.reverse(copy);
+            for(PElseIf e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        outAIfStmt(node);
+    }
+
+    public void inASwitchStmt(ASwitchStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASwitchStmt(ASwitchStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASwitchStmt(ASwitchStmt node)
+    {
+        inASwitchStmt(node);
+        {
+            List<PCase> copy = new ArrayList<PCase>(node.getCases());
+            Collections.reverse(copy);
+            for(PCase e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getVariable() != null)
+        {
+            node.getVariable().apply(this);
+        }
+        outASwitchStmt(node);
+    }
+
+    public void inAForStmt(AForStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAForStmt(AForStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAForStmt(AForStmt node)
+    {
+        inAForStmt(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getUpdate() != null)
+        {
+            node.getUpdate().apply(this);
+        }
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        if(node.getInit() != null)
+        {
+            node.getInit().apply(this);
+        }
+        outAForStmt(node);
+    }
+
+    public void inAForeachStmt(AForeachStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAForeachStmt(AForeachStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAForeachStmt(AForeachStmt node)
+    {
+        inAForeachStmt(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getList() != null)
+        {
+            node.getList().apply(this);
+        }
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        outAForeachStmt(node);
+    }
+
+    public void inAWhileStmt(AWhileStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAWhileStmt(AWhileStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAWhileStmt(AWhileStmt node)
+    {
+        inAWhileStmt(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        outAWhileStmt(node);
+    }
+
+    public void inAReturnStmt(AReturnStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAReturnStmt(AReturnStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAReturnStmt(AReturnStmt node)
+    {
+        inAReturnStmt(node);
+        if(node.getExpr() != null)
+        {
+            node.getExpr().apply(this);
+        }
+        outAReturnStmt(node);
+    }
+
+    public void inACaseCase(ACaseCase node)
+    {
+        defaultIn(node);
+    }
+
+    public void outACaseCase(ACaseCase node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseACaseCase(ACaseCase node)
+    {
+        inACaseCase(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getCase() != null)
+        {
+            node.getCase().apply(this);
+        }
+        outACaseCase(node);
+    }
+
+    public void inADefaultCase(ADefaultCase node)
+    {
+        defaultIn(node);
+    }
+
+    public void outADefaultCase(ADefaultCase node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseADefaultCase(ADefaultCase node)
+    {
+        inADefaultCase(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outADefaultCase(node);
+    }
+
+    public void inAMethodDcl(AMethodDcl node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAMethodDcl(AMethodDcl node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAMethodDcl(AMethodDcl node)
+    {
+        inAMethodDcl(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getBody());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getReturntype() != null)
+        {
+            node.getReturntype().apply(this);
+        }
+        {
+            List<PParamDcl> copy = new ArrayList<PParamDcl>(node.getParams());
+            Collections.reverse(copy);
+            for(PParamDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getName() != null)
+        {
+            node.getName().apply(this);
+        }
+        outAMethodDcl(node);
+    }
+
+    public void inAParamDcl(AParamDcl node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAParamDcl(AParamDcl node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAParamDcl(AParamDcl node)
+    {
+        inAParamDcl(node);
+        if(node.getName() != null)
+        {
+            node.getName().apply(this);
+        }
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        outAParamDcl(node);
     }
 }

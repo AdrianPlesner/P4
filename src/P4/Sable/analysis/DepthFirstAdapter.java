@@ -57,7 +57,141 @@ public class DepthFirstAdapter extends AnalysisAdapter
                 e.apply(this);
             }
         }
+        if(node.getSetup() != null)
+        {
+            node.getSetup().apply(this);
+        }
+        {
+            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMoves());
+            for(PMethodDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getTurn());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getEndCondition());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethods());
+            for(PMethodDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
         outAProg(node);
+    }
+
+    public void inASetup(ASetup node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASetup(ASetup node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASetup(ASetup node)
+    {
+        inASetup(node);
+        if(node.getCard() != null)
+        {
+            node.getCard().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getPublic());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getPrivate() != null)
+        {
+            node.getPrivate().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outASetup(node);
+    }
+
+    public void inAClassBody(AClassBody node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAClassBody(AClassBody node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAClassBody(AClassBody node)
+    {
+        inAClassBody(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethods());
+            for(PMethodDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PSubclass> copy = new ArrayList<PSubclass>(node.getSubclasses());
+            for(PSubclass e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAClassBody(node);
+    }
+
+    public void inASubclass(ASubclass node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASubclass(ASubclass node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASubclass(ASubclass node)
+    {
+        inASubclass(node);
+        if(node.getName() != null)
+        {
+            node.getName().apply(this);
+        }
+        if(node.getBody() != null)
+        {
+            node.getBody().apply(this);
+        }
+        outASubclass(node);
     }
 
     public void inAListExpr(AListExpr node)
@@ -450,5 +584,481 @@ public class DepthFirstAdapter extends AnalysisAdapter
             }
         }
         outACallCallField(node);
+    }
+
+    public void inASingleDcl(ASingleDcl node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASingleDcl(ASingleDcl node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASingleDcl(ASingleDcl node)
+    {
+        inASingleDcl(node);
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        if(node.getExpr() != null)
+        {
+            node.getExpr().apply(this);
+        }
+        outASingleDcl(node);
+    }
+
+    public void inAListType(AListType node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAListType(AListType node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAListType(AListType node)
+    {
+        inAListType(node);
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        outAListType(node);
+    }
+
+    public void inAVarType(AVarType node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAVarType(AVarType node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAVarType(AVarType node)
+    {
+        inAVarType(node);
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        outAVarType(node);
+    }
+
+    public void inAElseIf(AElseIf node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAElseIf(AElseIf node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAElseIf(AElseIf node)
+    {
+        inAElseIf(node);
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAElseIf(node);
+    }
+
+    public void inADclStmt(ADclStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outADclStmt(ADclStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseADclStmt(ADclStmt node)
+    {
+        inADclStmt(node);
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        {
+            List<PSingleDcl> copy = new ArrayList<PSingleDcl>(node.getDcls());
+            for(PSingleDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outADclStmt(node);
+    }
+
+    public void inAAssignStmt(AAssignStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAAssignStmt(AAssignStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAAssignStmt(AAssignStmt node)
+    {
+        inAAssignStmt(node);
+        if(node.getVar() != null)
+        {
+            node.getVar().apply(this);
+        }
+        if(node.getOperation() != null)
+        {
+            node.getOperation().apply(this);
+        }
+        if(node.getExpr() != null)
+        {
+            node.getExpr().apply(this);
+        }
+        outAAssignStmt(node);
+    }
+
+    public void inACallStmt(ACallStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outACallStmt(ACallStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseACallStmt(ACallStmt node)
+    {
+        inACallStmt(node);
+        if(node.getVal() != null)
+        {
+            node.getVal().apply(this);
+        }
+        outACallStmt(node);
+    }
+
+    public void inAIfStmt(AIfStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAIfStmt(AIfStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAIfStmt(AIfStmt node)
+    {
+        inAIfStmt(node);
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PElseIf> copy = new ArrayList<PElseIf>(node.getElseifs());
+            for(PElseIf e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getElse());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAIfStmt(node);
+    }
+
+    public void inASwitchStmt(ASwitchStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASwitchStmt(ASwitchStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASwitchStmt(ASwitchStmt node)
+    {
+        inASwitchStmt(node);
+        if(node.getVariable() != null)
+        {
+            node.getVariable().apply(this);
+        }
+        {
+            List<PCase> copy = new ArrayList<PCase>(node.getCases());
+            for(PCase e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outASwitchStmt(node);
+    }
+
+    public void inAForStmt(AForStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAForStmt(AForStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAForStmt(AForStmt node)
+    {
+        inAForStmt(node);
+        if(node.getInit() != null)
+        {
+            node.getInit().apply(this);
+        }
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        if(node.getUpdate() != null)
+        {
+            node.getUpdate().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAForStmt(node);
+    }
+
+    public void inAForeachStmt(AForeachStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAForeachStmt(AForeachStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAForeachStmt(AForeachStmt node)
+    {
+        inAForeachStmt(node);
+        if(node.getId() != null)
+        {
+            node.getId().apply(this);
+        }
+        if(node.getList() != null)
+        {
+            node.getList().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAForeachStmt(node);
+    }
+
+    public void inAWhileStmt(AWhileStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAWhileStmt(AWhileStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAWhileStmt(AWhileStmt node)
+    {
+        inAWhileStmt(node);
+        if(node.getPredicate() != null)
+        {
+            node.getPredicate().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAWhileStmt(node);
+    }
+
+    public void inAReturnStmt(AReturnStmt node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAReturnStmt(AReturnStmt node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAReturnStmt(AReturnStmt node)
+    {
+        inAReturnStmt(node);
+        if(node.getExpr() != null)
+        {
+            node.getExpr().apply(this);
+        }
+        outAReturnStmt(node);
+    }
+
+    public void inACaseCase(ACaseCase node)
+    {
+        defaultIn(node);
+    }
+
+    public void outACaseCase(ACaseCase node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseACaseCase(ACaseCase node)
+    {
+        inACaseCase(node);
+        if(node.getCase() != null)
+        {
+            node.getCase().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outACaseCase(node);
+    }
+
+    public void inADefaultCase(ADefaultCase node)
+    {
+        defaultIn(node);
+    }
+
+    public void outADefaultCase(ADefaultCase node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseADefaultCase(ADefaultCase node)
+    {
+        inADefaultCase(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outADefaultCase(node);
+    }
+
+    public void inAMethodDcl(AMethodDcl node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAMethodDcl(AMethodDcl node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAMethodDcl(AMethodDcl node)
+    {
+        inAMethodDcl(node);
+        if(node.getName() != null)
+        {
+            node.getName().apply(this);
+        }
+        {
+            List<PParamDcl> copy = new ArrayList<PParamDcl>(node.getParams());
+            for(PParamDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getReturntype() != null)
+        {
+            node.getReturntype().apply(this);
+        }
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getBody());
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        outAMethodDcl(node);
+    }
+
+    public void inAParamDcl(AParamDcl node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAParamDcl(AParamDcl node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAParamDcl(AParamDcl node)
+    {
+        inAParamDcl(node);
+        if(node.getType() != null)
+        {
+            node.getType().apply(this);
+        }
+        if(node.getName() != null)
+        {
+            node.getName().apply(this);
+        }
+        outAParamDcl(node);
     }
 }
