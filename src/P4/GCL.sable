@@ -128,7 +128,7 @@ Productions
 
     param{-> expr} = separator expr {-> expr};
 
-    method_dcl = fun id l_paren param_dcl_list? r_paren typeof type l_brack stmt* return_stmt? r_brack
+    method_dcl = fun id l_paren param_dcl_list? r_paren typeof type l_brack stmt* r_brack
     {-> New method_dcl(id, [param_dcl_list.param_dcl], type, [stmt])};
 
     param_dcl_list{-> param_dcl*} = param_dcl expand_param* {-> [param_dcl, expand_param.param_dcl]};
@@ -141,11 +141,9 @@ Productions
 
     list = T.list typeof;
 
-    return_stmt{-> stmt} = return expr semi {-> New stmt.return(expr)};
-
     stmt = {select} select_stmt {-> select_stmt.stmt} | {dcl} dcl semi {-> dcl.stmt} |
     {loop} loop_stmt {-> loop_stmt.stmt} | {assign} assign_value semi {-> assign_value.stmt} |
-    {call} val semi {-> New stmt.call(val)} ;
+    {call} val semi {-> New stmt.call(val)} | {return} return expr semi {-> New stmt.return(expr)} ;
 
     select_stmt{-> stmt} = {if} if_stmt {-> if_stmt.stmt} | {switch} switch_stmt {-> switch_stmt.stmt};
 

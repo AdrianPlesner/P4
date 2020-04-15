@@ -89,7 +89,7 @@ Turn{
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
     bool end = true;
-	for p in Players {
+	for p in players {
 		if p.hand.length == 0 {
 		    end &= true;
 		}
@@ -97,7 +97,7 @@ EndCondition{
 		    end &= false;
 		}
     }
-    End = end;
+    return end;
 	// Vinderen(e) er de(n) spiller(e) med flest point
 }
 
