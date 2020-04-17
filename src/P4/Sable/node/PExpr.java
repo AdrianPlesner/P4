@@ -4,5 +4,6 @@ package P4.Sable.node;
 
 public abstract class PExpr extends Node
 {
+    public String type;
     // Empty body
 }
