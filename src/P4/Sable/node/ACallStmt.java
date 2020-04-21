@@ -3,6 +3,7 @@
 package P4.Sable.node;
 
 import P4.Sable.analysis.*;
+import P4.symbolTable.TypeException;
 
 @SuppressWarnings("nls")
 public final class ACallStmt extends PStmt
@@ -30,8 +31,7 @@ public final class ACallStmt extends PStmt
     }
 
     @Override
-    public void apply(Switch sw)
-    {
+    public void apply(Switch sw) throws TypeException {
         ((Analysis) sw).caseACallStmt(this);
     }
 

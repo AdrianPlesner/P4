@@ -2,14 +2,25 @@ package P4.symbolTable;
 
 import P4.Sable.node.Node;
 
-public class Symbol {
+public abstract class Symbol {
     private String identifier;
-    private String Type;
     private Node declarationNode;
     private int scope;
 
-    public Symbol(){
+    public Symbol(String id, Node dcl){
+        this.identifier = id;
+        this.declarationNode = dcl;
+    }
 
+    public int getScope(){
+        return this.scope;
+    }
+    public void setScope(int s){
+        this.scope = s;
+    }
+
+    public String getIdentifier(){
+        return this.identifier;
     }
 
 

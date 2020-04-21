@@ -2,7 +2,9 @@
 
 package P4.Sable.node;
 
+import P4.symbolTable.TypeException;
+
 public interface Switchable
 {
-    void apply(Switch sw);
+    void apply(Switch sw) throws TypeException;
 }

@@ -4,6 +4,7 @@ package P4.Sable.node;
 
 import java.util.*;
 import P4.Sable.analysis.*;
+import P4.symbolTable.TypeException;
 
 @SuppressWarnings("nls")
 public final class AProg extends PProg
@@ -56,8 +57,7 @@ public final class AProg extends PProg
     }
 
     @Override
-    public void apply(Switch sw)
-    {
+    public void apply(Switch sw) throws TypeException {
         ((Analysis) sw).caseAProg(this);
     }
 

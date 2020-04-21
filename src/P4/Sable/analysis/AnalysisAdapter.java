@@ -4,6 +4,7 @@ package P4.Sable.analysis;
 
 import java.util.*;
 import P4.Sable.node.*;
+import P4.symbolTable.TypeException;
 
 public class AnalysisAdapter implements Analysis
 {
@@ -69,80 +70,67 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseStart(Start node)
-    {
+    public void caseStart(Start node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAProg(AProg node)
-    {
+    public void caseAProg(AProg node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseASetup(ASetup node)
-    {
+    public void caseASetup(ASetup node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAClassBody(AClassBody node)
-    {
+    public void caseAClassBody(AClassBody node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseASubclass(ASubclass node)
-    {
+    public void caseASubclass(ASubclass node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAListExpr(AListExpr node)
-    {
+    public void caseAListExpr(AListExpr node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAMultOpExpr(AMultOpExpr node)
-    {
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseALiteralExpr(ALiteralExpr node)
-    {
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAValueExpr(AValueExpr node)
-    {
+    public void caseAValueExpr(AValueExpr node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAAddOpExpr(AAddOpExpr node)
-    {
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseARelationExpr(ARelationExpr node)
-    {
+    public void caseARelationExpr(ARelationExpr node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node)
-    {
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseABoolOpExpr(ABoolOpExpr node)
-    {
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
         defaultCase(node);
     }
 
@@ -171,14 +159,12 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAElement(AElement node)
-    {
+    public void caseAElement(AElement node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAVal(AVal node)
-    {
+    public void caseAVal(AVal node) throws TypeException {
         defaultCase(node);
     }
 
@@ -189,14 +175,12 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseACallCallField(ACallCallField node)
-    {
+    public void caseACallCallField(ACallCallField node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseASingleDcl(ASingleDcl node)
-    {
+    public void caseASingleDcl(ASingleDcl node) throws TypeException {
         defaultCase(node);
     }
 
@@ -213,86 +197,72 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAElseIf(AElseIf node)
-    {
+    public void caseAElseIf(AElseIf node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node)
-    {
+    public void caseADclStmt(ADclStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAAssignStmt(AAssignStmt node)
-    {
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseACallStmt(ACallStmt node)
-    {
+    public void caseACallStmt(ACallStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAIfStmt(AIfStmt node)
-    {
+    public void caseAIfStmt(AIfStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseASwitchStmt(ASwitchStmt node)
-    {
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAForStmt(AForStmt node)
-    {
+    public void caseAForStmt(AForStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAForeachStmt(AForeachStmt node)
-    {
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAWhileStmt(AWhileStmt node)
-    {
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAReturnStmt(AReturnStmt node)
-    {
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseACaseCase(ACaseCase node)
-    {
+    public void caseACaseCase(ACaseCase node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseADefaultCase(ADefaultCase node)
-    {
+    public void caseADefaultCase(ADefaultCase node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node)
-    {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAParamDcl(AParamDcl node)
-    {
+    public void caseAParamDcl(AParamDcl node) throws TypeException {
         defaultCase(node);
     }
 

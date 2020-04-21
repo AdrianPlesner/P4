@@ -4,6 +4,7 @@ package P4.Sable.node;
 
 import java.util.*;
 import P4.Sable.analysis.*;
+import P4.symbolTable.TypeException;
 
 @SuppressWarnings("nls")
 public final class ACallCallField extends PCallField
@@ -36,8 +37,7 @@ public final class ACallCallField extends PCallField
     }
 
     @Override
-    public void apply(Switch sw)
-    {
+    public void apply(Switch sw) throws TypeException {
         ((Analysis) sw).caseACallCallField(this);
     }
 

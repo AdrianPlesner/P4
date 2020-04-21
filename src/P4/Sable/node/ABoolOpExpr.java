@@ -3,6 +3,7 @@
 package P4.Sable.node;
 
 import P4.Sable.analysis.*;
+import P4.symbolTable.TypeException;
 
 @SuppressWarnings("nls")
 public final class ABoolOpExpr extends PExpr
@@ -40,8 +41,7 @@ public final class ABoolOpExpr extends PExpr
     }
 
     @Override
-    public void apply(Switch sw)
-    {
+    public void apply(Switch sw) throws TypeException {
         ((Analysis) sw).caseABoolOpExpr(this);
     }
 
