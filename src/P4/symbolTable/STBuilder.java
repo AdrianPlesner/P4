@@ -3,6 +3,7 @@ package P4.symbolTable;
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -144,6 +145,42 @@ public class STBuilder extends DepthFirstAdapter {
             throw new TypeException(node.getName(),"Identifier already exists locally");
         }
 
+        var returnType = node.getReturntype();
+        //Check returntype
+        returnType.apply(this);
+        var method = new Function(name,node,returnType.toString());
+        st.openScope();
+        var prev = current;
+        // Check arguments
+        if(current instanceof SubClass){
+            current = method;
+        }
+        for (PParamDcl pd : node.getParams()) {
+            pd.apply(this);
+        }
+        for(PStmt stmt : node.getBody()){
+            stmt.apply(this);
+        }
+
+    }
+
+    @Override
+    public void caseAParamDcl(AParamDcl node) throws TypeException {
+        // Check type is valid
+        node.getType().apply(this);
+
+        // Check name is valid
+        var name = node.getName().getText();
+        if(st.declaredLocally(name)){
+            throw new IdentifierAlreadyExistsException(node.getName(),"");
+        }
+        if(current instanceof Function) {
+            var prev = current;
+            current = null;
+            addToCurrent(new Variable(name, node, node.getType().toString()));
+            current = prev;
+        }
+        addToCurrent(new Variable(name, node, node.getType().toString()));
     }
 
     @Override

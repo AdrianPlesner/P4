@@ -9,9 +9,9 @@ public class Function extends Symbol {
 
     private String returnType;
 
-    public Function(String id, Node dcl, String type) {
+    public Function(String id, Node dcl, String returnType) {
         super(id, dcl);
-        this.returnType = type;
+        this.returnType = returnType;
     }
 
     public void addArg(Variable v){

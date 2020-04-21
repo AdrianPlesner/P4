@@ -42,9 +42,39 @@ public class Main {
             }
 
         }
+        catch(InvalidTypeException e){
+            String message = e.getMessage();
+            var token = e.getToken();
+            if(token != null){
+                message += token.getText() + "is not a valid type.";
+                message = patchMessage(message,token);
+            }
+            System.out.println(message);
+        }
+        catch (IdentifierAlreadyExistsException e){
+            String message = e.getMessage();
+            var token = e.getToken();
+            if(token != null){
+                message = patchMessage(message,token);
+                message += "identifier already excists locally";
+            }
+            System.out.println(message);
+        }
+        catch (TypeException e){
+            String message = e.getMessage();
+            var token = e.getToken();
+            if(token != null){
+                    message = patchMessage(message,token);
+            }
+            System.out.println(message);
+        }
         catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    private static String patchMessage(String m, Token t){
+        return "Problem at line " + t.getLine() + ":" + t.getPos() + "\n" + m;
     }
 }
 
