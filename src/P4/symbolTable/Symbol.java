@@ -2,7 +2,7 @@ package P4.symbolTable;
 
 import P4.Sable.node.Node;
 
-public abstract class Symbol {
+public abstract class Symbol{
     private String identifier;
     private Node declarationNode;
     private int scope;

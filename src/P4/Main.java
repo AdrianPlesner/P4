@@ -27,11 +27,20 @@ public class Main {
             Start ast = parser.parse();
 
             // Construct symbol table and type check
-            SymbolTable st = new STBuilder(ast).BuildST(new SymbolTable());
+            STBuilder stBuilder = new STBuilder(ast);
+            SymbolTable st = stBuilder.BuildST(new SymbolTable());
 
             stop_time = System.currentTimeMillis();
             // Compute and print compilation time
             System.out.println("Compilation took " + (stop_time-start_time) + " milliseconds" );
+
+            if(stBuilder.hasTypeErrors()){
+                System.out.println(stBuilder.getErrorList());
+            }
+            else{
+                //TODO: code generation
+            }
+
         }
         catch (Exception e) {
             System.out.println(e);

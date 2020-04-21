@@ -8,6 +8,10 @@ public class TypeException extends Exception {
     public TypeException(Token token, String  message)
     {
         super(message);
+        if(token != null){
+            message = "Problem at line " + token.getLine() + ":" + token.getPos() + "\n" + message;
+        }
+
         this.token = token;
     }
 

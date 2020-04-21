@@ -13,4 +13,8 @@ public class Function extends Symbol {
         super(id, dcl);
         this.returnType = type;
     }
+
+    public void addArg(Variable v){
+        args.add(v);
+    }
 }

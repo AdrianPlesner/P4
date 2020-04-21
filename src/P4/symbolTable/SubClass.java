@@ -10,11 +10,31 @@ public class SubClass extends Symbol {
     private LinkedList<Variable> locals = new LinkedList<>();
     private LinkedList<SubClass> subclasses = new LinkedList<>();
 
-    public SubClass(String id, Node dcl) {
+    public SubClass(String id, Node dcl, SubClass sup) {
         super(id, dcl);
+        this.superClass = sup;
     }
 
     public LinkedList<Variable> getLocals(){
         return this.locals;
+    }
+
+    public void setLocals(LinkedList<Variable> locs){
+        this.locals = locs;
+    }
+
+    public void addLocal(Variable v){
+        locals.add(v);
+    }
+
+    public void addMethod(Function f){
+        methods.add(f);
+    }
+    public void addSubclass(SubClass s){
+        subclasses.add(s);
+    }
+
+    public SubClass getSuperClass(){
+        return this.superClass;
     }
 }

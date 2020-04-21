@@ -606,8 +606,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAListType(AListType node)
-    {
+    public void caseAListType(AListType node) throws TypeException {
         inAListType(node);
         if(node.getType() != null)
         {
@@ -627,8 +626,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAVarType(AVarType node)
-    {
+    public void caseAVarType(AVarType node) throws TypeException {
         inAVarType(node);
         if(node.getType() != null)
         {

@@ -185,14 +185,12 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAListType(AListType node)
-    {
+    public void caseAListType(AListType node) throws TypeException {
         defaultCase(node);
     }
 
     @Override
-    public void caseAVarType(AVarType node)
-    {
+    public void caseAVarType(AVarType node) throws TypeException {
         defaultCase(node);
     }
 

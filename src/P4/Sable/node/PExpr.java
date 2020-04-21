@@ -4,6 +4,6 @@ package P4.Sable.node;
 
 public abstract class PExpr extends Node
 {
-    public String type;
+    public String type = "void";
     // Empty body
 }

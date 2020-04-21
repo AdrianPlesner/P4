@@ -43,6 +43,16 @@ public class SymbolTable {
 
     }
 
+    public Boolean containsClass(String name){
+        var s = table.get(name);
+        for(Symbol sym : s){
+            if(sym instanceof SubClass){
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Check if a symbol is declared in the most recent scope
     public Boolean declaredLocally(String name){
         var current = table.get(name);
