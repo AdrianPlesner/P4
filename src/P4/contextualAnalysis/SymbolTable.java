@@ -1,6 +1,4 @@
-package P4.symbolTable;
-
-import P4.Sable.node.Node;
+package P4.contextualAnalysis;
 
 import java.util.*;
 

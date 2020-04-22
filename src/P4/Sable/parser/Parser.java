@@ -5,7 +5,7 @@ package P4.Sable.parser;
 import P4.Sable.lexer.*;
 import P4.Sable.node.*;
 import P4.Sable.analysis.*;
-import P4.symbolTable.TypeException;
+import P4.contextualAnalysis.TypeException;
 
 import java.util.*;
 

@@ -1,14 +1,9 @@
-package P4.symbolTable;
+package P4.contextualAnalysis;
 
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 public class STBuilder extends DepthFirstAdapter {
 
@@ -31,6 +26,7 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol("int",new SubClass("int",null,null));
         st.enterSymbol("float",new SubClass("float",null,null));
         st.enterSymbol("string",new SubClass("string",null,null));
+        st.enterSymbol("bool", new SubClass("bool",null,null));
         ast.apply(this);
 
         return this.st;
@@ -69,6 +65,14 @@ public class STBuilder extends DepthFirstAdapter {
         else{
             throw new TypeException(null,"An unknown type error occurred");
         }
+    }
+
+    private boolean compatibleTypes(PExpr l, PExpr r){
+        if(l.type.equals(r.type)){
+            return true;
+        }
+        //TODO: other compatible types
+        return false;
     }
 
     @Override
@@ -142,7 +146,7 @@ public class STBuilder extends DepthFirstAdapter {
         // check name
         var name = node.getName().getText();
         if(st.declaredLocally(name)){
-            throw new TypeException(node.getName(),"Identifier already exists locally");
+            throw new IdentifierAlreadyExistsException(node.getName(),"");
         }
 
         var returnType = node.getReturntype();
@@ -161,6 +165,8 @@ public class STBuilder extends DepthFirstAdapter {
         for(PStmt stmt : node.getBody()){
             stmt.apply(this);
         }
+        current = prev;
+        addToCurrent(method);
 
     }
 
@@ -222,7 +228,7 @@ public class STBuilder extends DepthFirstAdapter {
         var name = node.getName().getText();
         if(! st.containsClass(name)){
             // Name already exists
-            throw new TypeException(node.getName(),"A (sub)class named " + name);
+            throw new TypeException(node.getName(),"A (sub)class named " + name + " already exists.");
         }
         // Do class body
         var sub = new SubClass(name,node, (SubClass) current);
@@ -285,6 +291,39 @@ public class STBuilder extends DepthFirstAdapter {
         // Check that expression is OK
         if(node.getExpr() != null) {
             node.getExpr().apply(this);
+        }
+    }
+
+    @Override
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
+        // Dertermine type of left operand
+        node.getL().apply(this);
+        // Determine type of right operand
+        node.getR().apply(this);
+        // Check compatibility of operands
+        if(!compatibleTypes(node.getL(),node.getR())){
+            errors.add(new TypeError(node.getOperator(),""));
+        }
+        node.type = "bool";
+    }
+
+    @Override
+    public void caseAListExpr(AListExpr node) throws TypeException {
+        boolean sameType = true;
+        LinkedList<String> types = new LinkedList<>();
+        // Check each element
+        for(PElement e : node.getElements()){
+            e.apply(this);
+
+
+        }
+
+    }
+
+    @Override
+    public void caseAElement(AElement node) throws TypeException {
+        for(PExpr e : node.getValues()){
+            e.apply(this);
         }
     }
 }

@@ -3,7 +3,7 @@
 package P4.Sable.analysis;
 
 import P4.Sable.node.*;
-import P4.symbolTable.TypeException;
+import P4.contextualAnalysis.TypeException;
 
 public interface Analysis extends Switch
 {

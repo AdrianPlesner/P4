@@ -4,7 +4,7 @@ package P4.Sable.node;
 
 import java.util.*;
 import P4.Sable.analysis.*;
-import P4.symbolTable.TypeException;
+import P4.contextualAnalysis.TypeException;
 
 @SuppressWarnings("nls")
 public final class AIfStmt extends PStmt

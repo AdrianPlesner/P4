@@ -3,7 +3,7 @@ package P4;
 import P4.Sable.parser.*;
 import P4.Sable.lexer.*;
 import P4.Sable.node.*;
-import P4.symbolTable.*;
+import P4.contextualAnalysis.*;
 
 import java.io.*;
 
@@ -26,9 +26,11 @@ public class Main {
             // Debug med System.out.println(this.token.getClass().getSimpleName() + ": [" + token.getText() + "]");
             Start ast = parser.parse();
 
-            // Construct symbol table and type check
+            // Construct symbol table
             STBuilder stBuilder = new STBuilder(ast);
             SymbolTable st = stBuilder.BuildST(new SymbolTable());
+
+            TypeChecker tc = new TypeChecker(ast, st);
 
             stop_time = System.currentTimeMillis();
             // Compute and print compilation time
