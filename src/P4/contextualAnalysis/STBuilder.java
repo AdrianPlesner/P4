@@ -248,14 +248,17 @@ public class STBuilder extends DepthFirstAdapter {
         for(PSingleDcl sDcl : node.getDcls()){
             // Validate singleDcl
             sDcl.apply(this);
+            //TODO: move to typechecker
+            /*
             // If returned without exception, it is valid
+
             var exp = ((ASingleDcl) sDcl).getExpr();
             if(exp != null){
                 if(!exp.type.equals(type)){
                     throw new TypeException(null,"Cannot assign " + exp.type + " to variable of type " + type);
                 }
             }
-            // expression type and declare type are the same
+            // expression type and declare type are the same*/
             var v = new Variable(((ASingleDcl) sDcl).getId().getText(),sDcl,type);
             addToCurrent(v);
 
@@ -295,35 +298,45 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
-        // Dertermine type of left operand
-        node.getL().apply(this);
-        // Determine type of right operand
-        node.getR().apply(this);
-        // Check compatibility of operands
-        if(!compatibleTypes(node.getL(),node.getR())){
-            errors.add(new TypeError(node.getOperator(),""));
-        }
-        node.type = "bool";
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
+        node.getVar().apply(this);
+        node.getExpr().apply(this);
     }
 
     @Override
-    public void caseAListExpr(AListExpr node) throws TypeException {
-        boolean sameType = true;
-        LinkedList<String> types = new LinkedList<>();
-        // Check each element
-        for(PElement e : node.getElements()){
-            e.apply(this);
-
-
+    public void caseAVal(AVal node) throws TypeException {
+        Symbol now;
+        var prev = current;
+        for(PCallField cf : node.getCallField()){
+            cf.apply(this);
+            if(cf instanceof ACallCallField){
+                now = st.retrieveSymbol(((ACallCallField) cf).getId().getText());
+                now = st.retrieveSymbol(((Function)now).getReturnType());
+            }
+            else if(cf instanceof  AFieldCallField){
+                now = st.retrieveSymbol(((AFieldCallField) cf).getId().getText());
+            }
+            else{
+                throw new TypeException(null,"An unknown type error occurred");
+            }
+            current = now;
         }
-
+        current = prev;
     }
 
     @Override
-    public void caseAElement(AElement node) throws TypeException {
-        for(PExpr e : node.getValues()){
-            e.apply(this);
+    public void caseACallCallField(ACallCallField node) throws TypeException {
+        if(current == null){
+            if(st.retrieveSymbol(node.getId().getText()) == null ){
+                throw new TypeException(node.getId(),"Method does not exists in the current context");
+            }
+        }
+        else{
+            if(current instanceof SubClass){
+                if(((SubClass) current).getMethods().contains()){
+
+                }
+            }
         }
     }
 }

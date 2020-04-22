@@ -17,4 +17,8 @@ public class Function extends Symbol {
     public void addArg(Variable v){
         args.add(v);
     }
+
+    public String getReturnType(){
+        return this.returnType;
+    }
 }

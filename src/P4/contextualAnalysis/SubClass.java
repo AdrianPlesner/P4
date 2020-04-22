@@ -19,14 +19,13 @@ public class SubClass extends Symbol {
         return this.locals;
     }
 
-    public void setLocals(LinkedList<Variable> locs){
-        this.locals = locs;
+    public LinkedList<Function> getMethods() {
+        return this.methods;
     }
 
     public void addLocal(Variable v){
         locals.add(v);
     }
-
     public void addMethod(Function f){
         methods.add(f);
     }
