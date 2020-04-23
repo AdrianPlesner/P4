@@ -45,16 +45,16 @@ Setup{
 
         int a = 3+5;
         //Sæt start spiller
-        //turn.player = Players.find("Adrian");
+        //turn.current = Players.find("Adrian");
     }
 }
 // Mulige træk
 Moves{
     // input = et kort ( fra egen hånd) og en anden spiller
-    Function ChooseMove(card c, player player) typeof bool{
+    Function ChooseMove(card c, player p) typeof bool{
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
-        for pCard in player.hand {
+        for pCard in p.hand {
             if pCard.value == c.val {
                 //pCard.transfer(player, turn.player);
                 result = true;
@@ -63,7 +63,7 @@ Moves{
         for int i = 0; i < 10; i += 1 {
             //print (i);
         }
-        CheckForTrick(player.hand);
+        CheckForTrick(p.hand);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
         if(player.hand.length == 0){
             //player.hand = deck.take(1);
@@ -75,7 +75,7 @@ Moves{
 Turn{
     bool continue = true;
     player chosen;
-    while player.hand.length > 0 & continue {
+    while current.hand.length > 0 & continue {
         //chosen = chooseFrom(players);
         continue = ChooseMove(chooseFrom(player.hand),chosen);
     }

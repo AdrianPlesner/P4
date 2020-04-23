@@ -42,22 +42,22 @@ public class SubClass extends Symbol {
         return getIdentifier();
     }
 
-    public boolean containsMethod(String s){
+    public Function containsMethod(String s){
         for(var m : methods){
             if(m.getIdentifier().equals(s)){
-                return true;
+                return m;
             }
         }
-        return false;
+        return null;
     }
 
-    public boolean containsVariable(String s){
+    public Variable containsVariable(String s){
         for(var l : locals){
             if(l.getIdentifier().equals(s)){
-                return true;
+                return l;
             }
         }
-        return false;
+        return null;
     }
 
     @Override

@@ -26,13 +26,13 @@ public class SymbolTable {
         scope--;
     }
     // Enter a symbol in the symbol table
-    public void enterSymbol(String name, Symbol s){
-        LinkedList<Symbol> current = table.get(name);
+    public void enterSymbol(Symbol s){
+        LinkedList<Symbol> current = table.get(s.getIdentifier());
 
         if(current == null){
             current = new LinkedList<>();
 
-            table.put(name, current);
+            table.put(s.getIdentifier(), current);
         }
         s.setScope(scope);
         current.add(s);
