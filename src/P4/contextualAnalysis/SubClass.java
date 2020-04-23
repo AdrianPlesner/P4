@@ -47,7 +47,12 @@ public class SubClass extends Symbol {
     }
 
     public boolean containsVariable(String s){
-        for(var l : locals)
+        for(var l : locals){
+            if(l.getIdentifier().equals(s)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

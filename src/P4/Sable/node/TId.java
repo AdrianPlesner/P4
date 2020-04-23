@@ -7,6 +7,8 @@ import P4.Sable.analysis.*;
 @SuppressWarnings("nls")
 public final class TId extends Token
 {
+    public Node declarationNode;
+
     public TId(String text)
     {
         setText(text);

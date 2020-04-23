@@ -108,9 +108,14 @@ public class STBuilder extends DepthFirstAdapter {
         }
 
         // Check method bodies
-
+        for(PMethodDcl m : methods){
+            m.apply(this);
+        }
         // check move bodies
-
+        for(PMethodDcl move : moves)
+        {
+            move.apply(this);
+        }
 
     }
 
@@ -214,7 +219,11 @@ public class STBuilder extends DepthFirstAdapter {
                 }
             }
 
-            // Add methods
+            // Add method declarations
+            for(PMethodDcl md : node.getMethods()){
+                md.apply(this);
+            }
+            // Do method bodies
             for(PMethodDcl md : node.getMethods()){
                 md.apply(this);
             }
@@ -376,10 +385,61 @@ public class STBuilder extends DepthFirstAdapter {
         else{
             // Field on variable
             if(current instanceof SubClass){
-
+                if(!((SubClass)current).containsVariable(name)){
+                    throw new TypeException(node.getId(),"");
+                }
             }
             // Field on result from function call
+            else if(current instanceof Function){
+                if(!((SubClass)st.retrieveSymbol(((Function) current).getReturnType())).containsVariable(name)){
+                    throw new TypeException(node.getId(),"");
+                }
+            }
+            else{
+                throw new TypeException(node.getId(),"Unknown type error occured");
+            }
         }
 
+    }
+
+    @Override
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException {
+        node.getExpr().apply(this);
+    }
+
+    @Override
+    public void caseACallStmt(ACallStmt node) throws TypeException {
+        node.getVal().apply(this);
+    }
+
+    @Override
+    public void caseAIfStmt(AIfStmt node) throws TypeException {
+        node.getPredicate().apply(this);
+
+        st.openScope();
+        for(PStmt s :node.getThen()){
+            s.apply(this);
+        }
+        st.closeScope();
+
+        for(PElseIf ei : node.getElseifs()){
+            ei.apply(this);
+        }
+        st.openScope();
+        for(PStmt s : node.getElse()){
+            s.apply(this);
+        }
+        st.closeScope();
+    }
+
+    @Override
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
+        st.openScope();
+
+        node.getList().apply(this);
+
+        st.enterSymbol(node.getId().getText(),new Variable(node.getId().getText(),node,null));
+
+        st.closeScope();
     }
 }

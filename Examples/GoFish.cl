@@ -74,7 +74,7 @@ Moves{
 // Definer en tur. Efter Setup vil denne kode loopes indtil endcondition
 Turn{
     bool continue = true;
-    player chosen = null;
+    player chosen;
     while player.hand.length > 0 & continue {
         //chosen = chooseFrom(players);
         continue = ChooseMove(chooseFrom(player.hand),chosen);
