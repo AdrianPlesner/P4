@@ -47,8 +47,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAProg(AProg node)throws TypeException
-    {
+    public void caseAProg(AProg node) throws TypeException {
         inAProg(node);
         {
             List<PMethodDcl> copy = new ArrayList<PMethodDcl>(node.getMethods());
@@ -108,23 +107,14 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASetup(ASetup node)throws TypeException
-    {
+    public void caseASetup(ASetup node) throws TypeException {
         inASetup(node);
+        if(node.getPlayer() != null)
         {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
-            Collections.reverse(copy);
-            for(PStmt e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        if(node.getPrivate() != null)
-        {
-            node.getPrivate().apply(this);
+            node.getPlayer().apply(this);
         }
         {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getPublic());
+            List<PStmt> copy = new ArrayList<PStmt>(node.getGame());
             Collections.reverse(copy);
             for(PStmt e : copy)
             {
@@ -149,8 +139,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAClassBody(AClassBody node)throws TypeException
-    {
+    public void caseAClassBody(AClassBody node) throws TypeException {
         inAClassBody(node);
         {
             List<PSubclass> copy = new ArrayList<PSubclass>(node.getSubclasses());
@@ -190,8 +179,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASubclass(ASubclass node)throws TypeException
-    {
+    public void caseASubclass(ASubclass node) throws TypeException {
         inASubclass(node);
         if(node.getBody() != null)
         {
@@ -215,8 +203,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAListExpr(AListExpr node)throws TypeException
-    {
+    public void caseAListExpr(AListExpr node) throws TypeException {
         inAListExpr(node);
         {
             List<PElement> copy = new ArrayList<PElement>(node.getElements());
@@ -240,8 +227,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAMultOpExpr(AMultOpExpr node)throws TypeException
-    {
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException {
         inAMultOpExpr(node);
         if(node.getR() != null)
         {
@@ -269,8 +255,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseALiteralExpr(ALiteralExpr node)throws TypeException
-    {
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
         inALiteralExpr(node);
         if(node.getValue() != null)
         {
@@ -290,8 +275,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAValueExpr(AValueExpr node)throws TypeException
-    {
+    public void caseAValueExpr(AValueExpr node) throws TypeException {
         inAValueExpr(node);
         if(node.getVal() != null)
         {
@@ -311,8 +295,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAAddOpExpr(AAddOpExpr node)throws TypeException
-    {
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
         inAAddOpExpr(node);
         if(node.getR() != null)
         {
@@ -340,8 +323,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseARelationExpr(ARelationExpr node)throws TypeException
-    {
+    public void caseARelationExpr(ARelationExpr node) throws TypeException {
         inARelationExpr(node);
         if(node.getR() != null)
         {
@@ -369,8 +351,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node)throws TypeException
-    {
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
         inAEqualityExpr(node);
         if(node.getR() != null)
         {
@@ -398,8 +379,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseABoolOpExpr(ABoolOpExpr node)throws TypeException
-    {
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
         inABoolOpExpr(node);
         if(node.getR() != null)
         {
@@ -511,8 +491,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAElement(AElement node)throws TypeException
-    {
+    public void caseAElement(AElement node) throws TypeException {
         inAElement(node);
         {
             List<PExpr> copy = new ArrayList<PExpr>(node.getValues());
@@ -536,8 +515,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAVal(AVal node)throws TypeException
-    {
+    public void caseAVal(AVal node) throws TypeException {
         inAVal(node);
         {
             List<PCallField> copy = new ArrayList<PCallField>(node.getCallField());
@@ -582,8 +560,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseACallCallField(ACallCallField node)throws TypeException
-    {
+    public void caseACallCallField(ACallCallField node) throws TypeException {
         inACallCallField(node);
         {
             List<PExpr> copy = new ArrayList<PExpr>(node.getParams());
@@ -611,8 +588,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASingleDcl(ASingleDcl node)throws TypeException
-    {
+    public void caseASingleDcl(ASingleDcl node) throws TypeException {
         inASingleDcl(node);
         if(node.getExpr() != null)
         {
@@ -678,8 +654,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAElseIf(AElseIf node)throws TypeException
-    {
+    public void caseAElseIf(AElseIf node) throws TypeException {
         inAElseIf(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
@@ -707,8 +682,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node)throws TypeException
-    {
+    public void caseADclStmt(ADclStmt node) throws TypeException {
         inADclStmt(node);
         {
             List<PSingleDcl> copy = new ArrayList<PSingleDcl>(node.getDcls());
@@ -736,8 +710,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAAssignStmt(AAssignStmt node)throws TypeException
-    {
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
         inAAssignStmt(node);
         if(node.getExpr() != null)
         {
@@ -765,8 +738,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseACallStmt(ACallStmt node)throws TypeException
-    {
+    public void caseACallStmt(ACallStmt node) throws TypeException {
         inACallStmt(node);
         if(node.getVal() != null)
         {
@@ -786,8 +758,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAIfStmt(AIfStmt node)throws TypeException
-    {
+    public void caseAIfStmt(AIfStmt node) throws TypeException {
         inAIfStmt(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getElse());
@@ -831,8 +802,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASwitchStmt(ASwitchStmt node)throws TypeException
-    {
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
         inASwitchStmt(node);
         {
             List<PCase> copy = new ArrayList<PCase>(node.getCases());
@@ -860,8 +830,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAForStmt(AForStmt node)throws TypeException
-    {
+    public void caseAForStmt(AForStmt node) throws TypeException {
         inAForStmt(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
@@ -897,8 +866,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAForeachStmt(AForeachStmt node)throws TypeException
-    {
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
         inAForeachStmt(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
@@ -930,8 +898,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAWhileStmt(AWhileStmt node)throws TypeException
-    {
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException {
         inAWhileStmt(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
@@ -959,8 +926,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAReturnStmt(AReturnStmt node)throws TypeException
-    {
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException {
         inAReturnStmt(node);
         if(node.getExpr() != null)
         {
@@ -980,8 +946,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseACaseCase(ACaseCase node)throws TypeException
-    {
+    public void caseACaseCase(ACaseCase node) throws TypeException {
         inACaseCase(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
@@ -1009,8 +974,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseADefaultCase(ADefaultCase node)throws TypeException
-    {
+    public void caseADefaultCase(ADefaultCase node) throws TypeException {
         inADefaultCase(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
@@ -1034,8 +998,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node)throws TypeException
-    {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
         inAMethodDcl(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getBody());
@@ -1075,8 +1038,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAParamDcl(AParamDcl node)throws TypeException
-    {
+    public void caseAParamDcl(AParamDcl node) throws TypeException {
         inAParamDcl(node);
         if(node.getName() != null)
         {

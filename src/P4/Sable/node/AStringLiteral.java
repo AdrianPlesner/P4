@@ -3,7 +3,6 @@
 package P4.Sable.node;
 
 import P4.Sable.analysis.*;
-import P4.contextualAnalysis.TypeException;
 
 @SuppressWarnings("nls")
 public final class AStringLiteral extends PLiteral
@@ -31,7 +30,8 @@ public final class AStringLiteral extends PLiteral
     }
 
     @Override
-    public void apply(Switch sw) throws TypeException {
+    public void apply(Switch sw)
+    {
         ((Analysis) sw).caseAStringLiteral(this);
     }
 

@@ -367,18 +367,6 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseTPublic(TPublic node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseTPrivate(TPrivate node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
     public void caseTSeparator(TSeparator node)
     {
         defaultCase(node);
@@ -536,6 +524,18 @@ public class AnalysisAdapter implements Analysis
 
     @Override
     public void caseTSub(TSub node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseTGame(TGame node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseTPlayer(TPlayer node)
     {
         defaultCase(node);
     }

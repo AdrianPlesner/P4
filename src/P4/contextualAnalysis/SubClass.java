@@ -36,4 +36,21 @@ public class SubClass extends Symbol {
     public SubClass getSuperClass(){
         return this.superClass;
     }
+
+    public boolean containsMethod(String s){
+        for(var m : methods){
+            if(m.getIdentifier().equals(s)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "SubClass{" +
+                super.toString() +
+                "superClass=" + superClass +
+                '}';
+    }
 }

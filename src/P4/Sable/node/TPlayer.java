@@ -5,16 +5,16 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class TPrivate extends Token
+public final class TPlayer extends Token
 {
-    public TPrivate()
+    public TPlayer()
     {
-        super.setText("Private");
+        super.setText("Player");
     }
 
-    public TPrivate(int line, int pos)
+    public TPlayer(int line, int pos)
     {
-        super.setText("Private");
+        super.setText("Player");
         setLine(line);
         setPos(pos);
     }
@@ -22,18 +22,18 @@ public final class TPrivate extends Token
     @Override
     public Object clone()
     {
-      return new TPrivate(getLine(), getPos());
+      return new TPlayer(getLine(), getPos());
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseTPrivate(this);
+        ((Analysis) sw).caseTPlayer(this);
     }
 
     @Override
     public void setText(@SuppressWarnings("unused") String text)
     {
-        throw new RuntimeException("Cannot change TPrivate text.");
+        throw new RuntimeException("Cannot change TPlayer text.");
     }
 }

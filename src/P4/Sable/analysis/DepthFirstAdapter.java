@@ -109,22 +109,15 @@ public class DepthFirstAdapter extends AnalysisAdapter
             node.getCard().apply(this);
         }
         {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getPublic());
+            List<PStmt> copy = new ArrayList<PStmt>(node.getGame());
             for(PStmt e : copy)
             {
                 e.apply(this);
             }
         }
-        if(node.getPrivate() != null)
+        if(node.getPlayer() != null)
         {
-            node.getPrivate().apply(this);
-        }
-        {
-            List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
-            for(PStmt e : copy)
-            {
-                e.apply(this);
-            }
+            node.getPlayer().apply(this);
         }
         outASetup(node);
     }

@@ -10,9 +10,8 @@ import P4.contextualAnalysis.TypeException;
 public final class ASetup extends PSetup
 {
     private PClassBody _card_;
-    private final LinkedList<PStmt> _public_ = new LinkedList<PStmt>();
-    private PClassBody _private_;
-    private final LinkedList<PStmt> _dcls_ = new LinkedList<PStmt>();
+    private final LinkedList<PStmt> _game_ = new LinkedList<PStmt>();
+    private PClassBody _player_;
 
     public ASetup()
     {
@@ -21,18 +20,15 @@ public final class ASetup extends PSetup
 
     public ASetup(
         @SuppressWarnings("hiding") PClassBody _card_,
-        @SuppressWarnings("hiding") List<?> _public_,
-        @SuppressWarnings("hiding") PClassBody _private_,
-        @SuppressWarnings("hiding") List<?> _dcls_)
+        @SuppressWarnings("hiding") List<?> _game_,
+        @SuppressWarnings("hiding") PClassBody _player_)
     {
         // Constructor
         setCard(_card_);
 
-        setPublic(_public_);
+        setGame(_game_);
 
-        setPrivate(_private_);
-
-        setDcls(_dcls_);
+        setPlayer(_player_);
 
     }
 
@@ -41,9 +37,8 @@ public final class ASetup extends PSetup
     {
         return new ASetup(
             cloneNode(this._card_),
-            cloneList(this._public_),
-            cloneNode(this._private_),
-            cloneList(this._dcls_));
+            cloneList(this._game_),
+            cloneNode(this._player_));
     }
 
     @Override
@@ -76,18 +71,18 @@ public final class ASetup extends PSetup
         this._card_ = node;
     }
 
-    public LinkedList<PStmt> getPublic()
+    public LinkedList<PStmt> getGame()
     {
-        return this._public_;
+        return this._game_;
     }
 
-    public void setPublic(List<?> list)
+    public void setGame(List<?> list)
     {
-        for(PStmt e : this._public_)
+        for(PStmt e : this._game_)
         {
             e.parent(null);
         }
-        this._public_.clear();
+        this._game_.clear();
 
         for(Object obj_e : list)
         {
@@ -98,20 +93,20 @@ public final class ASetup extends PSetup
             }
 
             e.parent(this);
-            this._public_.add(e);
+            this._game_.add(e);
         }
     }
 
-    public PClassBody getPrivate()
+    public PClassBody getPlayer()
     {
-        return this._private_;
+        return this._player_;
     }
 
-    public void setPrivate(PClassBody node)
+    public void setPlayer(PClassBody node)
     {
-        if(this._private_ != null)
+        if(this._player_ != null)
         {
-            this._private_.parent(null);
+            this._player_.parent(null);
         }
 
         if(node != null)
@@ -124,33 +119,7 @@ public final class ASetup extends PSetup
             node.parent(this);
         }
 
-        this._private_ = node;
-    }
-
-    public LinkedList<PStmt> getDcls()
-    {
-        return this._dcls_;
-    }
-
-    public void setDcls(List<?> list)
-    {
-        for(PStmt e : this._dcls_)
-        {
-            e.parent(null);
-        }
-        this._dcls_.clear();
-
-        for(Object obj_e : list)
-        {
-            PStmt e = (PStmt) obj_e;
-            if(e.parent() != null)
-            {
-                e.parent().removeChild(e);
-            }
-
-            e.parent(this);
-            this._dcls_.add(e);
-        }
+        this._player_ = node;
     }
 
     @Override
@@ -158,9 +127,8 @@ public final class ASetup extends PSetup
     {
         return ""
             + toString(this._card_)
-            + toString(this._public_)
-            + toString(this._private_)
-            + toString(this._dcls_);
+            + toString(this._game_)
+            + toString(this._player_);
     }
 
     @Override
@@ -173,19 +141,14 @@ public final class ASetup extends PSetup
             return;
         }
 
-        if(this._public_.remove(child))
+        if(this._game_.remove(child))
         {
             return;
         }
 
-        if(this._private_ == child)
+        if(this._player_ == child)
         {
-            this._private_ = null;
-            return;
-        }
-
-        if(this._dcls_.remove(child))
-        {
+            this._player_ = null;
             return;
         }
 
@@ -202,7 +165,7 @@ public final class ASetup extends PSetup
             return;
         }
 
-        for(ListIterator<PStmt> i = this._public_.listIterator(); i.hasNext();)
+        for(ListIterator<PStmt> i = this._game_.listIterator(); i.hasNext();)
         {
             if(i.next() == oldChild)
             {
@@ -220,28 +183,10 @@ public final class ASetup extends PSetup
             }
         }
 
-        if(this._private_ == oldChild)
+        if(this._player_ == oldChild)
         {
-            setPrivate((PClassBody) newChild);
+            setPlayer((PClassBody) newChild);
             return;
-        }
-
-        for(ListIterator<PStmt> i = this._dcls_.listIterator(); i.hasNext();)
-        {
-            if(i.next() == oldChild)
-            {
-                if(newChild != null)
-                {
-                    i.set((PStmt) newChild);
-                    newChild.parent(this);
-                    oldChild.parent(null);
-                    return;
-                }
-
-                i.remove();
-                oldChild.parent(null);
-                return;
-            }
         }
 
         throw new RuntimeException("Not a child.");

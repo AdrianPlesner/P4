@@ -43,9 +43,11 @@ public class SymbolTable {
 
     public Boolean containsClass(String name){
         var s = table.get(name);
-        for(Symbol sym : s){
-            if(sym instanceof SubClass){
-                return true;
+        if(s != null){
+            for(Symbol sym : s){
+                if(sym instanceof SubClass){
+                    return true;
+                }
             }
         }
         return false;

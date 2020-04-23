@@ -23,5 +23,11 @@ public abstract class Symbol{
         return this.identifier;
     }
 
+    public Node getDeclarationNode() {
+        return declarationNode;
+    }
 
+    public String toString(){
+        return identifier;
+    }
 }

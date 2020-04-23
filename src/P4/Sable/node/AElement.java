@@ -32,8 +32,7 @@ public final class AElement extends PElement
     }
 
     @Override
-    public void apply(Switch sw) throws TypeException
-    {
+    public void apply(Switch sw) throws TypeException {
         ((Analysis) sw).caseAElement(this);
     }
 

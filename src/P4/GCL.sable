@@ -29,8 +29,6 @@ Tokens
     l_brack = '{';
     r_brack = '}';
     setup = 'Setup';
-    public = 'Public';
-    private = 'Private';
     separator = ',';
     dot = '.';
     moves = 'Moves';
@@ -58,6 +56,8 @@ Tokens
     fun = 'Function';
     inc = 'include';
     sub = 'Subclass';
+    game = 'Game';
+    player = 'Player';
     id = letter (letter |digit)*;
 
 Ignored Tokens
@@ -69,8 +69,8 @@ Productions
 
     include{-> id} = inc id semi {-> id };
 
-    setup = T.setup l_brack P.card P.public P.private stmt* r_brack
-    {-> New setup(card.class_body, [public.stmt], private.class_body, [stmt])};
+    setup = T.setup l_brack P.card P.player P.game r_brack
+    {-> New setup(card.class_body, [game.stmt], player.class_body)};
 
     card{-> class_body} = T.card class_body {-> class_body};
 
@@ -78,9 +78,9 @@ Productions
 
     subclass = sub id class_body {-> New subclass(id, class_body)};
 
-    public{-> stmt*} = T.public block{-> [block.stmt]};
+    game{-> stmt*} = T.game block{-> [block.stmt]};
 
-    private{-> class_body} = T.private class_body {-> class_body};
+    player{-> class_body} = T.player class_body {-> class_body};
 
     moves{-> method_dcl*} = T.moves l_brack method_dcl* r_brack {-> [method_dcl]};
 
@@ -175,7 +175,7 @@ Productions
 Abstract Syntax Tree
     prog = [includes]:id* P.setup [moves]:method_dcl* [turn]:stmt* [end_condition]:stmt* [methods]:method_dcl* ;
 
-    setup = [card]:class_body [public]:stmt* [private]:class_body [dcls]:stmt*;
+    setup = [card]:class_body [game]:stmt* [player]:class_body;
 
     class_body = [dcls]:stmt* [methods]:method_dcl* [subclasses]:subclass*;
 

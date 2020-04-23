@@ -21,4 +21,26 @@ public class Function extends Symbol {
     public String getReturnType(){
         return this.returnType;
     }
+
+    public boolean containsArg(String name){
+        for(var v : args){
+            if(v.getIdentifier().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public LinkedList<Variable> getArgs() {
+        return args;
+    }
+
+    @Override
+    public String toString() {
+        return "Function{" +
+                super.toString() +
+                "args=" + args +
+                ", returnType='" + returnType + '\'' +
+                '}';
+    }
 }

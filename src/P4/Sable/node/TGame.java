@@ -5,16 +5,16 @@ package P4.Sable.node;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
-public final class TPublic extends Token
+public final class TGame extends Token
 {
-    public TPublic()
+    public TGame()
     {
-        super.setText("Public");
+        super.setText("Game");
     }
 
-    public TPublic(int line, int pos)
+    public TGame(int line, int pos)
     {
-        super.setText("Public");
+        super.setText("Game");
         setLine(line);
         setPos(pos);
     }
@@ -22,18 +22,18 @@ public final class TPublic extends Token
     @Override
     public Object clone()
     {
-      return new TPublic(getLine(), getPos());
+      return new TGame(getLine(), getPos());
     }
 
     @Override
     public void apply(Switch sw)
     {
-        ((Analysis) sw).caseTPublic(this);
+        ((Analysis) sw).caseTGame(this);
     }
 
     @Override
     public void setText(@SuppressWarnings("unused") String text)
     {
-        throw new RuntimeException("Cannot change TPublic text.");
+        throw new RuntimeException("Cannot change TGame text.");
     }
 }

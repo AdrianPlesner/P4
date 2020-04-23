@@ -10,4 +10,12 @@ public class Variable extends Symbol {
         super(id, dcl);
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Variable{" +
+                super.toString() +
+                "type='" + type + '\'' +
+                '}';
+    }
 }
