@@ -27,6 +27,8 @@ public abstract class Symbol{
         return declarationNode;
     }
 
+    public abstract String getType();
+
     public String toString(){
         return identifier;
     }

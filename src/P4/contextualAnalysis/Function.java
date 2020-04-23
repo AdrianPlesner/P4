@@ -43,4 +43,9 @@ public class Function extends Symbol {
                 ", returnType='" + returnType + '\'' +
                 '}';
     }
+
+    @Override
+    public String getType() {
+        return returnType;
+    }
 }

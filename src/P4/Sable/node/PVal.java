@@ -4,5 +4,6 @@ package P4.Sable.node;
 
 public abstract class PVal extends Node
 {
+    public String type = "void";
     // Empty body
 }

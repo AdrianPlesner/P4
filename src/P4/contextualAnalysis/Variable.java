@@ -18,4 +18,9 @@ public class Variable extends Symbol {
                 "type='" + type + '\'' +
                 '}';
     }
+
+    @Override
+    public String getType() {
+        return type;
+    }
 }

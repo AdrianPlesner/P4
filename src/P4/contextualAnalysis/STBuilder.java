@@ -22,7 +22,7 @@ public class STBuilder extends DepthFirstAdapter {
     // Construct the given symbol table from the ast
     public SymbolTable BuildST(SymbolTable st) throws TypeException {
         this.st = st;
-        // Add buildin classes
+        // Add standard environment
         st.enterSymbol("int",new SubClass("int",null,null));
         st.enterSymbol("float",new SubClass("float",null,null));
         st.enterSymbol("string",new SubClass("string",null,null));
@@ -323,7 +323,7 @@ public class STBuilder extends DepthFirstAdapter {
 
     @Override
     public void caseAVal(AVal node) throws TypeException {
-        Symbol now;
+        Symbol now = null;
         var prev = current;
         for(PCallField cf : node.getCallField()){
             //Check call/field is valid
@@ -343,6 +343,12 @@ public class STBuilder extends DepthFirstAdapter {
             current = now;
         }
         current = prev;
+        if (now != null) {
+            node.type = now.getType();
+        }
+        else{
+            throw new TypeException(null,"An unknown type error occurred");
+        }
     }
 
     @Override
@@ -434,12 +440,75 @@ public class STBuilder extends DepthFirstAdapter {
 
     @Override
     public void caseAForeachStmt(AForeachStmt node) throws TypeException {
-        st.openScope();
 
         node.getList().apply(this);
+        var type = node.getList().type;
+        if(!type.startsWith("List of")){
+            throw new TypeException(node.getId(),"Iteration variable must be a list");
+        }
+        type = type.substring(7);
 
-        st.enterSymbol(node.getId().getText(),new Variable(node.getId().getText(),node,null));
+        st.openScope();
+        st.enterSymbol(node.getId().getText(),new Variable(node.getId().getText(),node,type));
+        for(PStmt s : node.getThen()){
+            s.apply(this);
+        }
+        st.closeScope();
+    }
+
+    @Override
+    public void caseAForStmt(AForStmt node) throws TypeException {
+        st.openScope();
+
+        node.getInit().apply(this);
+
+        node.getPredicate().apply(this);
+
+        node.getUpdate().apply(this);
+
+        for(PStmt s : node.getThen()){
+            s.apply(this);
+        }
 
         st.closeScope();
     }
+
+    @Override
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
+        node.getVariable().apply(this);
+        for(PCase c : node.getCases()){
+            c.apply(this);
+        }
+    }
+
+    @Override
+    public void caseACaseCase(ACaseCase node) throws TypeException {
+        node.getCase().apply(this);
+        st.openScope();
+        for(PStmt s : node.getThen()){
+            s.apply(this);
+        }
+        st.closeScope();
+    }
+
+    @Override
+    public void caseADefaultCase(ADefaultCase node) throws TypeException {
+        st.openScope();
+        for(PStmt s : node.getThen()){
+            s.apply(this);
+        }
+        st.closeScope();
+    }
+
+    @Override
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException {
+        node.getPredicate().apply(this);
+        st.openScope();
+        for(PStmt s : node.getThen()){
+            s.apply(this);
+        }
+        st.closeScope();
+    }
+
+
 }
