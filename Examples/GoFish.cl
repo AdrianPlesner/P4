@@ -46,10 +46,7 @@ Setup{
         int a = 3+5;
         //Sæt start spiller
         //turn.player = Players.find("Adrian");
-
     }
-
-
 }
 // Mulige træk
 Moves{

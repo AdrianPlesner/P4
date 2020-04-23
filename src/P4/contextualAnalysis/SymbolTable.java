@@ -17,6 +17,12 @@ public class SymbolTable {
     }
     // Close the most recent scope
     public void closeScope(){
+        for(var key : table.keySet()){
+            var current = table.get(key);
+            if(current.getLast().getScope() == scope){
+                current.removeLast();
+            }
+        }
         scope--;
     }
     // Enter a symbol in the symbol table
@@ -38,7 +44,6 @@ public class SymbolTable {
             return current.getLast();
         }
         return null;
-
     }
 
     public Boolean containsClass(String name){

@@ -31,7 +31,7 @@ public interface Analysis extends Switch
     void caseABoolLiteral(ABoolLiteral node);
     void caseAElement(AElement node) throws TypeException;
     void caseAVal(AVal node) throws TypeException;
-    void caseAFieldCallField(AFieldCallField node);
+    void caseAFieldCallField(AFieldCallField node) throws TypeException;
     void caseACallCallField(ACallCallField node) throws TypeException;
     void caseASingleDcl(ASingleDcl node) throws TypeException;
     void caseAListType(AListType node) throws TypeException;

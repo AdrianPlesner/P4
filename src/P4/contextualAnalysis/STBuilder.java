@@ -68,20 +68,13 @@ public class STBuilder extends DepthFirstAdapter {
         }
     }
 
-    private boolean compatibleTypes(PExpr l, PExpr r){
-        if(l.type.equals(r.type)){
-            return true;
-        }
-        //TODO: other compatible types
-        return false;
-    }
-
     @Override
     public void caseAProg(AProg node) throws TypeException {
-        //TODO: include includes
+
         var includes = node.getIncludes();
         for(TId inc : includes){
             // Something about reading a file and adding everything to symboltable
+            //TODO: include includes
         }
 
         // Do Setup
@@ -178,10 +171,8 @@ public class STBuilder extends DepthFirstAdapter {
             var method = new Function(name, node, returnType.toString());
 
             var prev = current;
+            current = method;
             // Check arguments
-            if (current instanceof SubClass) {
-                current = method;
-            }
             for (PParamDcl pd : node.getParams()) {
                 pd.apply(this);
             }
@@ -229,9 +220,7 @@ public class STBuilder extends DepthFirstAdapter {
             }
 
             // Add subclasses
-
             for(PSubclass sc : node.getSubclasses()){
-
                 sc.apply(this);
             }
         }
@@ -328,7 +317,10 @@ public class STBuilder extends DepthFirstAdapter {
         Symbol now;
         var prev = current;
         for(PCallField cf : node.getCallField()){
+            //Check call/field is valid
             cf.apply(this);
+
+            // Get next symbol in the trace
             if(cf instanceof ACallCallField){
                 now = st.retrieveSymbol(((ACallCallField) cf).getId().getText());
                 now = st.retrieveSymbol(((Function)now).getReturnType());
@@ -366,6 +358,28 @@ public class STBuilder extends DepthFirstAdapter {
                     throw new TypeException(node.getId(),"");
                 }
             }
+            else{
+                throw new TypeException(null,"An unknown type error occurred");
+            }
         }
+    }
+
+    @Override
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
+        var name = node.getId().getText();
+        if(current == null){
+            // Base call, lookup at symboltable
+            if(st.retrieveSymbol(name) == null){
+                throw new TypeException(node.getId(),"Variable " + name + " does not exists in the current context");
+            }
+        }
+        else{
+            // Field on variable
+            if(current instanceof SubClass){
+
+            }
+            // Field on result from function call
+        }
+
     }
 }

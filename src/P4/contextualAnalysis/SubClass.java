@@ -46,6 +46,10 @@ public class SubClass extends Symbol {
         return false;
     }
 
+    public boolean containsVariable(String s){
+        for(var l : locals)
+    }
+
     @Override
     public String toString() {
         return "SubClass{" +

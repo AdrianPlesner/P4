@@ -527,8 +527,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAFieldCallField(AFieldCallField node)
-    {
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
         inAFieldCallField(node);
         if(node.getId() != null)
         {

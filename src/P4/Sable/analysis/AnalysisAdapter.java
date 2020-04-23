@@ -169,8 +169,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseAFieldCallField(AFieldCallField node)
-    {
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
         defaultCase(node);
     }
 

@@ -39,7 +39,7 @@ public class Function extends Symbol {
     public String toString() {
         return "Function{" +
                 super.toString() +
-                "args=" + args +
+                ", args=" + args +
                 ", returnType='" + returnType + '\'' +
                 '}';
     }
