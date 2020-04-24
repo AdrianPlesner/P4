@@ -32,7 +32,7 @@ Setup{
 //public er “spillepladen” (tilgængelig for alle spillere)
     Game{
         // Der er en bunke i spillet, trækbunken til når man fisker
-        List typeof card Deck;//GetStdDeck(0);
+        List typeof card Deck = GetStdDeck(0);
         // Definer spillere, initaliserer en List<Player> Players
         List typeof player Players = {
             "Adrian", false;
@@ -45,7 +45,7 @@ Setup{
 
         int a = 3+5;
         //Sæt start spiller
-        //turn.current = Players.find("Adrian");
+        turn.current = Players.find("Adrian");
     }
 }
 // Mulige træk
@@ -56,17 +56,17 @@ Moves{
         bool result = false;
         for pCard in p.hand {
             if pCard.value == c.val {
-                //pCard.transfer(player, turn.player);
+                pCard.transfer(player, turn.player);
                 result = true;
             }
         }
         for int i = 0; i < 10; i += 1 {
-            //print (i);
+            print(i);
         }
         CheckForTrick(p.hand);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
-        if(player.hand.length == 0){
-            //player.hand = deck.take(1);
+        if(p.hand.length == 0){
+            p.hand = deck.take(1);
          }
          return result;
     }
@@ -75,25 +75,25 @@ Moves{
 Turn{
     bool continue = true;
     player chosen;
-    while current.hand.length > 0 & continue {
-        //chosen = chooseFrom(players);
+    while turn.current.hand.length > 0 & continue {
+        chosen = chooseFrom(players);
         continue = ChooseMove(chooseFrom(player.hand),chosen);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
-    //player.hand.add(deck.take(1));
-    turn.player = chosen;
+    turn.current.hand.add(deck.take(1));
+    turn.current = chosen;
 }
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
     bool end = true;
 	for p in players {
-		//if p.hand.length 0 == 0 {
+		if p.hand.length == 0 {
 		    end &= true;
-		//}
-		//else {
-		  //  end &= false;
-		//}
+		}
+		else {
+		    end &= false;
+		}
     }
     return end;
 	// Vinderen(e) er de(n) spiller(e) med flest point
@@ -102,18 +102,18 @@ EndCondition{
 Function CheckForTrick(player p) typeof void{
     List typeof card trick;
     for int i = 1; i < 14 ; i += 1 {
-        //trick.clear();
+        trick.clear();
         for c in p.hand {
-            //if i == c.value {
-            //    trick.add(c);
-            //}
+            if i == c.value {
+                trick.add(c);
+            }
         }
-        //if trick.length == 4 {
-        //    for c in trick {
-        //        p.hand.remove(c);
-        //    }
+        if trick.length == 4 {
+            for c in trick {
+                p.hand.remove(c);
+            }
             p.score += 1;
-        //}
+        }
     }
 }
 

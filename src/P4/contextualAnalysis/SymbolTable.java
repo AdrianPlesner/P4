@@ -1,5 +1,8 @@
 package P4.contextualAnalysis;
 
+import P4.contextualAnalysis.Symbol.SubClass;
+import P4.contextualAnalysis.Symbol.Symbol;
+
 import java.util.*;
 
 //Symbol table

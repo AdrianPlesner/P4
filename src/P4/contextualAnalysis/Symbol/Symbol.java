@@ -1,4 +1,4 @@
-package P4.contextualAnalysis;
+package P4.contextualAnalysis.Symbol;
 
 import P4.Sable.node.Node;
 

@@ -1,4 +1,4 @@
-package P4.contextualAnalysis;
+package P4.contextualAnalysis.Symbol;
 
 import P4.Sable.node.Node;
 
@@ -62,9 +62,9 @@ public class SubClass extends Symbol {
 
     @Override
     public String toString() {
-        return "SubClass{" +
+        return "SubClass{ " +
                 super.toString() +
-                "superClass=" + superClass +
+                ", superClass=" + superClass +
                 '}';
     }
 }

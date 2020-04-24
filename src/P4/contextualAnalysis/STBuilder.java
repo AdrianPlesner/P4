@@ -1,8 +1,14 @@
 package P4.contextualAnalysis;
 
 import P4.Sable.analysis.DepthFirstAdapter;
+import P4.Sable.lexer.Lexer;
 import P4.Sable.node.*;
+import P4.Sable.parser.Parser;
+import P4.contextualAnalysis.Symbol.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PushbackReader;
 import java.util.LinkedList;
 
 public class STBuilder extends DepthFirstAdapter {
@@ -13,10 +19,13 @@ public class STBuilder extends DepthFirstAdapter {
 
     private Symbol current;
 
+    private String path;
+
     private LinkedList<TypeError> errors = new LinkedList<>();
 
-    public STBuilder(Start ast) {
+    public STBuilder(Start ast, String contentPath) {
         this.ast = ast;
+        this.path = contentPath;
     }
 
     // Construct the given symbol table from the ast
@@ -70,12 +79,24 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(new SubClass("string",null,null));
         st.enterSymbol(new SubClass("bool",null,null));
         st.enterSymbol(new SubClass("void",null,null));
-        SubClass list = new SubClass("list",null,null);
-        list.addLocal(new Variable("length",null,"int"));
-        list.addMethod(new Function("take",null,"list"));
-
+        st.enterSymbol(new SubClass("card",null,null));
+        st.enterSymbol(new SubClass("player",null,null));
+        var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
-
+        list.addLocal(new Variable("length",null,"int"));
+        var take = new Function("take",null,null);
+        take.addArg(new Variable("num",null,"int"));
+        list.addMethod(take);
+        var find = new Function("find",null,null);
+        list.addMethod(find);
+        find.addArg(new Variable("n",null,"string"));
+        st.enterSymbol(new Function("GetStdDeck",null,"list of card"));
+        var Turn = new SubClass("Turn",null,null);
+        st.enterSymbol(Turn);
+        Turn.addLocal(new Variable("current",null,"player"));
+        st.enterSymbol(new Variable("turn",null,"Turn"));
+        var chooseFrom = new Function("chooseFrom",null,null);
+        chooseFrom.addArg(new GenerecVariable("l",null,"list",null));
     }
 
     @Override
@@ -85,6 +106,22 @@ public class STBuilder extends DepthFirstAdapter {
         for(TId inc : includes){
             // Something about reading a file and adding everything to symboltable
             //TODO: include includes
+            try {
+                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
+
+                // parser program
+                Parser parser = new Parser(lexer);
+                // Debug med System.out.println(this.token.getClass().getSimpleName() + ": [" + token.getText() + "]");
+                Start ast = parser.parse();
+                node.includes.add(ast);
+
+            }
+            catch(Exception e){
+                System.out.println(e);
+            }
+        }
+        for(Start ast : node.includes){
+            ast.apply(this);
         }
 
         // Do Setup
@@ -132,15 +169,23 @@ public class STBuilder extends DepthFirstAdapter {
     @Override
     public void caseASetup(ASetup node) throws TypeException {
         // Add card
-        var card = new SubClass("card",node.getCard(),null);
-        st.enterSymbol(card);
+        SubClass card;
+        card = (SubClass) st.retrieveSymbol("card");
+        if(card == null) {
+            card = new SubClass("card", node.getCard(), null);
+            st.enterSymbol(card);
+        }
         current = card;
         node.getCard().apply(this);
         current = null;
 
         // Add player
-        var player = new SubClass("player",node.getPlayer(),null);
-        st.enterSymbol(player);
+        SubClass player;
+        player = (SubClass) st.retrieveSymbol("player");
+        if(player == null) {
+            player = new SubClass("player", node.getPlayer(), null);
+            st.enterSymbol(player);
+        }
         current = player;
         node.getPlayer().apply(this);
         current = null;
@@ -271,25 +316,25 @@ public class STBuilder extends DepthFirstAdapter {
     @Override
     public void caseADclStmt(ADclStmt node) throws TypeException {
         // Validate type
-        node.getType().apply(this);
-        var type = node.getType().toString();
+        var typeNode = node.getType();
+        typeNode.apply(this);
+        var type = node.getType().toString().trim();
         for(PSingleDcl sDcl : node.getDcls()){
             // Validate singleDcl
             sDcl.apply(this);
-            //TODO: move to typechecker
-            /*
-            // If returned without exception, it is valid
 
-            var exp = ((ASingleDcl) sDcl).getExpr();
-            if(exp != null){
-                if(!exp.type.equals(type)){
-                    throw new TypeException(null,"Cannot assign " + exp.type + " to variable of type " + type);
-                }
+            // expression type and declare type are the same
+            Variable v;
+            if(typeNode instanceof AVarType) {
+                v = new Variable(((ASingleDcl) sDcl).getId().getText(), sDcl, type);
             }
-            // expression type and declare type are the same*/
-            var v = new Variable(((ASingleDcl) sDcl).getId().getText(),sDcl,type);
+            else if(typeNode instanceof AListType){
+                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), sDcl,"list",type);
+            }
+            else{
+                throw new TypeException(null,"An unknown type error occurred");
+            }
             addToCurrent(v);
-
         }
     }
 
@@ -310,7 +355,6 @@ public class STBuilder extends DepthFirstAdapter {
             //Type is not a valid type
             throw new InvalidTypeException(node.getType(),"");
         }
-        node.getType().setText("List of "+s.getIdentifier());
     }
 
     @Override
@@ -333,69 +377,63 @@ public class STBuilder extends DepthFirstAdapter {
 
     @Override
     public void caseAVal(AVal node) throws TypeException {
-        Symbol now = null;
         var prev = current;
         for(PCallField cf : node.getCallField()){
             //Check call/field is valid
             cf.apply(this);
 
-            // Get next symbol in the trace
-            if(cf instanceof ACallCallField){
-                now = st.retrieveSymbol(((ACallCallField) cf).getId().getText());
-                now = st.retrieveSymbol(((Function)now).getReturnType());
-            }
-            else if(cf instanceof  AFieldCallField){
-                now = st.retrieveSymbol(((AFieldCallField) cf).getId().getText());
-            }
-            else{
-                throw new TypeException(null,"An unknown type error occurred");
-            }
-            if(now != null && now.getType().startsWith("List of")){
-                now = st.retrieveSymbol("list");
-            }
-            current = now;
         }
-        current = prev;
-        if (now != null) {
-            node.type = now.getType();
+        if (current != null) {
+            node.type = current.getType();
         }
         else{
             throw new TypeException(null,"An unknown type error occurred");
         }
+        current = prev;
     }
 
     @Override
     public void caseACallCallField(ACallCallField node) throws TypeException {
         var name = node.getId().getText();
-        Symbol dcl = null;
+        Symbol dcl;
         if(current == null){
             // Base call, lookup at symbol table
             dcl = st.retrieveSymbol(name);
-            if(dcl == null ){
-                throw new TypeException(node.getId(),"Method " + node.getId().getText() + " does not exists in the current context");
-            }
         }
         else{
             // Call on a variable
             if(current instanceof SubClass){
                 dcl = ((SubClass) current).containsMethod(name);
-                if(dcl == null){
-                    throw new TypeException(node.getId(),"");
-                }
-
-            }
-            // Call on the result of a function call
-            else if( current instanceof Function){
-                dcl = ((SubClass)st.retrieveSymbol(((Function) current).getReturnType())).containsMethod(name);
-                if(dcl == null){
-                    throw new TypeException(node.getId(),"");
-                }
             }
             else{
                 throw new TypeException(null,"An unknown type error occurred");
             }
         }
         // Set delcaration node
+        if(dcl instanceof Function){
+            var type = ((Function) dcl).getReturnType();
+
+            if(type == null){
+                // unknown classvariable
+                type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
+            }
+            else if(type.startsWith("list of")){
+                // known class variable
+                ((GenericClass)st.retrieveSymbol("list")).setClassVariable(type.substring(8));
+                type = "list";
+            }
+
+            current = st.retrieveSymbol(type);
+            if(current == null){
+                // Return type dont exist
+                throw new InvalidTypeException(node.getId(),((Function) dcl).getReturnType());
+            }
+        }
+        else{
+            throw new TypeException(node.getId(),"Method " + node.getId().getText() + " does not exists in the current context");
+        }
+
+
         node.getId().declarationNode = dcl.getDeclarationNode();
     }
 
@@ -406,31 +444,26 @@ public class STBuilder extends DepthFirstAdapter {
         if(current == null){
             // Base call, lookup at symboltable
             dcl = st.retrieveSymbol(name);
-            if(dcl == null){
-                throw new TypeException(node.getId(),"Variable " + name + " does not exists in the current context");
-            }
         }
         else{
             // Field on variable
             if(current instanceof SubClass){
                 dcl = ((SubClass)current).containsVariable(name);
-                if(dcl == null){
-                    throw new TypeException(node.getId(),"");
-                }
-            }
-            // Field on result from function call
-            else if(current instanceof Function){
-                dcl = ((SubClass)st.retrieveSymbol(((Function) current).getReturnType())).containsVariable(name);
-                if(dcl == null){
-                    throw new TypeException(node.getId(),"");
-                }
             }
             else{
                 throw new TypeException(node.getId(),"Unknown type error occured");
             }
         }
-        node.getId().declarationNode = dcl.getDeclarationNode();
+        if(! (dcl instanceof Variable)){
+            throw new TypeException(node.getId(),"Variable " + name + " does not exists in the current context");
+        }
+        current = st.retrieveSymbol(dcl.getType());
+        // Handle list
+        if(current instanceof GenericClass && dcl instanceof GenerecVariable){
+            ((GenericClass) current).setClassVariable(((GenerecVariable) dcl).getClassVariable());
+        }
 
+        node.getId().declarationNode = dcl.getDeclarationNode();
     }
 
     @Override

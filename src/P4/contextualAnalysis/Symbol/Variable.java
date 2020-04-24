@@ -1,6 +1,7 @@
-package P4.contextualAnalysis;
+package P4.contextualAnalysis.Symbol;
 
 import P4.Sable.node.Node;
+import P4.contextualAnalysis.Symbol.Symbol;
 
 public class Variable extends Symbol {
 
@@ -13,9 +14,9 @@ public class Variable extends Symbol {
 
     @Override
     public String toString() {
-        return "Variable{" +
+        return "Variable{ " +
                 super.toString() +
-                "type='" + type + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 
