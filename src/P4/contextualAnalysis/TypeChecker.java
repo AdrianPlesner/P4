@@ -73,6 +73,23 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
+    public void caseAEqualityExpr(AEqualityExpr node) throws  TypeException {
+        // Check children
+        var L = node.getL();
+        L.apply(this);
+        var R = node.getR();
+        R.apply(this);
+
+        //Only possible if operands are of same type
+        if (L.type.equals(R.type)){
+            node.type = "bool";
+        }
+        else{
+            throw new TypeException(node.getOperator(), "Cannot compare operands of type " + L.type + " and " + R.type);
+        }
+    }
+
+    @Override
     public void caseAVal(AVal node) throws TypeException {
         // Check children
         for(PCallField cf : node.getCallField()){
