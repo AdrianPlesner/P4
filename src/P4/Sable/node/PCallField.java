@@ -5,4 +5,5 @@ package P4.Sable.node;
 public abstract class PCallField extends Node
 {
     // Empty body
+    public String type;
 }

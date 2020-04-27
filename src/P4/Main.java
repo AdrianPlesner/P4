@@ -30,7 +30,7 @@ public class Main {
             STBuilder stBuilder = new STBuilder(ast);
             SymbolTable st = stBuilder.BuildST(new SymbolTable());
 
-            TypeChecker tc = new TypeChecker(ast, st);
+            TypeChecker tc = new TypeChecker(ast);
 
             stop_time = System.currentTimeMillis();
             // Compute and print compilation time
