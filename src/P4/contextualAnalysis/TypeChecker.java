@@ -27,8 +27,26 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void caseAIntLiteral(AIntLiteral node) {
-        // Set type of literal
+        // Set type of int literal
         node.type = "int";
+    }
+
+    @Override
+    public void caseABoolLiteral(ABoolLiteral node) {
+        // Set type of boolean literal
+        node.type = "bool";
+    }
+
+    @Override
+    public void caseAFloatLiteral(AFloatLiteral node) {
+        // Set type of float literal
+        node.type = "float";
+    }
+
+    @Override
+    public void caseAStringLiteral(AStringLiteral node){
+        // Set type of string literal
+        node.type = "string";
     }
 
     @Override
@@ -114,5 +132,15 @@ public class TypeChecker extends DepthFirstAdapter {
             throw new TypeException(node.getId(),"An unknown type error occurred");
         }
 
+    }
+
+    @Override
+    public void caseAForeachStmt(AForeachStmt node) throws  TypeException{
+        var list = node.getList();
+        list.apply(this);
+        var then = node.getThen();
+        //then.apply(this);
+
+        //TODO: Figure out how to make this
     }
 }
