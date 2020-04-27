@@ -221,7 +221,9 @@ public class STBuilder extends DepthFirstAdapter {
                 current = prev;
                 st.closeScope();
             }
-            throw new IdentifierAlreadyExistsException(node.getName(), fun + " already exsists");
+            else {
+                throw new IdentifierAlreadyExistsException(node.getName(), fun + " already exsists");
+            }
         }
         else {
             // Declare function
