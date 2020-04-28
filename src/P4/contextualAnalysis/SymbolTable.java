@@ -3,6 +3,7 @@ package P4.contextualAnalysis;
 import P4.contextualAnalysis.Symbol.SubClass;
 import P4.contextualAnalysis.Symbol.Symbol;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 //Symbol table
@@ -52,6 +53,21 @@ public class SymbolTable {
         var current = table.get(name);
         if(current != null){
             return current.getLast();
+        }
+        return null;
+    }
+
+    public Symbol retrieveSymbol(String name, Class T){
+        var current = table.get(name);
+        if(current == null){
+            return null;
+        }
+        int i = current.size()-1;
+        while( i >= 0){
+            if(current.get(i).getClass().equals(T)){
+                return current.get(i);
+            }
+            i--;
         }
         return null;
     }
