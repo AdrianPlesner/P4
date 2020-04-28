@@ -74,6 +74,10 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(string);
         string.addLocal(new Variable("length",null,"int"));
 
+        var stringIndex = new Function("index",null,"string");
+        string.addMethod(stringIndex);
+        stringIndex.addArg(new Variable("i",null,"int"));
+
         var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
         list.addLocal(new Variable("length",null,"int"));
