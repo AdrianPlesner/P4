@@ -15,14 +15,6 @@ public class SubClass extends Symbol {
         this.superClass = sup;
     }
 
-    public LinkedList<Variable> getLocals(){
-        return this.locals;
-    }
-
-    public LinkedList<Function> getMethods() {
-        return this.methods;
-    }
-
     public void addLocal(Variable v){
         locals.add(v);
     }

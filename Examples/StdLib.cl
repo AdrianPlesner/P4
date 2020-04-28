@@ -34,11 +34,33 @@ Function GetStdDeck(int jokers) typeof List typeof card {
             result.add(c);
         }
     }
+    for int i = 0; i < jokers; i+=1 {
+        result.add(card("joker",0));
+    }
     return result;
 }
 
 Function chooseFrom(List typeof void l) typeof List typeof void {
     // print
+    MessageAll("Please choose one of the following by typing the number:");
+    for int i = 0; i < l.length; i+= 1 {
+        MessageAll(l.index(i));
+    }
     // input
+    string s = Read();
     // return element
+}
+
+Function AskAll(string s) typeof string{
+    MessageAll(s);
+    return Read();
+}
+
+Function Ask(player p, string s) typeof string{
+    Message(p,s);
+    return Read();
+}
+
+Function ParseInt(string s) typeof int{
+
 }

@@ -8,6 +8,11 @@ Setup{
         bool ai = false;
         List typeof card hand;
         int score = 0;
+        Function player(string name, bool ai )typeof player{
+            this.name = name;
+            this.ai = ai;
+            return this;
+        }
     }
 //public er “spillepladen” (tilgængelig for alle spillere)
     Game{
@@ -15,18 +20,19 @@ Setup{
         List typeof card Deck = GetStdDeck(0);
         // Definer spillere, initaliserer en List<Player> Players
         List typeof player Players = {
-            "Adrian", false;
-            "Frederik", false;
-            "Johan", false;
-            "Lasse", false;
-            "Oliver", false;
-            "Rikke", false;
+            player("Adrian", false);
+            player("Frederik", false);
+            player("Johan", false);
+            player("Lasse", false);
+            player("Oliver", false);
+            player("Rikke", false);
         };
         //Sæt start spiller
         turn.current = Players.find("Adrian");
         for p in Players {
             p.hand = Deck.take(7);
         }
+        int a = Deck.index(0).value;
     }
 }
 // Mulige træk
@@ -59,7 +65,7 @@ Turn{
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
-    turn.current.hand.add(deck.take(1));
+    turn.current.hand.add(Deck.take(1));
     turn.current = chosen;
 }
 EndCondition{

@@ -65,11 +65,15 @@ public class STBuilder extends DepthFirstAdapter {
     private void createStdEnv(){
         st.enterSymbol(new SubClass("int",null,null));
         st.enterSymbol(new SubClass("float",null,null));
-        st.enterSymbol(new SubClass("string",null,null));
         st.enterSymbol(new SubClass("bool",null,null));
         st.enterSymbol(new SubClass("void",null,null));
         st.enterSymbol(new SubClass("card",null,null));
         st.enterSymbol(new SubClass("player",null,null));
+
+        var string = new SubClass("string",null,null);
+        st.enterSymbol(string);
+        string.addLocal(new Variable("length",null,"int"));
+
         var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
         list.addLocal(new Variable("length",null,"int"));
@@ -92,30 +96,35 @@ public class STBuilder extends DepthFirstAdapter {
 
         list.addMethod(new Function("clear",null,"void"));
 
+        var index = new Function("index",null,"element");
+        list.addMethod(index);
+        index.addArg(new Variable("i",null,"int"));
+
         var Turn = new SubClass("Turn",null,null);
         st.enterSymbol(Turn);
         Turn.addLocal(new Variable("current",null,"player"));
         st.enterSymbol(new Variable("turn",null,"Turn"));
 
-        var message = new Function("message",null,"void");
+        var message = new Function("Message",null,"void");
         st.enterSymbol(message);
         message.addArg(new Variable("p",null,"player"));
         message.addArg(new Variable("m",null,"string"));
 
-        var messageAll = new Function("messageAll",null,"void");
+        var messageAll = new Function("MessageAll",null,"void");
         st.enterSymbol(messageAll);
         messageAll.addArg(new Variable("m",null,"string"));
 
-        st.enterSymbol(new Function("scan",null,"string"));
+
+        st.enterSymbol(new Function("Read",null,"string"));
     }
 
     @Override
     public void caseAProg(AProg node) throws TypeException {
 
         var includes = node.getIncludes();
-        for(TId inc : includes){
-            try {
-
+        int i = 0;
+        try {
+            for (TId inc : includes) {
                 // Read included .cl file
                 Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
 
@@ -124,14 +133,17 @@ public class STBuilder extends DepthFirstAdapter {
 
                 Start ast = parser.parse();
                 node.includes.add(ast);
-
+                i++;
             }
-            catch(Exception e){
-                System.out.println(e);
+            i = 0;
+
+            for (Start ast : node.includes) {
+                ast.apply(this);
+                i++;
             }
         }
-        for(Start ast : node.includes){
-            ast.apply(this);
+        catch(Exception e){
+            System.out.println("In "+includes.get(i).getText()+ "\n" + e);
         }
 
         // Do Setup
@@ -221,6 +233,7 @@ public class STBuilder extends DepthFirstAdapter {
                 // Go through method body
                 st.openScope();
                 for(var p : fun.getArgs()){
+                    // Declare arguments as local variables
                     if(st.declaredLocally(p.getIdentifier())){
                         throw new IdentifierAlreadyExistsException(null,"Parameter " + p.getIdentifier() + " in function " + fun.getIdentifier());
                     }
@@ -228,6 +241,7 @@ public class STBuilder extends DepthFirstAdapter {
                 }
                 // Check body
                 var prev = current;
+
                 current = null;
                 for (PStmt stmt : node.getBody()) {
                     stmt.apply(this);
@@ -283,16 +297,27 @@ public class STBuilder extends DepthFirstAdapter {
     @Override
     public void caseAParamDcl(AParamDcl node) throws TypeException {
         // Check type is valid
-        node.getType().apply(this);
-
+        var typeNode = node.getType();
+        typeNode.apply(this);
+        var type = typeNode.toString().trim();
         // Check name is valid
         var name = node.getName().getText();
         if(((Function)current).containsArg(name)){
             throw new IdentifierAlreadyExistsException(node.getName(),"A parameter with " + name
                     + " already exists in method "+ ((AMethodDcl)node.parent()).getName().getText());
         }
-        // Add argument
-        addToCurrent(new Variable(name, node, node.getType().toString().trim()));
+        Variable v;
+        if(typeNode instanceof AVarType) {
+            v = new Variable(name, node, type);
+        }
+        else if(typeNode instanceof AListType){
+            // variable is a list
+            v = new GenerecVariable(name, node,"list",type);
+        }
+        else{
+            throw new TypeException(null,"An unknown type error occurred");
+        }
+        addToCurrent(v);
     }
 
     @Override
@@ -362,12 +387,12 @@ public class STBuilder extends DepthFirstAdapter {
             // Validate singleDcl
             sDcl.apply(this);
 
-            // expression type and declare type are the same
             Variable v;
             if(typeNode instanceof AVarType) {
                 v = new Variable(((ASingleDcl) sDcl).getId().getText(), sDcl, type);
             }
             else if(typeNode instanceof AListType){
+                // variable is a list
                 v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), sDcl,"list",type);
             }
             else{
@@ -449,6 +474,13 @@ public class STBuilder extends DepthFirstAdapter {
         }
         // Set delcaration node
         if(dcl instanceof Function){
+            // check arguments
+            var prev = current;
+            current = null;
+            for(PExpr e: node.getParams()){
+                e.apply(this);
+            }
+            current = prev;
             var type = ((Function) dcl).getReturnType().trim();
 
             if(type.startsWith("list of")){
@@ -464,6 +496,9 @@ public class STBuilder extends DepthFirstAdapter {
                     ((GenericClass) st.retrieveSymbol("list")).setClassVariable(classV);
                     type = "list";
                 }
+            }
+            else if(type.equals("element")){
+                type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
             }
 
             current = st.retrieveSymbol(type,SubClass.class);
