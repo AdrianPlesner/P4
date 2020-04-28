@@ -15,6 +15,7 @@ Setup{
         }
     }
     Player{
+        string name;
     }
     Game{
     }
@@ -49,6 +50,7 @@ Function chooseFrom(List typeof void l) typeof List typeof void {
     // input
     string s = Read();
     // return element
+    return l.index(ParseInt(s));
 }
 
 Function AskAll(string s) typeof string{

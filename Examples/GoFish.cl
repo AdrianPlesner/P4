@@ -4,7 +4,6 @@ Setup{
     }
     Player{
         // Alle spillere starter med 7 kort hver, fra bunken.
-        string name;
         bool ai = false;
         List typeof card hand;
         int score = 0;
@@ -19,20 +18,16 @@ Setup{
         // Der er en bunke i spillet, trækbunken til når man fisker
         List typeof card Deck = GetStdDeck(0);
         // Definer spillere, initaliserer en List<Player> Players
-        List typeof player Players = {
-            player("Adrian", false);
-            player("Frederik", false);
-            player("Johan", false);
-            player("Lasse", false);
-            player("Oliver", false);
-            player("Rikke", false);
-        };
+        List typeof player Players = InitPlayers();
+        while Players == null | Players.length < 2 {
+            MessageAll("You need at least 2 players to play");
+            Players = InitPlayers();
+        }
         //Sæt start spiller
         turn.current = Players.find("Adrian");
         for p in Players {
             p.hand = Deck.take(7);
         }
-        int a = Deck.index(0).value;
     }
 }
 // Mulige træk
@@ -101,4 +96,30 @@ Function CheckForTrick(player p) typeof void{
     }
 }
 
-
+Function InitPlayers() typeof List typeof player {
+    List typeof player result;
+    MessageAll("So who is playing today?");
+    string input = "y";
+    while(input == "y"){
+        MessageAll("Already in the game is:");
+        for p in result {
+            Message(p,p.ai);
+        }
+        string name = AskAll("Next players name: ");
+        string aiS = AskAll("Are they an ai (y/n)");
+        bool ai;
+        if aiS == "y" {
+            ai = true;
+        }
+        else if aiS == "n" {
+            ai = false;
+        }
+        else {
+            MessageAll("Thats not right");
+            return null;
+        }
+        result.add(player(name,ai));
+        input = AskAll("Are there any more players?");
+    }
+    return result;
+}

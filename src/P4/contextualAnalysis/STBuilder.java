@@ -120,6 +120,9 @@ public class STBuilder extends DepthFirstAdapter {
 
 
         st.enterSymbol(new Function("Read",null,"string"));
+
+        st.enterSymbol(new SubClass("null",null,null));
+        st.enterSymbol(new Variable("null",null,"null"));
     }
 
     @Override
@@ -150,18 +153,18 @@ public class STBuilder extends DepthFirstAdapter {
             System.out.println("In "+includes.get(i).getText()+ "\n" + e);
         }
 
-        // Do Setup
-        if(node.getSetup() != null){
-            node.getSetup().apply(this);
-        }
-
         // Do method declarations
         var methods = node.getMethods();
         for(PMethodDcl m : methods){
             m.apply(this);
         }
 
-        // Do Moves
+        // Do Setup
+        if(node.getSetup() != null){
+            node.getSetup().apply(this);
+        }
+
+        // Do Move declarations
         var moves = node.getMoves();
         for(PMethodDcl move : moves)
         {
