@@ -40,12 +40,8 @@ public class Main {
             // Compute and print compilation time
             System.out.println("Compilation took " + (stop_time-start_time) + " milliseconds" );
 
-            if(stBuilder.hasTypeErrors()){
-                System.out.println(stBuilder.getErrorList());
-            }
-            else{
-                //TODO: code generation
-            }
+            //TODO: code generation
+
 
         }
         catch(InvalidTypeException e){

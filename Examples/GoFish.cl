@@ -1,32 +1,12 @@
 include StdLib;
 Setup{
     Card {
-        string name;
-        string description;
-        Subclass Spell {
-            Function CastSpell(card target) typeof void {
-                //Do something
-            }
-        }
-        Subclass Creature {
-            int attack;
-            int health;
-            List typeof string abilities;
-            Function Attack(card target) typeof void {
-            }
-            Function Merge(card merger) typeof card {
-            }
-            Function Sacrifice() typeof void{
-            }
-            Function UseAbility(string ability) typeof void{
-            }
-        }
     }
     Player{
         // Alle spillere starter med 7 kort hver, fra bunken.
         string name;
         bool ai = false;
-        List typeof card hand;// = deck.take(7);
+        List typeof card hand;
         int score = 0;
     }
 //public er “spillepladen” (tilgængelig for alle spillere)
@@ -42,10 +22,11 @@ Setup{
             "Oliver", false;
             "Rikke", false;
         };
-
-        int a = 3+5;
         //Sæt start spiller
         turn.current = Players.find("Adrian");
+        for p in Players {
+            p.hand = Deck.take(7);
+        }
     }
 }
 // Mulige træk

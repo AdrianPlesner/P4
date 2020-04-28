@@ -21,8 +21,6 @@ public class STBuilder extends DepthFirstAdapter {
 
     private String path;
 
-    private LinkedList<TypeError> errors = new LinkedList<>();
-
     public STBuilder(Start ast, String contentPath) {
         this.ast = ast;
         this.path = contentPath;
@@ -36,15 +34,6 @@ public class STBuilder extends DepthFirstAdapter {
         ast.apply(this);
 
         return this.st;
-    }
-
-    public String getErrorList(){
-        String result = "";
-        return result;
-    }
-
-    public boolean hasTypeErrors(){
-        return errors.size() > 0;
     }
 
     private void addToCurrent(Variable v) throws TypeException {
@@ -84,23 +73,40 @@ public class STBuilder extends DepthFirstAdapter {
         var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
         list.addLocal(new Variable("length",null,"int"));
+
         var take = new Function("take",null,"list of void");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
+
         var find = new Function("find",null,"list of void");
         list.addMethod(find);
         find.addArg(new Variable("n",null,"string"));
+
         var add = new Function("add",null,"void");
         list.addMethod(add);
         add.addArg(new Variable("e",null,"void"));
+
         var remove = new Function("remove",null,"void");
         list.addMethod(remove);
         remove.addArg(new Variable("e",null,"void"));
+
         list.addMethod(new Function("clear",null,"void"));
+
         var Turn = new SubClass("Turn",null,null);
         st.enterSymbol(Turn);
         Turn.addLocal(new Variable("current",null,"player"));
         st.enterSymbol(new Variable("turn",null,"Turn"));
+
+        var message = new Function("message",null,"void");
+        st.enterSymbol(message);
+        message.addArg(new Variable("p",null,"player"));
+        message.addArg(new Variable("m",null,"string"));
+
+        var messageAll = new Function("messageAll",null,"void");
+        st.enterSymbol(messageAll);
+        messageAll.addArg(new Variable("m",null,"string"));
+
+        st.enterSymbol(new Function("scan",null,"string"));
     }
 
     @Override
@@ -108,14 +114,14 @@ public class STBuilder extends DepthFirstAdapter {
 
         var includes = node.getIncludes();
         for(TId inc : includes){
-            // Something about reading a file and adding everything to symboltable
-            //TODO: include includes
             try {
+
+                // Read included .cl file
                 Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
 
                 // parser program
                 Parser parser = new Parser(lexer);
-                // Debug med System.out.println(this.token.getClass().getSimpleName() + ": [" + token.getText() + "]");
+
                 Start ast = parser.parse();
                 node.includes.add(ast);
 
@@ -354,7 +360,6 @@ public class STBuilder extends DepthFirstAdapter {
         }
     }
 
-    //TODO: check for subclass
     @Override
     public void caseAVarType(AVarType node) throws TypeException {
         var s = st.retrieveSymbol(node.getType().getText());
