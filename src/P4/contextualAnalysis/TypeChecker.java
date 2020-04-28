@@ -91,6 +91,42 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
+        var L = node.getL();
+        L.apply(this);
+        var R = node.getR();
+        R.apply(this);
+
+        if(L.type == "bool" && R.type == "bool"){
+            node.type = "bool";
+        }
+        else {
+            throw new TypeException(node.getOperator(), "Expression is not of type boolean");
+        }
+    }
+
+    @Override
+    public void caseARelationExpr(ARelationExpr node) throws TypeException {
+        var L = node.getL();
+        L.apply(this);
+        var R = node.getR();
+        R.apply(this);
+
+        if(L.type.equals(R.type)){
+            switch (L.type){
+                case "int": case "float": {
+                    node.type = "bool";
+                }
+                default:{
+                    //Types that cannot be compared
+                    throw new TypeException(node.getOperator(), "Cannot compare operands of type " + L.type);
+                }
+            }
+
+        }
+    }
+
+    @Override
     public void caseAEqualityExpr(AEqualityExpr node) throws  TypeException {
         // Check children
         var L = node.getL();
@@ -98,6 +134,7 @@ public class TypeChecker extends DepthFirstAdapter {
         var R = node.getR();
         R.apply(this);
 
+        //TODO: Reference types?
         //Only possible if operands are of same type
         if (L.type.equals(R.type)){
             node.type = "bool";
