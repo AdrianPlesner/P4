@@ -84,19 +84,23 @@ public class STBuilder extends DepthFirstAdapter {
         var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
         list.addLocal(new Variable("length",null,"int"));
-        var take = new Function("take",null,null);
+        var take = new Function("take",null,"list of void");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
-        var find = new Function("find",null,null);
+        var find = new Function("find",null,"list of void");
         list.addMethod(find);
         find.addArg(new Variable("n",null,"string"));
-        st.enterSymbol(new Function("GetStdDeck",null,"list of card"));
+        var add = new Function("add",null,"void");
+        list.addMethod(add);
+        add.addArg(new Variable("e",null,"void"));
+        var remove = new Function("remove",null,"void");
+        list.addMethod(remove);
+        remove.addArg(new Variable("e",null,"void"));
+        list.addMethod(new Function("clear",null,"void"));
         var Turn = new SubClass("Turn",null,null);
         st.enterSymbol(Turn);
         Turn.addLocal(new Variable("current",null,"player"));
         st.enterSymbol(new Variable("turn",null,"Turn"));
-        var chooseFrom = new Function("chooseFrom",null,null);
-        chooseFrom.addArg(new GenerecVariable("l",null,"list",null));
     }
 
     @Override
@@ -230,7 +234,16 @@ public class STBuilder extends DepthFirstAdapter {
             var returnType = node.getReturntype();
             //Check returntype
             returnType.apply(this);
-            var method = new Function(name, node, returnType.toString());
+            var type = returnType.toString();
+            if(returnType instanceof AListType){
+                if(type.equals("void")){
+                    type = "list";
+                }
+                else{
+                    type = "list of " + type;
+                }
+            }
+            var method = new Function(name, node, type);
 
             var prev = current;
             current = method;
@@ -256,7 +269,8 @@ public class STBuilder extends DepthFirstAdapter {
             throw new IdentifierAlreadyExistsException(node.getName(),"A parameter with " + name
                     + " already exists in method "+ ((AMethodDcl)node.parent()).getName().getText());
         }
-        addToCurrent(new Variable(name, node, node.getType().toString()));
+        // Add argument
+        addToCurrent(new Variable(name, node, node.getType().toString().trim()));
     }
 
     @Override
@@ -413,16 +427,21 @@ public class STBuilder extends DepthFirstAdapter {
         }
         // Set delcaration node
         if(dcl instanceof Function){
-            var type = ((Function) dcl).getReturnType();
+            var type = ((Function) dcl).getReturnType().trim();
 
-            if(type == null){
-                // unknown classvariable
-                type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
-            }
-            else if(type.startsWith("list of")){
-                // known class variable
-                ((GenericClass)st.retrieveSymbol("list")).setClassVariable(type.substring(8));
-                type = "list";
+            if(type.startsWith("list of")){
+                // get class variabel
+                var classV = type.substring(8).trim();
+
+                if(classV.equals("void")){
+                    // unknown classvariable
+                    type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
+                }
+                else {
+                    // known class variable
+                    ((GenericClass) st.retrieveSymbol("list")).setClassVariable(classV);
+                    type = "list";
+                }
             }
 
             current = st.retrieveSymbol(type);
@@ -503,13 +522,23 @@ public class STBuilder extends DepthFirstAdapter {
 
         node.getList().apply(this);
         var type = node.getList().type;
-        if(!type.startsWith("List of")){
+        if(type.equals("list")){
+            // Generic list
+            type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
+        }
+        else if(type.startsWith("list of")){
+            // Known list type
+            type = type.substring(7);
+
+        }
+        else{
+            // Not a list
             throw new TypeException(node.getId(),"Iteration variable must be a list");
         }
-        type = type.substring(7);
+
 
         st.openScope();
-        st.enterSymbol(new Variable(node.getId().getText(),node,type));
+        st.enterSymbol(new Variable(node.getId().getText(),node,type.trim()));
         for(PStmt s : node.getThen()){
             s.apply(this);
         }

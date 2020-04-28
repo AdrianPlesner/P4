@@ -55,18 +55,15 @@ Moves{
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
         for pCard in p.hand {
-            if pCard.value == c.val {
-                pCard.transfer(player, turn.player);
+            if pCard.value == c.value {
+                pCard.transfer(p, turn.current);
                 result = true;
             }
-        }
-        for int i = 0; i < 10; i += 1 {
-            print(i);
         }
         CheckForTrick(p.hand);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
         if(p.hand.length == 0){
-            p.hand = deck.take(1);
+            p.hand = Deck.take(1);
          }
          return result;
     }
@@ -76,8 +73,8 @@ Turn{
     bool continue = true;
     player chosen;
     while turn.current.hand.length > 0 & continue {
-        chosen = chooseFrom(players);
-        continue = ChooseMove(chooseFrom(player.hand),chosen);
+        chosen = chooseFrom(Players);
+        continue = ChooseMove(chooseFrom(turn.current.hand),chosen);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
@@ -87,7 +84,7 @@ Turn{
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
     bool end = true;
-	for p in players {
+	for p in Players {
 		if p.hand.length == 0 {
 		    end &= true;
 		}

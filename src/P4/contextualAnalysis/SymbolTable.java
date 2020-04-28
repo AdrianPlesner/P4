@@ -20,11 +20,18 @@ public class SymbolTable {
     }
     // Close the most recent scope
     public void closeScope(){
+        var removeList = new LinkedList<String>();
         for(var key : table.keySet()){
             var current = table.get(key);
             if(current.getLast().getScope() == scope){
                 current.removeLast();
+                if(current.isEmpty()){
+                    removeList.add(key);
+                }
             }
+        }
+        for(var s : removeList){
+            table.remove(s);
         }
         scope--;
     }

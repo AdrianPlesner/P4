@@ -13,6 +13,7 @@ public class SubClass extends Symbol {
     public SubClass(String id, Node dcl, SubClass sup) {
         super(id, dcl);
         this.superClass = sup;
+        locals.add(new Variable("this",null,id));
     }
 
     public LinkedList<Variable> getLocals(){
