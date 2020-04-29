@@ -128,7 +128,7 @@ public class TypeChecker extends DepthFirstAdapter {
         var R = node.getR();
         R.apply(this);
 
-        if(L.type == "bool" && R.type == "bool"){
+        if(L.type.equals("bool") && R.type.equals("bool")){
             node.type = "bool";
         }
         else {
@@ -154,8 +154,8 @@ public class TypeChecker extends DepthFirstAdapter {
                 }
             }
         }
-        if(!(L.type.equals(R.type))){
-            if(L.type == "int" && R.type == "float" || R.type == "int" && L.type == "float"){
+        else{
+            if(L.type.equals("int") && R.type.equals("float") || R.type.equals("int") && L.type.equals("float")){
                 node.type = "bool";
             }
             else {
