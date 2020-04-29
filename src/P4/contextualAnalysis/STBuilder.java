@@ -396,11 +396,11 @@ public class STBuilder extends DepthFirstAdapter {
 
             Variable v;
             if(typeNode instanceof AVarType) {
-                v = new Variable(((ASingleDcl) sDcl).getId().getText(), sDcl, type);
+                v = new Variable(((ASingleDcl) sDcl).getId().getText(), node, type);
             }
             else if(typeNode instanceof AListType){
                 // variable is a list
-                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), sDcl,"list",type);
+                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list",type);
             }
             else{
                 throw new TypeException(null,"An unknown type error occurred");
