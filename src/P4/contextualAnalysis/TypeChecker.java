@@ -209,6 +209,17 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException{
+        var id = node.getName().declarationNode;
+        id.apply(this);
+        var expr = node.getReturntype();
+        expr.apply(this);
+
+
+
+    }
+
+    @Override
     public void caseAForeachStmt(AForeachStmt node) throws  TypeException{
         var list = node.getList();
         list.apply(this);
