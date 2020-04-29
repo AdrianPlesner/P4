@@ -2,11 +2,15 @@ package P4.contextualAnalysis;
 
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
+import P4.contextualAnalysis.SymbolTable;
 
 public class TypeChecker extends DepthFirstAdapter {
 
-    public TypeChecker(Start ast) throws TypeException {
+    SymbolTable st;
+
+    public TypeChecker(Start ast, SymbolTable _st) throws TypeException {
         ast.apply(this);
+        st = _st;
     }
 
     @Override
@@ -211,13 +215,9 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void caseAMethodDcl(AMethodDcl node) throws TypeException{
-        var id = node.getName().declarationNode;
-        id.apply(this);
-        var expr = node.getReturntype();
-        expr.apply(this);
-
-
-
+        for(PStmt s: node.getBody()){
+            s.apply(this);
+        }
     }
 
     @Override
