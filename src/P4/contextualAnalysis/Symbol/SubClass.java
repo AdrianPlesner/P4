@@ -1,4 +1,4 @@
-package P4.contextualAnalysis;
+package P4.contextualAnalysis.Symbol;
 
 import P4.Sable.node.Node;
 
@@ -15,14 +15,6 @@ public class SubClass extends Symbol {
         this.superClass = sup;
     }
 
-    public LinkedList<Variable> getLocals(){
-        return this.locals;
-    }
-
-    public LinkedList<Function> getMethods() {
-        return this.methods;
-    }
-
     public void addLocal(Variable v){
         locals.add(v);
     }
@@ -37,29 +29,34 @@ public class SubClass extends Symbol {
         return this.superClass;
     }
 
-    public boolean containsMethod(String s){
-        for(var m : methods){
-            if(m.getIdentifier().equals(s)){
-                return true;
-            }
-        }
-        return false;
+    @Override
+    public String getType() {
+        return getIdentifier();
     }
 
-    public boolean containsVariable(String s){
-        for(var l : locals){
-            if(l.getIdentifier().equals(s)){
-                return true;
+    public Function containsMethod(String s){
+        for(var m : methods){
+            if(m.getIdentifier().equals(s)){
+                return m;
             }
         }
-        return false;
+        return null;
+    }
+
+    public Variable containsVariable(String s){
+        for(var l : locals){
+            if(l.getIdentifier().equals(s)){
+                return l;
+            }
+        }
+        return null;
     }
 
     @Override
     public String toString() {
-        return "SubClass{" +
+        return "SubClass{ " +
                 super.toString() +
-                "superClass=" + superClass +
+                ", superClass=" + superClass +
                 '}';
     }
 }

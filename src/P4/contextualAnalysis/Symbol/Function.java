@@ -1,4 +1,4 @@
-package P4.contextualAnalysis;
+package P4.contextualAnalysis.Symbol;
 
 import P4.Sable.node.Node;
 
@@ -37,10 +37,15 @@ public class Function extends Symbol {
 
     @Override
     public String toString() {
-        return "Function{" +
+        return "Function{ " +
                 super.toString() +
                 ", args=" + args +
                 ", returnType='" + returnType + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getType() {
+        return returnType;
     }
 }

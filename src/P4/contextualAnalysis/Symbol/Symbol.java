@@ -1,4 +1,4 @@
-package P4.contextualAnalysis;
+package P4.contextualAnalysis.Symbol;
 
 import P4.Sable.node.Node;
 
@@ -26,6 +26,8 @@ public abstract class Symbol{
     public Node getDeclarationNode() {
         return declarationNode;
     }
+
+    public abstract String getType();
 
     public String toString(){
         return identifier;

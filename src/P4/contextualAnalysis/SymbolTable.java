@@ -1,5 +1,9 @@
 package P4.contextualAnalysis;
 
+import P4.contextualAnalysis.Symbol.SubClass;
+import P4.contextualAnalysis.Symbol.Symbol;
+
+import java.lang.reflect.Type;
 import java.util.*;
 
 //Symbol table
@@ -17,22 +21,29 @@ public class SymbolTable {
     }
     // Close the most recent scope
     public void closeScope(){
+        var removeList = new LinkedList<String>();
         for(var key : table.keySet()){
             var current = table.get(key);
             if(current.getLast().getScope() == scope){
                 current.removeLast();
+                if(current.isEmpty()){
+                    removeList.add(key);
+                }
             }
+        }
+        for(var s : removeList){
+            table.remove(s);
         }
         scope--;
     }
     // Enter a symbol in the symbol table
-    public void enterSymbol(String name, Symbol s){
-        LinkedList<Symbol> current = table.get(name);
+    public void enterSymbol(Symbol s){
+        LinkedList<Symbol> current = table.get(s.getIdentifier());
 
         if(current == null){
             current = new LinkedList<>();
 
-            table.put(name, current);
+            table.put(s.getIdentifier(), current);
         }
         s.setScope(scope);
         current.add(s);
@@ -42,6 +53,21 @@ public class SymbolTable {
         var current = table.get(name);
         if(current != null){
             return current.getLast();
+        }
+        return null;
+    }
+
+    public Symbol retrieveSymbol(String name, Class T){
+        var current = table.get(name);
+        if(current == null){
+            return null;
+        }
+        int i = current.size()-1;
+        while( i >= 0){
+            if(current.get(i).getClass().equals(T)){
+                return current.get(i);
+            }
+            i--;
         }
         return null;
     }

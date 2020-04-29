@@ -25,9 +25,13 @@ public class Main {
             Parser parser = new Parser(lexer);
             // Debug med System.out.println(this.token.getClass().getSimpleName() + ": [" + token.getText() + "]");
             Start ast = parser.parse();
-
+            var path = args[0].split("/");
+            String contentPath = "";
+            for(int i = 0; i < path.length-1; i++){
+                contentPath = contentPath.concat(path[i]).concat("/");
+            }
             // Construct symbol table
-            STBuilder stBuilder = new STBuilder(ast);
+            STBuilder stBuilder = new STBuilder(ast,contentPath);
             SymbolTable st = stBuilder.BuildST(new SymbolTable());
 
             TypeChecker tc = new TypeChecker(ast);
@@ -36,19 +40,15 @@ public class Main {
             // Compute and print compilation time
             System.out.println("Compilation took " + (stop_time-start_time) + " milliseconds" );
 
-            if(stBuilder.hasTypeErrors()){
-                System.out.println(stBuilder.getErrorList());
-            }
-            else{
-                //TODO: code generation
-            }
+            //TODO: code generation
+
 
         }
         catch(InvalidTypeException e){
             String message = e.getMessage();
             var token = e.getToken();
             if(token != null){
-                message += token.getText() + "is not a valid type.";
+                message += token.getText() + " is not a valid type.";
                 message = patchMessage(message,token);
             }
             System.out.println(message);

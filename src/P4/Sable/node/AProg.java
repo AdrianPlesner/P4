@@ -15,6 +15,7 @@ public final class AProg extends PProg
     private final LinkedList<PStmt> _turn_ = new LinkedList<PStmt>();
     private final LinkedList<PStmt> _endCondition_ = new LinkedList<PStmt>();
     private final LinkedList<PMethodDcl> _methods_ = new LinkedList<PMethodDcl>();
+    public LinkedList<Start> includes = new LinkedList<>();
 
     public AProg()
     {
