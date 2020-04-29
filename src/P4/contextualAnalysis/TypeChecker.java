@@ -162,10 +162,6 @@ public class TypeChecker extends DepthFirstAdapter {
                 throw new TypeException(node.getOperator(), "Cannot compare operands of type " + L.type + "and " + R.type);
             }
         }
-
-
-
-
     }
 
     @Override
