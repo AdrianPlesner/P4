@@ -193,6 +193,7 @@ public class TypeChecker extends DepthFirstAdapter {
         node.type = node.getCallField().getLast().type;
     }
 
+
     @Override
     public void caseAFieldCallField(AFieldCallField node) throws TypeException {
         // Get declaration node
