@@ -6,5 +6,4 @@ public abstract class PVal extends Node
 {
     public String type = "void";
     // Empty body
-    public String type;
 }
