@@ -91,6 +91,37 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException{
+        var L = node.getL();
+        L.apply(this);
+        var R = node.getR();
+        R.apply(this);
+
+        if (L.type.equals(R.type)){
+            //Each operand is of the same type.
+            switch (L.type){
+                case "int": case "float":{
+                    node.type = L.type;
+                    break;
+                }
+                default:{
+                    // incompatible types
+                    throw new TypeException(node.getOperator(), "Operation cannot be done on operands of type " + L.type);
+                }
+            }
+        }
+        else {
+            //Operands are of different types
+            if (L.type.equals("int") && R.type.equals("float") || L.type.equals("float") && R.type.equals("int")){
+                node.type = "float";
+            } else {
+                throw new TypeException(node.getOperator(), "Operation cannot be done on operands of type " + L.type + " and " + R.type);
+            }
+
+        }
+    }
+
+    @Override
     public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
         var L = node.getL();
         L.apply(this);
