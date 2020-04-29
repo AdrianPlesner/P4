@@ -112,10 +112,6 @@ public class TypeChecker extends DepthFirstAdapter {
         var R = node.getR();
         R.apply(this);
 
-        if(L.type == "int" && R.type == "float" || R.type == "int" && L.type == "float"){
-            node.type = "bool";
-        }
-
         if(L.type.equals(R.type)){
             switch (L.type){
                 case "int": case "float": {
@@ -127,9 +123,17 @@ public class TypeChecker extends DepthFirstAdapter {
                 }
             }
         }
-        else {
-            throw new TypeException(node.getOperator(), "Cannot compare operands of type " + L.type + "and " + R.type);
+        if(!(L.type.equals(R.type))){
+            if(L.type == "int" && R.type == "float" || R.type == "int" && L.type == "float"){
+                node.type = "bool";
+            }
+            else {
+                throw new TypeException(node.getOperator(), "Cannot compare operands of type " + L.type + "and " + R.type);
+            }
         }
+
+
+
 
     }
 
