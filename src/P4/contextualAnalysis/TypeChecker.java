@@ -124,6 +124,9 @@ public class TypeChecker extends DepthFirstAdapter {
             }
 
         }
+        if(L.type == "int" && R.type == "float" || R.type == "int" && L.type == "float"){
+            node.type = "bool";
+        }
     }
 
     @Override
@@ -142,7 +145,6 @@ public class TypeChecker extends DepthFirstAdapter {
         else{
             throw new TypeException(node.getOperator(), "Cannot compare operands of type " + L.type + " and " + R.type);
         }
-
     }
 
     @Override
@@ -179,5 +181,13 @@ public class TypeChecker extends DepthFirstAdapter {
         //then.apply(this);
 
         //TODO: Figure out how to make this
+    }
+
+    @Override
+    public void caseAIfStmt(AIfStmt node) throws TypeException{
+        var p = node.getPredicate();
+        p.apply(this);
+
+        //TODO: LOl, how do?
     }
 }
