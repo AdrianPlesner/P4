@@ -214,27 +214,28 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
+    public void caseACallCallField(ACallCallField node) throws TypeException{
+        // Apply on parameters
+        for (PExpr p: node.getParams()){
+            p.apply(this);
+        }
+
+        // Get declaration node
+        var dcl = node.getId().declarationNode;
+        if (dcl instanceof AMethodDcl){
+            node.type = st.retrieveSymbol(((AMethodDcl) dcl).getName().toString()).getType();
+        }
+        else {
+            throw new TypeException(node.getId(), "An unknown type error has occurred");
+        }
+    }
+
+    @Override
     public void caseAMethodDcl(AMethodDcl node) throws TypeException{
         for(PStmt s: node.getBody()){
             s.apply(this);
         }
     }
 
-    @Override
-    public void caseAForeachStmt(AForeachStmt node) throws  TypeException{
-        var list = node.getList();
-        list.apply(this);
-        var then = node.getThen();
-        //then.apply(this);
 
-        //TODO: Figure out how to make this
-    }
-
-    @Override
-    public void caseAIfStmt(AIfStmt node) throws TypeException{
-        var p = node.getPredicate();
-        p.apply(this);
-
-        //TODO: LOl, how do?
-    }
 }
