@@ -86,10 +86,6 @@ public class STBuilder extends DepthFirstAdapter {
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
-        var find = new Function("find",null,"list of void");
-        list.addMethod(find);
-        find.addArg(new Variable("n",null,"string"));
-
         var add = new Function("add",null,"void");
         list.addMethod(add);
         add.addArg(new Variable("e",null,"void"));
@@ -260,7 +256,7 @@ public class STBuilder extends DepthFirstAdapter {
                 throw new IdentifierAlreadyExistsException(node.getName(), fun + " already exsists");
             }
         }
-        else if(local == null || local instanceof SubClass) {
+        else if(local == null ) {
             // Declare function
             var returnType = node.getReturntype();
             //Check returntype
@@ -284,16 +280,10 @@ public class STBuilder extends DepthFirstAdapter {
             for (PParamDcl pd : node.getParams()) {
                 pd.apply(this);
             }
-            if(local != null){
-                // constructor, add to global scope
-                current = null;
-            }else {
-                // Globl function in current scope
-                current = prev;
-            }
+            // Globl function in current scope
+            current = prev;
             // Add function to current scope
             addToCurrent(method);
-            current = prev;
         }
         else{
             throw new IdentifierAlreadyExistsException(node.getName(),"");
@@ -345,6 +335,11 @@ public class STBuilder extends DepthFirstAdapter {
                 }
             }
 
+            var construct = node.getConstruct();
+            if(construct != null){
+                construct.apply(this);
+            }
+
             // Add method declarations
             for(PMethodDcl md : node.getMethods()){
                 md.apply(this);
@@ -382,6 +377,34 @@ public class STBuilder extends DepthFirstAdapter {
         // Add subclass to superclass
         ((SubClass)current).addSubclass(sub);
 
+    }
+
+    @Override
+    public void caseAConstruct(AConstruct node) throws TypeException {
+        var name = node.getName();
+        if( !name.getText().equals(current.getIdentifier())){
+            throw new TypeException(name,"Constructor must have same name as class");
+        }
+        var construct = new Function(name.getText(),node,name.getText());
+        var prev = current;
+        current = null;
+        st.enterSymbol(construct);
+        st.openScope();
+        current = construct;
+
+        for(PParamDcl pd : node.getParams()){
+            pd.apply(this);
+        }
+        current = null;
+        for(Symbol s : construct.getArgs()){
+            st.enterSymbol(s);
+        }
+        st.enterSymbol(new Variable("this",null,name.getText()));
+        for(PStmt s : node.getBody()){
+            s.apply(this);
+        }
+        st.closeScope();
+        current = prev;
     }
 
     @Override
@@ -711,14 +734,7 @@ public class STBuilder extends DepthFirstAdapter {
 
     @Override
     public void caseAListExpr(AListExpr node) throws TypeException {
-        for(PElement e : node.getElements()){
-            e.apply(this);
-        }
-    }
-
-    @Override
-    public void caseAElement(AElement node) throws TypeException {
-        for(PExpr e : node.getValues()){
+        for(PExpr e : node.getElements()){
             e.apply(this);
         }
     }

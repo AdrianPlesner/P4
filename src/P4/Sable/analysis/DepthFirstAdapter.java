@@ -198,8 +198,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAConstruct(AConstruct node)
-    {
+    public void caseAConstruct(AConstruct node) throws TypeException {
         inAConstruct(node);
         if(node.getName() != null)
         {

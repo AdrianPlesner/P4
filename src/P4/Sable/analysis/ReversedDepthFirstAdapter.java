@@ -207,8 +207,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAConstruct(AConstruct node)
-    {
+    public void caseAConstruct(AConstruct node) throws TypeException {
         inAConstruct(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getBody());

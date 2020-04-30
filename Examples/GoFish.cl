@@ -23,7 +23,7 @@ Setup{
             Players = InitPlayers();
         }
         //Sæt start spiller
-        turn.current = Players.find("Adrian");
+        turn.current = find("Adrian", Players);
         for p in Players {
             p.hand = Deck.take(7);
         }
@@ -121,4 +121,14 @@ Function InitPlayers() typeof List typeof player {
         input = AskAll("Are there any more players?");
     }
     return result;
+}
+
+Function find(string name, List typeof player ps) typeof player{
+    for p in ps {
+        if(p.name == name)
+        {
+            return p;
+        }
+    }
+    return null;
 }

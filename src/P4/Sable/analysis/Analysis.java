@@ -20,6 +20,7 @@ public interface Analysis extends Switch
     void caseAListExpr(AListExpr node) throws TypeException;
     void caseAMultOpExpr(AMultOpExpr node) throws TypeException;
     void caseALiteralExpr(ALiteralExpr node) throws TypeException;
+    void caseAConstruct(AConstruct node) throws TypeException;
     void caseAValueExpr(AValueExpr node) throws TypeException;
     void caseAAddOpExpr(AAddOpExpr node) throws TypeException;
     void caseARelationExpr(ARelationExpr node) throws TypeException;
@@ -29,7 +30,6 @@ public interface Analysis extends Switch
     void caseAFloatLiteral(AFloatLiteral node);
     void caseAStringLiteral(AStringLiteral node);
     void caseABoolLiteral(ABoolLiteral node);
-    void caseAElement(AElement node) throws TypeException;
     void caseAVal(AVal node) throws TypeException;
     void caseAFieldCallField(AFieldCallField node) throws TypeException;
     void caseACallCallField(ACallCallField node) throws TypeException;
