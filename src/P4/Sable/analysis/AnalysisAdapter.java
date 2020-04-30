@@ -110,6 +110,11 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
+    public void caseAConstruct(AConstruct node) throws TypeException {
+        defaultCase(node);
+    }
+
+    @Override
     public void caseAValueExpr(AValueExpr node) throws TypeException {
         defaultCase(node);
     }
@@ -158,10 +163,6 @@ public class AnalysisAdapter implements Analysis
         defaultCase(node);
     }
 
-    @Override
-    public void caseAElement(AElement node) throws TypeException {
-        defaultCase(node);
-    }
 
     @Override
     public void caseAVal(AVal node) throws TypeException {
@@ -535,6 +536,12 @@ public class AnalysisAdapter implements Analysis
 
     @Override
     public void caseTPlayer(TPlayer node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseTConst(TConst node)
     {
         defaultCase(node);
     }

@@ -9,7 +9,7 @@ import P4.contextualAnalysis.TypeException;
 @SuppressWarnings("nls")
 public final class AListExpr extends PExpr
 {
-    private final LinkedList<PElement> _elements_ = new LinkedList<PElement>();
+    private final LinkedList<PExpr> _elements_ = new LinkedList<PExpr>();
 
     public AListExpr()
     {
@@ -36,14 +36,14 @@ public final class AListExpr extends PExpr
         ((Analysis) sw).caseAListExpr(this);
     }
 
-    public LinkedList<PElement> getElements()
+    public LinkedList<PExpr> getElements()
     {
         return this._elements_;
     }
 
     public void setElements(List<?> list)
     {
-        for(PElement e : this._elements_)
+        for(PExpr e : this._elements_)
         {
             e.parent(null);
         }
@@ -51,7 +51,7 @@ public final class AListExpr extends PExpr
 
         for(Object obj_e : list)
         {
-            PElement e = (PElement) obj_e;
+            PExpr e = (PExpr) obj_e;
             if(e.parent() != null)
             {
                 e.parent().removeChild(e);
@@ -85,13 +85,13 @@ public final class AListExpr extends PExpr
     void replaceChild(@SuppressWarnings("unused") Node oldChild, @SuppressWarnings("unused") Node newChild)
     {
         // Replace child
-        for(ListIterator<PElement> i = this._elements_.listIterator(); i.hasNext();)
+        for(ListIterator<PExpr> i = this._elements_.listIterator(); i.hasNext();)
         {
             if(i.next() == oldChild)
             {
                 if(newChild != null)
                 {
-                    i.set((PElement) newChild);
+                    i.set((PExpr) newChild);
                     newChild.parent(this);
                     oldChild.parent(null);
                     return;

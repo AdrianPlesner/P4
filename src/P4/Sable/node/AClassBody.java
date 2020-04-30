@@ -10,6 +10,7 @@ import P4.contextualAnalysis.TypeException;
 public final class AClassBody extends PClassBody
 {
     private final LinkedList<PStmt> _dcls_ = new LinkedList<PStmt>();
+    private PConstruct _construct_;
     private final LinkedList<PMethodDcl> _methods_ = new LinkedList<PMethodDcl>();
     private final LinkedList<PSubclass> _subclasses_ = new LinkedList<PSubclass>();
 
@@ -20,11 +21,14 @@ public final class AClassBody extends PClassBody
 
     public AClassBody(
         @SuppressWarnings("hiding") List<?> _dcls_,
+        @SuppressWarnings("hiding") PConstruct _construct_,
         @SuppressWarnings("hiding") List<?> _methods_,
         @SuppressWarnings("hiding") List<?> _subclasses_)
     {
         // Constructor
         setDcls(_dcls_);
+
+        setConstruct(_construct_);
 
         setMethods(_methods_);
 
@@ -37,6 +41,7 @@ public final class AClassBody extends PClassBody
     {
         return new AClassBody(
             cloneList(this._dcls_),
+            cloneNode(this._construct_),
             cloneList(this._methods_),
             cloneList(this._subclasses_));
     }
@@ -70,6 +75,31 @@ public final class AClassBody extends PClassBody
             e.parent(this);
             this._dcls_.add(e);
         }
+    }
+
+    public PConstruct getConstruct()
+    {
+        return this._construct_;
+    }
+
+    public void setConstruct(PConstruct node)
+    {
+        if(this._construct_ != null)
+        {
+            this._construct_.parent(null);
+        }
+
+        if(node != null)
+        {
+            if(node.parent() != null)
+            {
+                node.parent().removeChild(node);
+            }
+
+            node.parent(this);
+        }
+
+        this._construct_ = node;
     }
 
     public LinkedList<PMethodDcl> getMethods()
@@ -129,6 +159,7 @@ public final class AClassBody extends PClassBody
     {
         return ""
             + toString(this._dcls_)
+            + toString(this._construct_)
             + toString(this._methods_)
             + toString(this._subclasses_);
     }
@@ -139,6 +170,12 @@ public final class AClassBody extends PClassBody
         // Remove child
         if(this._dcls_.remove(child))
         {
+            return;
+        }
+
+        if(this._construct_ == child)
+        {
+            this._construct_ = null;
             return;
         }
 
@@ -175,6 +212,12 @@ public final class AClassBody extends PClassBody
                 oldChild.parent(null);
                 return;
             }
+        }
+
+        if(this._construct_ == oldChild)
+        {
+            setConstruct((PConstruct) newChild);
+            return;
         }
 
         for(ListIterator<PMethodDcl> i = this._methods_.listIterator(); i.hasNext();)

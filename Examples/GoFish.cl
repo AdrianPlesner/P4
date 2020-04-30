@@ -7,10 +7,9 @@ Setup{
         bool ai = false;
         List typeof card hand;
         int score = 0;
-        Function player(string name, bool ai )typeof player{
+        Construct player(string name, bool ai ){
             this.name = name;
             this.ai = ai;
-            return this;
         }
     }
 //public er “spillepladen” (tilgængelig for alle spillere)
@@ -24,7 +23,7 @@ Setup{
             Players = InitPlayers();
         }
         //Sæt start spiller
-        turn.current = Players.find("Adrian");
+        turn.current = find("Adrian", Players);
         for p in Players {
             p.hand = Deck.take(7);
         }
@@ -122,4 +121,14 @@ Function InitPlayers() typeof List typeof player {
         input = AskAll("Are there any more players?");
     }
     return result;
+}
+
+Function find(string name, List typeof player ps) typeof player{
+    for p in ps {
+        if(p.name == name)
+        {
+            return p;
+        }
+    }
+    return null;
 }
