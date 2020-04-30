@@ -22,6 +22,36 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
+    public void caseAClassBody(AClassBody node) throws TypeException{
+        // Apply everything
+        for (PStmt ps : node.getDcls()){
+            ps.apply(this);
+        }
+        for (PMethodDcl pMetDcl : node.getMethods()){
+            pMetDcl.apply(this);
+        }
+        for (PSubclass pSub : node.getSubclasses()){
+            pSub.apply(this);
+        }
+
+        var pConstruct = node.getConstruct();
+        pConstruct.apply(this);
+    }
+
+    @Override
+    public void caseAConstruct(AConstruct node) throws TypeException{
+        for (PStmt ps : node.getBody()){
+            ps.apply(this);
+        }
+
+        for (PParamDcl pParamDcl : node.getParams()){
+            pParamDcl.apply(this);
+        }
+
+        //TODO: Probably not done
+    }
+
+    @Override
     public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
         // Set type of literal
         node.getValue().apply(this);
@@ -124,6 +154,14 @@ public class TypeChecker extends DepthFirstAdapter {
                 throw new TypeException(node.getOperator(), "Operation cannot be done on operands of type " + L.type + " and " + R.type);
             }
 
+        }
+    }
+
+    @Override
+    public void caseAListExpr(AListExpr node) throws TypeException{
+        // Each element is an expression
+        for (PExpr p : node.getElements()){
+            p.apply(this);
         }
     }
 
@@ -295,6 +333,18 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
+    public void caseACaseCase(ACaseCase node) throws TypeException{
+        // Apply on body of each case
+        for (PStmt s : node.getThen()){
+            s.apply(this);
+        }
+
+        // Each case is an expression
+        var pExpr = node.getCase();
+        pExpr.apply(this);
+    }
+
+    @Override
     public void caseAForeachStmt(AForeachStmt node) throws TypeException{
         // Apply on statement body
         for (PStmt ps : node.getThen()){
@@ -308,8 +358,6 @@ public class TypeChecker extends DepthFirstAdapter {
             throw new TypeException(node.getId(), pVal.type + " is not a collection");
         }
     }
-
-
 
 
 }
