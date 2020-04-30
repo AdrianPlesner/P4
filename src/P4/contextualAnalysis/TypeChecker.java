@@ -4,6 +4,8 @@ import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
 import P4.contextualAnalysis.SymbolTable;
 
+import java.lang.reflect.Type;
+
 public class TypeChecker extends DepthFirstAdapter {
 
     SymbolTable st;
@@ -290,6 +292,21 @@ public class TypeChecker extends DepthFirstAdapter {
         }
 
         //TODO: Do we care about the value?
+    }
+
+    @Override
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException{
+        // Apply on statement body
+        for (PStmt ps : node.getThen()){
+            ps.apply(this);
+        }
+
+        // Foreach stmt only works on collections
+        var pVal = node.getList();
+        pVal.apply(this);
+        if (!pVal.type.equals("list")){
+            throw new TypeException(node.getId(), pVal.type + " is not a collection");
+        }
     }
 
 
