@@ -157,6 +157,10 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
                 e.apply(this);
             }
         }
+        if(node.getConstruct() != null)
+        {
+            node.getConstruct().apply(this);
+        }
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
             Collections.reverse(copy);
@@ -192,6 +196,43 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         outASubclass(node);
     }
 
+    public void inAConstruct(AConstruct node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAConstruct(AConstruct node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAConstruct(AConstruct node)
+    {
+        inAConstruct(node);
+        {
+            List<PStmt> copy = new ArrayList<PStmt>(node.getBody());
+            Collections.reverse(copy);
+            for(PStmt e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        {
+            List<PParamDcl> copy = new ArrayList<PParamDcl>(node.getParams());
+            Collections.reverse(copy);
+            for(PParamDcl e : copy)
+            {
+                e.apply(this);
+            }
+        }
+        if(node.getName() != null)
+        {
+            node.getName().apply(this);
+        }
+        outAConstruct(node);
+    }
+
     public void inAListExpr(AListExpr node)
     {
         defaultIn(node);
@@ -206,9 +247,9 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
     public void caseAListExpr(AListExpr node) throws TypeException {
         inAListExpr(node);
         {
-            List<PElement> copy = new ArrayList<PElement>(node.getElements());
+            List<PExpr> copy = new ArrayList<PExpr>(node.getElements());
             Collections.reverse(copy);
-            for(PElement e : copy)
+            for(PExpr e : copy)
             {
                 e.apply(this);
             }
@@ -478,30 +519,6 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
             node.getValue().apply(this);
         }
         outABoolLiteral(node);
-    }
-
-    public void inAElement(AElement node)
-    {
-        defaultIn(node);
-    }
-
-    public void outAElement(AElement node)
-    {
-        defaultOut(node);
-    }
-
-    @Override
-    public void caseAElement(AElement node) throws TypeException {
-        inAElement(node);
-        {
-            List<PExpr> copy = new ArrayList<PExpr>(node.getValues());
-            Collections.reverse(copy);
-            for(PExpr e : copy)
-            {
-                e.apply(this);
-            }
-        }
-        outAElement(node);
     }
 
     public void inAVal(AVal node)

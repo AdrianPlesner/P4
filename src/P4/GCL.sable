@@ -58,6 +58,7 @@ Tokens
     sub = 'Subclass';
     game = 'Game';
     player = 'Player';
+    const = 'Construct';
     id = letter (letter |digit)*;
 
 Ignored Tokens
@@ -74,9 +75,11 @@ Productions
 
     card{-> class_body} = T.card class_body {-> class_body};
 
-    class_body = l_brack stmt* method_dcl* subclass* r_brack {-> New class_body([stmt], [method_dcl], [subclass])};
+    class_body = l_brack stmt* construct? method_dcl* subclass* r_brack {-> New class_body([stmt], construct, [method_dcl], [subclass])};
 
     subclass = sub id class_body {-> New subclass(id, class_body)};
+
+    construct = const id l_paren param_dcl_list? r_paren block {-> New construct(id,[param_dcl_list.param_dcl],[block.stmt])};
 
     game{-> stmt*} = T.game block{-> [block.stmt]};
 
@@ -105,18 +108,14 @@ Productions
     term{-> expr} = {expand} term mult_op factor {-> New expr.mult_op(term.expr, mult_op, factor.expr)} | {factor} factor {-> factor.expr};
 
     factor{-> expr} = {expand} parens {-> parens.expr} | {literal} literal {-> New expr.literal(literal)} | {val} val {-> New expr.value(val)} |
-    {init} l_brack element_list* r_brack {-> New expr.list([element_list.element])};
+    {init} l_brack element* r_brack {-> New expr.list([element.expr])};
 
     parens{-> expr} = l_paren expr r_paren {-> expr};
 
     literal = {int} int_literal {-> New literal.int(int_literal)} | {float} float_literal {-> New literal.float(float_literal)} |
     {string} string {-> New literal.string(string)} | {bool} bool_literal {-> New literal.bool(bool_literal)} ;
 
-    element_list{-> element} = element semi {-> element};
-
-    element = expr? element_expand* {-> New element([expr, element_expand.expr])};
-
-    element_expand{-> expr} = separator expr{-> expr};
+    element{-> expr} = expr semi {-> expr};
 
     val = call_field val_list* {-> New val([call_field, val_list.call_field])} ;
 
@@ -128,8 +127,8 @@ Productions
 
     param{-> expr} = separator expr {-> expr};
 
-    method_dcl = fun id l_paren param_dcl_list? r_paren typeof type l_brack stmt* r_brack
-    {-> New method_dcl(id, [param_dcl_list.param_dcl], type, [stmt])};
+    method_dcl = fun id l_paren param_dcl_list? r_paren typeof type block
+    {-> New method_dcl(id, [param_dcl_list.param_dcl], type, [block.stmt])};
 
     param_dcl_list{-> param_dcl*} = param_dcl expand_param* {-> [param_dcl, expand_param.param_dcl]};
 
@@ -177,17 +176,17 @@ Abstract Syntax Tree
 
     setup = [card]:class_body [game]:stmt* [player]:class_body;
 
-    class_body = [dcls]:stmt* [methods]:method_dcl* [subclasses]:subclass*;
+    class_body = [dcls]:stmt* construct? [methods]:method_dcl* [subclasses]:subclass*;
 
     subclass = [name]:id [body]:class_body;
 
-    expr = {list} [elements]:element* | {mult_op} [l]:expr [operator]:mult_op [r]:expr | {literal} [value]:literal | {value} val |
+    construct = [name]:id [params]:param_dcl* [body]:stmt*;
+
+    expr = {list} [elements]:expr* | {mult_op} [l]:expr [operator]:mult_op [r]:expr | {literal} [value]:literal | {value} val |
     {add_op} [l]:expr [operator]:add_op [r]:expr | {relation} [l]:expr [operator]:relation_op [r]:expr |
     {equality} [l]:expr [operator]:equal_op [r]:expr | {bool_op} [l]:expr [operator]:bool_op [r]:expr;
 
     literal = {int} [value]:int_literal | {float} [value]:float_literal | {string} [value]:string | {bool} [value]:bool_literal;
-
-    element = [values]:expr*;
 
     val = call_field*;
 

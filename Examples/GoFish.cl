@@ -7,10 +7,9 @@ Setup{
         bool ai = false;
         List typeof card hand;
         int score = 0;
-        Function player(string name, bool ai )typeof player{
+        Construct player(string name, bool ai ){
             this.name = name;
             this.ai = ai;
-            return this;
         }
     }
 //public er “spillepladen” (tilgængelig for alle spillere)

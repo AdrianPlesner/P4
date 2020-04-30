@@ -3,10 +3,9 @@ Setup{
         string suit;
         int value;
 
-        Function card(string s, int i) typeof card{
+        Construct card(string s, int i){
             this.suit = s;
             this.value = i;
-            return this;
         }
 
         Function transfer(player from, player to) typeof void{

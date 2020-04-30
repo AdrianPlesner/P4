@@ -2,7 +2,7 @@
 
 package P4.Sable.node;
 
-public abstract class PElement extends Node
+public abstract class PConstruct extends Node
 {
     // Empty body
 }

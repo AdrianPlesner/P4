@@ -97,6 +97,7 @@ public interface Analysis extends Switch
     void caseTSub(TSub node);
     void caseTGame(TGame node);
     void caseTPlayer(TPlayer node);
+    void caseTConst(TConst node);
     void caseTId(TId node);
     void caseEOF(EOF node);
     void caseInvalidToken(InvalidToken node);
