@@ -293,6 +293,13 @@ public class TypeChecker extends DepthFirstAdapter {
         //TODO: Finish AAssignStmt
     }
 
+
+    @Override
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException{
+        var expr = node.getExpr();
+        expr.apply(this);
+    }
+
     @Override
     public void caseAForStmt(AForStmt node) throws TypeException{
         // Apply to the statement body
