@@ -232,10 +232,67 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void caseAMethodDcl(AMethodDcl node) throws TypeException{
+        // Apply on method body
         for(PStmt s: node.getBody()){
             s.apply(this);
         }
     }
+
+    @Override
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException{
+        var pVal = node.getVar();
+        pVal.apply(this);
+        var pExpr = node.getExpr();
+        pExpr.apply(this);
+
+        if (!pVal.type.equals(pExpr.type)){
+            // If types are incompatible, throw exception.
+            throw new TypeException(node.getOperation(), "Cannot assign type " + pVal.type + " to type " + pExpr.type);
+        }
+
+        //TODO: Finish AAssignStmt
+    }
+
+    @Override
+    public void caseAForStmt(AForStmt node) throws TypeException{
+        // Apply to the statement body
+        for (PStmt s : node.getThen()){
+            s.apply(this);
+        }
+
+        // init is an assign statement. Has already been type checked.
+        var initStmt = node.getInit();
+        initStmt.apply(this);
+        // Predicate is an expression. Has already been type checked.
+        var predicate = node.getPredicate();
+        predicate.apply(this);
+        // Update is a statement.
+        var update = node.getUpdate();
+        update.apply(this);
+    }
+
+    @Override
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException{
+        // Apply on statement body
+        for (PStmt s : node.getThen()){
+            s.apply(this);
+        }
+        // Predicate is an expression. Has already been type checked.
+        var predicate = node.getPredicate();
+        predicate.apply(this);
+    }
+
+    @Override
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException{
+        // Apply on each case
+        for (PCase pc : node.getCases()){
+            pc.apply(this);
+        }
+
+        //TODO: Do we care about the value?
+    }
+
+
 
 
 }
