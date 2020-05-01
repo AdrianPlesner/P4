@@ -1,5 +1,6 @@
 package P4;
 
+import P4.CodeGenarator.CodeGenerator;
 import P4.Sable.parser.*;
 import P4.Sable.lexer.*;
 import P4.Sable.node.*;
@@ -36,11 +37,13 @@ public class Main {
 
             TypeChecker tc = new TypeChecker(ast, st);
 
+            CodeGenerator cg = new CodeGenerator(ast,st);
+
+            cg.generate();
+
             stop_time = System.currentTimeMillis();
             // Compute and print compilation time
             System.out.println("Compilation took " + (stop_time-start_time) + " milliseconds" );
-
-            //TODO: code generation
 
 
         }
