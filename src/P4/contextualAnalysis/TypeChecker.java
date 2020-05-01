@@ -157,6 +157,11 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    private TokenFinder tf = new TokenFinder();
+
+    public TypeChecker(Start ast, SymbolTable st) {
+        this.ast = ast;
+        this.st = st;
     @Override
     public void caseAListExpr(AListExpr node) throws TypeException{
         // Each element is an expression

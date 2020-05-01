@@ -21,6 +21,8 @@ public class STBuilder extends DepthFirstAdapter {
 
     private String path;
 
+    private TokenFinder tf = new TokenFinder();
+
     public STBuilder(Start ast, String contentPath) {
         this.ast = ast;
         this.path = contentPath;
