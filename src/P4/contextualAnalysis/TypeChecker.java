@@ -8,6 +8,8 @@ public class TypeChecker extends DepthFirstAdapter {
     private Start ast;
     private SymbolTable st;
 
+    private TokenFinder tf = new TokenFinder();
+
     public TypeChecker(Start ast, SymbolTable st) {
         this.ast = ast;
         this.st = st;
