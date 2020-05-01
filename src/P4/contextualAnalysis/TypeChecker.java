@@ -324,9 +324,12 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PStmt s : node.getThen()){
             s.apply(this);
         }
-        // Predicate is an expression. Has already been type checked.
+        // Predicate is an expression.
         var predicate = node.getPredicate();
         predicate.apply(this);
+        if (!(predicate.type.equals("bool"))){
+            //TODO: Throw TypeException. No token to reference.
+        }
     }
 
     @Override
@@ -349,6 +352,14 @@ public class TypeChecker extends DepthFirstAdapter {
         // Each case is an expression
         var pExpr = node.getCase();
         pExpr.apply(this);
+    }
+
+    @Override
+    public void caseADefaultCase(ADefaultCase node) throws TypeException{
+        // Apply to body of the default statement
+        for (PStmt ps : node.getThen()){
+            ps.apply(this);
+        }
     }
 
     @Override
