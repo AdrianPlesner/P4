@@ -366,5 +366,4 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
-
 }
