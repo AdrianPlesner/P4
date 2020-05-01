@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 public class TypeChecker extends DepthFirstAdapter {
 
     SymbolTable st;
+    private TokenFinder tf = new TokenFinder();
 
     public TypeChecker(Start ast, SymbolTable _st) throws TypeException {
         ast.apply(this);
@@ -377,5 +378,23 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
+    public void caseAIfStmt(AIfStmt node) throws TypeException{
+        var expr = node.getPredicate();
+        expr.apply(this);
+        for (PStmt ps : node.getThen()){
+            ps.apply(this);
+        }
+        for (PElseIf ps : node.getElseifs()){
+            ps.apply(this);
+        }
+        for (PStmt ps : node.getElse()){
+            ps.apply(this);
+        }
 
+        node.apply(tf);
+        if(!expr.type.equals("bool")){
+            throw new TypeException(tf.getToken(), "Expression is not of type boolean");
+        }
+    }
 }
