@@ -311,12 +311,17 @@ public class TypeChecker extends DepthFirstAdapter {
         // init is an assign statement. Has already been type checked.
         var initStmt = node.getInit();
         initStmt.apply(this);
-        // Predicate is an expression. Has already been type checked.
-        var predicate = node.getPredicate();
-        predicate.apply(this);
         // Update is a statement.
         var update = node.getUpdate();
         update.apply(this);
+
+        // Predicate is an expression.
+        var predicate = node.getPredicate();
+        predicate.apply(this);
+        if (!predicate.type.equals("bool")){
+            node.apply(tf);
+            throw new TypeException(tf.getToken(), "Predicate does not return type boolean");
+        }
     }
 
     @Override
@@ -329,7 +334,8 @@ public class TypeChecker extends DepthFirstAdapter {
         var predicate = node.getPredicate();
         predicate.apply(this);
         if (!(predicate.type.equals("bool"))){
-            //TODO: Throw TypeException. No token to reference.
+            node.apply(tf);
+            throw new TypeException(tf.getToken(), "Predicate does not return type boolean");
         }
     }
 
@@ -340,7 +346,7 @@ public class TypeChecker extends DepthFirstAdapter {
             pc.apply(this);
         }
 
-        //TODO: Do we care about the value?
+        //TODO: Do we care about the type of the value?
     }
 
     @Override
