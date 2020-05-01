@@ -299,6 +299,7 @@ public class TypeChecker extends DepthFirstAdapter {
     public void caseAReturnStmt(AReturnStmt node) throws TypeException{
         var expr = node.getExpr();
         expr.apply(this);
+        //TODO: Fix this
     }
 
     @Override
@@ -359,6 +360,7 @@ public class TypeChecker extends DepthFirstAdapter {
         // Each case is an expression
         var pExpr = node.getCase();
         pExpr.apply(this);
+        //TODO: Make correct.
     }
 
     @Override
@@ -400,7 +402,22 @@ public class TypeChecker extends DepthFirstAdapter {
 
         node.apply(tf);
         if(!expr.type.equals("bool")){
-            throw new TypeException(tf.getToken(), "Expression is not of type boolean");
+            throw new TypeException(tf.getToken(), "Predicate is not of type boolean");
+        }
+    }
+
+    @Override
+    public void caseAElseIf(AElseIf node) throws TypeException{
+        // Apply on statement body
+        for (PStmt ps : node.getThen()){
+            ps.apply(this);
+        }
+        // Check predicate for type correctness
+        var predicate = node.getPredicate();
+        predicate.apply(this);
+        if (!predicate.type.equals("bool")){
+            node.apply(tf);
+            throw new TypeException(tf.getToken(), "Predicate is not of type boolean");
         }
     }
 }
