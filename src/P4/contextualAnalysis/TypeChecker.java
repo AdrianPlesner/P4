@@ -386,4 +386,5 @@ public class TypeChecker extends DepthFirstAdapter {
             throw new TypeException(tf.getToken(), "Expression is not of type boolean");
         }
     }
+
 }
