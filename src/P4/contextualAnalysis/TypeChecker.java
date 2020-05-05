@@ -5,6 +5,7 @@ import P4.Sable.node.*;
 import P4.contextualAnalysis.SymbolTable;
 
 import java.lang.reflect.Type;
+import java.nio.MappedByteBuffer;
 
 public class TypeChecker extends DepthFirstAdapter {
 
@@ -20,6 +21,28 @@ public class TypeChecker extends DepthFirstAdapter {
     public void caseStart(Start node) throws TypeException {
         // Check everything. No need to change anything
         super.caseStart(node);
+    }
+
+    @Override
+    public void caseAProg(AProg node) throws TypeException{
+        //Apply everything!
+        var setup = node.getSetup();
+        setup.apply(this);
+
+        for (PMethodDcl moves : node.getMoves()){
+            moves.apply(this);
+        }
+        for (PStmt turn : node.getTurn()){
+            turn.apply(this);
+        }
+        for (PStmt endCondition : node.getEndCondition()){
+            endCondition.apply(this);
+        }
+        for (PMethodDcl methods : node.getMethods()){
+            methods.apply(this);
+        }
+
+        //TODO: What to do with linked list of TId?
     }
 
     @Override
@@ -122,8 +145,12 @@ public class TypeChecker extends DepthFirstAdapter {
             }
         }
         else{
-            // operands is of different types
-            //TODO: check compatibility
+            //Operands are of different types
+            if (L.type.equals("int") && R.type.equals("float") || L.type.equals("float") && R.type.equals("int")){
+                node.type = "float";
+            } else {
+                throw new TypeException(node.getOperator(), "Operation cannot be done on operands of type " + L.type + " and " + R.type);
+            }
         }
     }
 
@@ -418,6 +445,13 @@ public class TypeChecker extends DepthFirstAdapter {
         if (!predicate.type.equals("bool")){
             node.apply(tf);
             throw new TypeException(tf.getToken(), "Predicate is not of type boolean");
+        }
+    }
+
+    @Override
+    public void caseADclStmt(ADclStmt node) throws TypeException{
+        for (PSingleDcl dcl : node.getDcls()){
+            dcl.apply(this);
         }
     }
 
