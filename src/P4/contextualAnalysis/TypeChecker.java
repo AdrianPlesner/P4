@@ -421,4 +421,36 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    @Override
+    public void caseASubclass(ASubclass node) throws TypeException{
+        var body = node.getBody();
+        body.apply(this);
+    }
+
+    @Override
+    public void caseASetup(ASetup node) throws TypeException{
+        var card = node.getCard();
+        card.apply(this);
+        var player = node.getPlayer();
+        player.apply(this);
+
+        for(PStmt p : node.getGame()){
+            p.apply(this);
+        }
+
+    }
+
+    @Override
+    public void caseASingleDcl(ASingleDcl node) throws TypeException{
+        var expr = node.getExpr();
+        expr.apply(this);
+
+        var type = st.retrieveSymbol(node.getId().toString()).getType();
+
+        if(!expr.type.equals(type)){
+            throw new TypeException(node.getId(), "Type does not match the expression");
+        }
+
+    }
+
 }
