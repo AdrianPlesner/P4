@@ -474,6 +474,7 @@ public class TypeChecker extends DepthFirstAdapter {
 
     }
 
+
     @Override
     public void caseASingleDcl(ASingleDcl node) throws TypeException{
         var expr = node.getExpr();
