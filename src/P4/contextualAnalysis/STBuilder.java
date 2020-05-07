@@ -331,7 +331,7 @@ public class STBuilder extends DepthFirstAdapter {
     public void caseAClassBody(AClassBody node) throws TypeException {
         if(current != null){
             st.openScope();
-            st.enterSymbol(new Variable("this",null,current.getIdentifier()));
+            st.enterSymbol(new Variable("this",new ADclStmt(new AVarType(new TId(current.getIdentifier())),new LinkedList<>()),current.getIdentifier()));
             // Add locals
             for(PStmt dcl : node.getDcls()){
                 // Check if statement is a declare
@@ -363,6 +363,7 @@ public class STBuilder extends DepthFirstAdapter {
             for(PSubclass sc : node.getSubclasses()){
                 sc.apply(this);
             }
+            //st.closeScope();
         }
         else {
             //report error
@@ -409,7 +410,6 @@ public class STBuilder extends DepthFirstAdapter {
         for(Symbol s : construct.getArgs()){
             st.enterSymbol(s);
         }
-        st.enterSymbol(new Variable("this",null,name.getText()));
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
