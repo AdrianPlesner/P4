@@ -488,5 +488,11 @@ public class TypeChecker extends DepthFirstAdapter {
 
     }
 
+    @Override
+    public void caseACallStmt(ACallStmt node) throws TypeException{
+        var val = node.getVal();
+        val.apply(this);
+    }
+
 
 }
