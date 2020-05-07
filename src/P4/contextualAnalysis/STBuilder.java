@@ -7,6 +7,7 @@ import P4.Sable.parser.Parser;
 import P4.contextualAnalysis.Symbol.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.PushbackReader;
 import java.util.LinkedList;
@@ -131,7 +132,14 @@ public class STBuilder extends DepthFirstAdapter {
         try {
             for (TId inc : includes) {
                 // Read included .cl file
-                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
+                File f = new File(path.concat(inc.getText()).concat(".cl"));
+                if(f.exists()){
+                    System.out.println("Found include: " + f.getAbsolutePath());
+                }
+                else{
+                    throw new TypeException(inc,"Could not find file to include: " + f.getPath());
+                }
+                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(f)), 1024));
 
                 // parser program
                 Parser parser = new Parser(lexer);

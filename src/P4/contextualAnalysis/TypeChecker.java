@@ -59,7 +59,9 @@ public class TypeChecker extends DepthFirstAdapter {
         }
 
         var pConstruct = node.getConstruct();
-        pConstruct.apply(this);
+        if(pConstruct != null) {
+            pConstruct.apply(this);
+        }
     }
 
     @Override
