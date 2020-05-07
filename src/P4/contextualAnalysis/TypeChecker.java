@@ -13,8 +13,8 @@ public class TypeChecker extends DepthFirstAdapter {
     private TokenFinder tf = new TokenFinder();
 
     public TypeChecker(Start ast, SymbolTable _st) throws TypeException {
-        ast.apply(this);
         st = _st;
+        ast.apply(this);
     }
 
     @Override
@@ -480,13 +480,11 @@ public class TypeChecker extends DepthFirstAdapter {
     @Override
     public void caseASingleDcl(ASingleDcl node) throws TypeException{
         var expr = node.getExpr();
-        expr.apply(this);
 
-        var type = st.retrieveSymbol(node.getId().toString()).getType();
-
-        if(!expr.type.equals(type)){
-            throw new TypeException(node.getId(), "Type does not match the expression");
+        if (expr != null){
+            expr.apply(this);
         }
+
 
     }
 
