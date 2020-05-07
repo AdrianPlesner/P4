@@ -131,6 +131,7 @@ public class STBuilder extends DepthFirstAdapter {
         try {
             for (TId inc : includes) {
                 // Read included .cl file
+                //TODO: check if file exists
                 Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
 
                 // parser program
