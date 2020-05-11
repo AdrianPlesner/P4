@@ -276,11 +276,23 @@ public class TypeChecker extends DepthFirstAdapter {
         var dcl = node.getId().declarationNode;
         if(dcl instanceof ADclStmt){
             // Type of variable is type of declaration node
-            node.type = ((ADclStmt) dcl).getType().toString();
+            var type = ((ADclStmt) dcl).getType();
+            var typeTxt = "";
+            if(type instanceof AListType){
+                typeTxt = "list of ";
+            }
+            typeTxt += type.toString();
+            node.type = typeTxt;
         }
         else if(dcl instanceof AParamDcl){
             // Type of variable is type of declaration node
-            node.type = ((AParamDcl) dcl).getType().toString();
+            var type = ((AParamDcl) dcl).getType();
+            var typeTxt = "";
+            if(type instanceof AListType){
+                typeTxt = "list of ";
+            }
+            typeTxt += type.toString();
+            node.type = typeTxt;
         }
         else{
             // if declaration node is not a ASINGLEDCL something went wrong
