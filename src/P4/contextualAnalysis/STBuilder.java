@@ -330,7 +330,7 @@ public class STBuilder extends DepthFirstAdapter {
     @Override
     public void caseAClassBody(AClassBody node) throws TypeException {
         if(current != null){
-            st.openScope();
+            //st.openScope();
             st.enterSymbol(new Variable("this",new ADclStmt(new AVarType(new TId(current.getIdentifier())),new LinkedList<>()),current.getIdentifier()));
             // Add locals
             for(PStmt dcl : node.getDcls()){
