@@ -2,6 +2,7 @@ package P4.contextualAnalysis;
 
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
+import P4.contextualAnalysis.Symbol.Function;
 import P4.contextualAnalysis.SymbolTable;
 
 import java.lang.reflect.Type;
@@ -193,6 +194,7 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PExpr p : node.getElements()){
             p.apply(this);
         }
+        node.type = node.getElements().getFirst().type;
     }
 
     @Override
@@ -272,9 +274,13 @@ public class TypeChecker extends DepthFirstAdapter {
     public void caseAFieldCallField(AFieldCallField node) throws TypeException {
         // Get declaration node
         var dcl = node.getId().declarationNode;
-        if(dcl instanceof ASingleDcl){
+        if(dcl instanceof ADclStmt){
             // Type of variable is type of declaration node
-            node.type = ((ASingleDcl) dcl).getExpr().type;
+            node.type = ((ADclStmt) dcl).getType().toString();
+        }
+        else if(dcl instanceof AParamDcl){
+            // Type of variable is type of declaration node
+            node.type = ((AParamDcl) dcl).getType().toString();
         }
         else{
             // if declaration node is not a ASINGLEDCL something went wrong
@@ -291,9 +297,10 @@ public class TypeChecker extends DepthFirstAdapter {
         }
 
         // Get declaration node
-        var dcl = node.getId().declarationNode;
-        if (dcl instanceof AMethodDcl){
-            node.type = st.retrieveSymbol(((AMethodDcl) dcl).getName().toString()).getType();
+        var dcl = st.retrieveSymbol(node.getId().getText());
+
+        if (dcl instanceof Function){
+            node.type = ((Function) dcl).getReturnType();
         }
         else {
             throw new TypeException(node.getId(), "An unknown type error has occurred");
