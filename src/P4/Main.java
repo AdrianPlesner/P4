@@ -14,14 +14,12 @@ public class Main {
         long start_time, stop_time; //times compilation
         if (args.length < 1) {
             System.out.println("Usage:");
-            System.out.println(" java P4.Main <filename>");
+            System.out.println(" java P4.Main <filename> [outputname]");
         }
         try {
             start_time = System.currentTimeMillis();
-
                // create lexer
             Lexer lexer = new Lexer (new PushbackReader(new BufferedReader(new FileReader(args[0])), 1024));
-
                // parser program
             Parser parser = new Parser(lexer);
             // Debug med System.out.println(this.token.getClass().getSimpleName() + ": [" + token.getText() + "]");
@@ -35,11 +33,15 @@ public class Main {
             STBuilder stBuilder = new STBuilder(ast,contentPath);
             SymbolTable st = stBuilder.BuildST(new SymbolTable());
 
-            TypeChecker tc = new TypeChecker(ast, st);
-
-            CodeGenerator cg = new CodeGenerator(ast,st);
+            //TypeChecker tc = new TypeChecker(ast, st);
+            CodeGenerator cg;
+            if(args.length == 2){
+                cg = new CodeGenerator(ast,st,args[1]);
+            }
+             cg = new CodeGenerator(ast,st,null);
 
             cg.generate();
+            cg.writeFiles();
 
             stop_time = System.currentTimeMillis();
             // Compute and print compilation time
