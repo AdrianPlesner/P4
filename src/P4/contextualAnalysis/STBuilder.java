@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PushbackReader;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class STBuilder extends DepthFirstAdapter {
@@ -77,7 +79,7 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(string);
         string.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var stringIndex = new Function("index",null,"string");
+        var stringIndex = new Function("index",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("string")),new LinkedList<>()),"string");
         string.addMethod(stringIndex);
         stringIndex.addArg(new Variable("i",null,"int"));
 
@@ -85,21 +87,21 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(list);
         list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var take = new Function("take",null,"list of void");
+        var take = new Function("take",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("element")),new LinkedList<>()),"list of void");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
-        var add = new Function("add",null,"void");
+        var add = new Function("add",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(add);
         add.addArg(new Variable("e",null,"void"));
 
-        var remove = new Function("remove",null,"void");
+        var remove = new Function("remove",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(remove);
         remove.addArg(new Variable("e",null,"void"));
 
-        list.addMethod(new Function("clear",null,"void"));
+        list.addMethod(new Function("clear",new AMethodDcl(null,new LinkedList<>(),new AVarType(new TId("void")),new LinkedList<>()),"void"));
 
-        var index = new Function("index",null,"element");
+        var index = new Function("index",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("element")),new LinkedList<>()),"element");
         list.addMethod(index);
         index.addArg(new Variable("i",null,"int"));
 
