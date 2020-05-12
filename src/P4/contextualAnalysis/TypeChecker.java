@@ -279,16 +279,22 @@ public class TypeChecker extends DepthFirstAdapter {
         if(dcl instanceof ADclStmt){
             // Type of variable is type of declaration node
             var type = ((ADclStmt) dcl).getType();
-            var typetxt = "";
+            var typeTxt = "";
             if(type instanceof AListType){
-                typetxt = "list of ";
+                typeTxt = "list of ";
             }
-            typetxt += type.toString();
-            node.type = typetxt;
+            typeTxt += type.toString();
+            node.type = typeTxt;
         }
         else if(dcl instanceof AParamDcl){
             // Type of variable is type of declaration node
-            node.type = ((AParamDcl) dcl).getType().toString();
+            var type = ((AParamDcl) dcl).getType();
+            var typeTxt = "";
+            if(type instanceof AListType){
+                typeTxt = "list of ";
+            }
+            typeTxt += type.toString();
+            node.type = typeTxt;
         }
         else if(dcl2 != null && dcl2.getType().equals("null")){
             node.type = "null";
