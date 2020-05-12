@@ -75,7 +75,7 @@ public class STBuilder extends DepthFirstAdapter {
 
         var string = new SubClass("string",null,null);
         st.enterSymbol(string);
-        string.addLocal(new Variable("length",null,"int"));
+        string.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
         var stringIndex = new Function("index",null,"string");
         string.addMethod(stringIndex);
@@ -83,7 +83,7 @@ public class STBuilder extends DepthFirstAdapter {
 
         var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
-        list.addLocal(new Variable("length",null,"int"));
+        list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
         var take = new Function("take",null,"list of void");
         take.addArg(new Variable("num",null,"int"));
@@ -105,7 +105,7 @@ public class STBuilder extends DepthFirstAdapter {
 
         var Turn = new SubClass("Turn",null,null);
         st.enterSymbol(Turn);
-        Turn.addLocal(new Variable("current",null,"player"));
+        Turn.addLocal(new Variable("current",new ADclStmt(new AVarType(new TId("player")),new LinkedList<>()),"player"));
         st.enterSymbol(new Variable("turn",null,"Turn"));
 
         var message = new Function("Message",null,"void");
