@@ -283,8 +283,8 @@ public class TypeChecker extends DepthFirstAdapter {
             if(type instanceof AListType){
                 typeTxt = "list of ";
             }
-            typeTxt += type.toString();
-            node.type = typeTxt;
+            typeTxt += type.toString().trim();
+            node.type = typeTxt.trim();
         }
         else if(dcl instanceof AParamDcl){
             // Type of variable is type of declaration node
@@ -293,8 +293,8 @@ public class TypeChecker extends DepthFirstAdapter {
             if(type instanceof AListType){
                 typeTxt = "list of ";
             }
-            typeTxt += type.toString();
-            node.type = typeTxt;
+            typeTxt += type.toString().trim();
+            node.type = typeTxt.trim();
         }
         else if(dcl2 != null && dcl2.getType().equals("null")){
             node.type = "null";
