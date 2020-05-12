@@ -271,7 +271,7 @@ public class STBuilder extends DepthFirstAdapter {
             var returnType = node.getReturntype();
             //Check returntype
             returnType.apply(this);
-            var type = returnType.toString();
+            var type = returnType.toString().trim();
             // Handle list return type
             if(returnType instanceof AListType){
                 if(type.equals("void")){

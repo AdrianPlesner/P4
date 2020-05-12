@@ -223,6 +223,7 @@ public class TypeChecker extends DepthFirstAdapter {
             switch (L.type){
                 case "int": case "float": {
                     node.type = "bool";
+                    break;
                 }
                 default:{
                     //Types that cannot be compared
