@@ -103,6 +103,8 @@ public class CodeGenerator extends DepthFirstAdapter {
         for(Start s : node.includes){
             s.getPProg().apply(this);
         }
+        node.getSetup().apply(this);
+
     }
 
 }

@@ -128,6 +128,7 @@ public class STBuilder extends DepthFirstAdapter {
         int i = 0;
         try {
             for (TId inc : includes) {
+                // TODO: only include each file once
                 // Read included .cl file
                 Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
 
