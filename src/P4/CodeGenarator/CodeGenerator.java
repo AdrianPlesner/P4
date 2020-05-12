@@ -2,6 +2,7 @@ package P4.CodeGenarator;
 
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.AProg;
+import P4.Sable.node.ASetup;
 import P4.Sable.node.Start;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
@@ -18,7 +19,11 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     private String name;
 
-    private HashMap<String,String> files = new HashMap<>();
+    protected HashMap<String,String> files = new HashMap<>();
+
+    private FieldGenerator fg;
+    private MethodGenerator mg;
+    private SubClassGenerator sg;
 
     public CodeGenerator(){}
 
@@ -32,11 +37,13 @@ public class CodeGenerator extends DepthFirstAdapter {
             name = n;
         }
         files.put(name,"");
+        fg = new FieldGenerator(files);
+        mg = new MethodGenerator(files);
+        sg = new SubClassGenerator(files);
     }
 
     public void generate() throws TypeException {
         ast.apply(this);
-
     }
 
     public void writeFiles() throws IOException {
@@ -100,10 +107,11 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     @Override
     public void caseAProg(AProg node) throws TypeException {
+        // fields fase
         for(Start s : node.includes){
-            s.getPProg().apply(this);
+            s.getPProg().apply(fg);
         }
-        node.getSetup().apply(this);
+
 
     }
 
