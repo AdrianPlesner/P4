@@ -250,7 +250,7 @@ public class TypeChecker extends DepthFirstAdapter {
 
         //TODO: Reference types?
         //Only possible if operands are of same type
-        if (L.type.equals(R.type)){
+        if (L.type.equals(R.type) || R.type.equals("null")){
             node.type = "bool";
         }
         else{
@@ -274,13 +274,24 @@ public class TypeChecker extends DepthFirstAdapter {
     public void caseAFieldCallField(AFieldCallField node) throws TypeException {
         // Get declaration node
         var dcl = node.getId().declarationNode;
+        var dcl2 = st.retrieveSymbol(node.getId().getText());
+
         if(dcl instanceof ADclStmt){
             // Type of variable is type of declaration node
-            node.type = ((ADclStmt) dcl).getType().toString();
+            var type = ((ADclStmt) dcl).getType();
+            var typetxt = "";
+            if(type instanceof AListType){
+                typetxt = "list of ";
+            }
+            typetxt += type.toString();
+            node.type = typetxt;
         }
         else if(dcl instanceof AParamDcl){
             // Type of variable is type of declaration node
             node.type = ((AParamDcl) dcl).getType().toString();
+        }
+        else if(dcl2 != null && dcl2.getType().equals("null")){
+            node.type = "null";
         }
         else{
             // if declaration node is not a ASINGLEDCL something went wrong
