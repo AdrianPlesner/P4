@@ -22,7 +22,7 @@ public class STBuilder extends DepthFirstAdapter {
 
     private Symbol current;
 
-    private String path; // hje igen du
+    private String path;
 
     private TokenFinder tf = new TokenFinder();
 
@@ -110,17 +110,17 @@ public class STBuilder extends DepthFirstAdapter {
         Turn.addLocal(new Variable("current",new ADclStmt(new AVarType(new TId("player")),new LinkedList<>()),"player"));
         st.enterSymbol(new Variable("turn",null,"Turn"));
 
-        var message = new Function("Message",null,"void");
+        var message = new Function("Message",new AMethodDcl(null,new LinkedList<PParamDcl>(Arrays.asList(new AParamDcl(new AVarType(new TId("player")), new TId("p")), new AParamDcl(new AVarType(new TId("string")), new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(message);
         message.addArg(new Variable("p",null,"player"));
         message.addArg(new Variable("m",null,"string"));
 
-        var messageAll = new Function("MessageAll",null,"void");
+        var messageAll = new Function("MessageAll",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("string")),new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(messageAll);
         messageAll.addArg(new Variable("m",null,"string"));
 
 
-        st.enterSymbol(new Function("Read",null,"string"));
+        st.enterSymbol(new Function("Read",new AMethodDcl(null,new LinkedList<PParamDcl>(),new AVarType(new TId("string")),new LinkedList<>()),"string"));
 
         st.enterSymbol(new SubClass("null",null,null));
         st.enterSymbol(new Variable("null",null,"null"));
