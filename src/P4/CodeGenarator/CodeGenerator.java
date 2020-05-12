@@ -20,6 +20,8 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     private HashMap<String,String> files = new HashMap<>();
 
+    public CodeGenerator(){}
+
     public CodeGenerator(Start ast, SymbolTable st, String n) {
         this.ast = ast;
         this.st = st;
@@ -41,7 +43,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         writeFiles("");
     }
 
-    public void writeFiles(String path) throws IOException {
+    public final void writeFiles(String path) throws IOException {
         if(path.equals("")){
             path = System.getProperty("user.dir");
         }
@@ -79,23 +81,28 @@ public class CodeGenerator extends DepthFirstAdapter {
                     + "return\n"
                 + ".end method\n";
         emit(name,s);
-    }
-
-    @Override
-    public void caseAProg(AProg node) throws TypeException {
-        inAProg(node);
-
-        outAProg(node);
-    }
-
-    @Override
-    public void inAProg(AProg node) {
-        String s = ".method public static main([Ljava/lang/String)V\n";
+        files.put("player","");
+        s = ".class player\n"
+            + ".super java/lang/Object\n";
+        emit("player",s);
+        files.put("card","");
+        s = ".class card\n"
+            + ".super java/Lang/Object\n";
+        emit("card",s);
+        s = ".method public static main([Ljava/lang/String)V\n";
         emit(name,s);
     }
 
     @Override
-    public void outAProg(AProg node) {
+    public void outStart(Start node) {
         emit(name,".end method\n");
     }
+
+    @Override
+    public void caseAProg(AProg node) throws TypeException {
+        for(Start s : node.includes){
+            s.getPProg().apply(this);
+        }
+    }
+
 }

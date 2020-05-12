@@ -1,6 +1,8 @@
 ;The purpose of this is to test out jasmin and to make a program that prints the input.
 .class public examples/echo
 .super java/lang/Object
+.field private static Bob I = 5
+.field public static Bub F = 3.14
 
 .method public <init>()V
     aload_0
