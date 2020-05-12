@@ -262,10 +262,7 @@ public class TypeChecker extends DepthFirstAdapter {
     @Override
     public void caseAVal(AVal node) throws TypeException {
         // Check children
-        for(PCallField cf : node.getCallField()){
-            cf.apply(this);
-        }
-
+        node.getCallField().getLast().apply(this);
         // Node type = type of last element in call sequence
         node.type = node.getCallField().getLast().type;
     }
