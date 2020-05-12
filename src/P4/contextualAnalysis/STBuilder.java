@@ -22,7 +22,7 @@ public class STBuilder extends DepthFirstAdapter {
 
     private Symbol current;
 
-    private String path; // hje
+    private String path; // hje igen
 
     private TokenFinder tf = new TokenFinder();
 
