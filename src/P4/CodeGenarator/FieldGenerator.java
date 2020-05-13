@@ -18,16 +18,21 @@ public class FieldGenerator extends CodeGenerator {
 
     @Override
     public void caseAProg(AProg node) throws TypeException {
+        // Go through all includes
         for(Start s : node.includes){
             s.getPProg().apply(this);
         }
+        // Go through this
+        // Fields are only found in setup
         node.getSetup().apply(this);
     }
 
     @Override
     public void caseASetup(ASetup node) throws TypeException {
+        // Card fields
         current = "card";
         node.getCard().apply(this);
+        // player fields
         current = "player";
         node.getPlayer().apply(this);
     }
@@ -42,6 +47,7 @@ public class FieldGenerator extends CodeGenerator {
     @Override
     public void caseADclStmt(ADclStmt node) throws TypeException {
         // .field <access-spec> <field-name> <descriptor> [ = <value> ]
+        // field head
         String s = ".field public ";
         String prev = current;
         current = s;

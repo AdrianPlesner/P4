@@ -57,6 +57,11 @@ public class CodeGenerator extends DepthFirstAdapter {
         for(var key : files.keySet()){
             File f = new File(path +"/" + key + ".j");
 
+            if(f.exists()){
+                if(!f.delete()){
+                    throw new IOException("Could not delete " + f.getAbsolutePath());
+                }
+            }
             if(f.createNewFile()) {
 
                 FileWriter fw = new FileWriter(f);
@@ -109,8 +114,10 @@ public class CodeGenerator extends DepthFirstAdapter {
     public void caseAProg(AProg node) throws TypeException {
         // fields fase
         node.apply(fg);
-
-
+        // Methods fase
+        //node.apply(mg);
+        // Subclasses fase
+        //node.apply(sg);
     }
 
 }
