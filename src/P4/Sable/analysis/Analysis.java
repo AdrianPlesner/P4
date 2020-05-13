@@ -2,6 +2,7 @@
 
 package P4.Sable.analysis;
 
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.node.*;
 import P4.contextualAnalysis.TypeException;
 

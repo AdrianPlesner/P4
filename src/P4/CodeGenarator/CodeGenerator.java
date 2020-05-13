@@ -69,7 +69,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
     }
 
-    private void emit(String file, String s){
+    protected void emit(String file, String s){
         files.put(file,files.get(file).concat(s));
     }
 
@@ -108,9 +108,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     @Override
     public void caseAProg(AProg node) throws TypeException {
         // fields fase
-        for(Start s : node.includes){
-            s.getPProg().apply(fg);
-        }
+        node.apply(fg);
 
 
     }

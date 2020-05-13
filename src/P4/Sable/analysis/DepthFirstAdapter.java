@@ -3,6 +3,8 @@
 package P4.Sable.analysis;
 
 import java.util.*;
+
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.node.*;
 import P4.contextualAnalysis.TypeException;
 
@@ -589,7 +591,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASingleDcl(ASingleDcl node) throws TypeException {
+    public void caseASingleDcl(ASingleDcl node) throws TypeException{
         inASingleDcl(node);
         if(node.getId() != null)
         {
