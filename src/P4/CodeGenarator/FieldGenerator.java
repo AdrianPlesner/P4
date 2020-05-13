@@ -47,36 +47,38 @@ public class FieldGenerator extends CodeGenerator {
     @Override
     public void caseADclStmt(ADclStmt node) throws TypeException {
         // .field <access-spec> <field-name> <descriptor> [ = <value> ]
-        // field head
-        String s = ".field public ";
-        String prev = current;
-        current = s;
+
         for(PSingleDcl sdcl : node.getDcls()){
+            // field head
+            String s = ".field public ";
+            String prev = current;
+            current = s;
             sdcl.apply(this);
+            s = current;
+            current = prev;
+            String type = node.getType().toString().trim();
+            String t;
+            switch(type) {
+                case "int":
+                    t = "I";
+                    break;
+                case "float":
+                    t = "F";
+                    break;
+                case "string":
+                    t = "Ljava/lang/String";
+                    break;
+                case "bool":
+                    t = "Z";
+                    break;
+                default:
+                    t = "L"+type;
+                    break;
+            }
+            s = s.concat(t + "\n");
+            emit(current,s);
         }
-        s = current;
-        current = prev;
-        String type = node.getType().toString().trim();
-        String t;
-        switch(type) {
-            case "int":
-                t = "I";
-                break;
-            case "float":
-                t = "F";
-                break;
-            case "string":
-                t = "Ljava/lang/String";
-                break;
-            case "bool":
-                t = "Z";
-                break;
-            default:
-                t = "L"+type;
-                break;
-        }
-        s = s.concat(t + "\n");
-        emit(current,s);
+
     }
 
     @Override
