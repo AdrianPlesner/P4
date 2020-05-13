@@ -310,12 +310,15 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PExpr p: node.getParams()){
             p.apply(this);
         }
-
+        var dclnode = node.getId().declarationNode;
         // Get declaration node
         var dcl = st.retrieveSymbol(node.getId().getText());
 
-        if (dcl instanceof Function){
+        if (dcl instanceof Function) {
             node.type = ((Function) dcl).getReturnType();
+        }
+        else if (dclnode instanceof AMethodDcl){
+            node.type = ((AMethodDcl) dclnode).getReturntype().toString().trim();
         }
         else {
             throw new TypeException(node.getId(), "An unknown type error has occurred");
