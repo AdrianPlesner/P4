@@ -87,7 +87,7 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(list);
         list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var take = new Function("take",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("element")),new LinkedList<>()),"list of void");
+        var take = new Function("take",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("list of element")),new LinkedList<>()),"list of element");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
