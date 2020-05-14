@@ -3,6 +3,7 @@ package P4.CodeGenarator;
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.AProg;
 import P4.Sable.node.ASetup;
+import P4.Sable.node.AVarType;
 import P4.Sable.node.Start;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
@@ -18,6 +19,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     private SymbolTable st;
 
     protected String name;
+    protected String current;
 
     protected HashMap<String,String> files = new HashMap<>();
 
@@ -115,9 +117,32 @@ public class CodeGenerator extends DepthFirstAdapter {
         // fields fase
         node.apply(fg);
         // Methods fase
-        node.apply(mg);
+        //node.apply(mg);
         // Subclasses fase
-        node.apply(sg);
+        //node.apply(sg);
     }
 
+    @Override
+    public void caseAVarType(AVarType node) throws TypeException {
+        String t, type = node.getType().getText();
+
+        switch(type) {
+            case "int":
+                t = "I";
+                break;
+            case "float":
+                t = "F";
+                break;
+            case "string":
+                t = "Ljava/lang/String";
+                break;
+            case "bool":
+                t = "Z";
+                break;
+            default:
+                t = "L"+type;
+                break;
+        }
+        emit(current,t + "\n");
+    }
 }

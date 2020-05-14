@@ -46,6 +46,12 @@ public class MethodGenerator extends CodeGenerator {
         var cons = node.getConstruct();
         if(cons == null){
             // default constructor
+            emit(".method public <init>()V \n" +
+                    "    aload_0\n" +
+                    "    invokenonvirtual java/lang/Object/<init>()V\n" +
+                    "    return\n" +
+                    ".end method\n"
+            );
         }
         else{
             cons.apply(this);
@@ -56,17 +62,39 @@ public class MethodGenerator extends CodeGenerator {
     }
 
     @Override
+    public void caseAConstruct(AConstruct node) throws TypeException {
+        inAConstruct(node);
+        emit("(");
+        for(PParamDcl p : node.getParams()){
+            p.apply(this);
+        }
+        emit(")V\n");
+        //TODO måske tælle stack idk
+        for(PStmt s : node.getBody()){
+            s.apply(this);
+        }
+        outAConstruct(node);
+    }
+
+    @Override
+    public void inAConstruct(AConstruct node) {
+        emit(".method public <init>");
+    }
+
+    @Override
     public void inAMethodDcl(AMethodDcl node) {
         emit(".method public ");
         if(Static){
             emit("static ");
         }
-        emit(node.getName().getText() + "(");
+        emit(node.getName().getText());
     }
+
 
     @Override
     public void caseAMethodDcl(AMethodDcl node) throws TypeException {
         inAMethodDcl(node);
+        emit("(");
         for(PParamDcl pd : node.getParams()){
             pd.apply(this);
         }
@@ -79,7 +107,12 @@ public class MethodGenerator extends CodeGenerator {
         for(PStmt st : node.getBody()){
             st.apply(this);
         }
+        outAMethodDcl(node);
 
+    }
+
+    @Override
+    public void defaultOut(Node node) {
         emit(".end method");
     }
 }

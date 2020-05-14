@@ -14,8 +14,6 @@ public class FieldGenerator extends CodeGenerator {
 
     private String current = "";
 
-    private String value = null;
-
     @Override
     public void caseAProg(AProg node) throws TypeException {
         // Go through all includes
@@ -54,28 +52,9 @@ public class FieldGenerator extends CodeGenerator {
             String prev = current;
             current = s;
             sdcl.apply(this);
+            node.getType().apply(this);
             s = current;
             current = prev;
-            String type = node.getType().toString().trim();
-            String t;
-            switch(type) {
-                case "int":
-                    t = "I";
-                    break;
-                case "float":
-                    t = "F";
-                    break;
-                case "string":
-                    t = "Ljava/lang/String";
-                    break;
-                case "bool":
-                    t = "Z";
-                    break;
-                default:
-                    t = "L"+type;
-                    break;
-            }
-            s = s.concat(t + "\n");
             emit(current,s);
         }
 
