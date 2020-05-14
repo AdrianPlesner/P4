@@ -7,7 +7,6 @@ Setup{
             this.suit = s;
             this.value = i;
         }
-
         Function transfer(player from, player to) typeof void{
             from.hand.remove(this);
             to.hand.add(this);
@@ -15,6 +14,7 @@ Setup{
     }
     Player{
         string name;
+        List typeof card hand;
     }
     Game{
     }
@@ -40,11 +40,11 @@ Function GetStdDeck(int jokers) typeof List typeof card {
     return result;
 }
 
-Function chooseFrom(List typeof void l) typeof List typeof element{
+Function chooseFrom(List typeof element l) typeof  element{
     // print
     MessageAll("Please choose one of the following by typing the number:");
     for int i = 0; i < l.length; i+= 1 {
-        MessageAll(l.index(i));
+        MessageAll(i);
     }
     // input
     string s = Read();

@@ -124,6 +124,7 @@ public class STBuilder extends DepthFirstAdapter {
 
         st.enterSymbol(new SubClass("null",null,null));
         st.enterSymbol(new Variable("null",null,"null"));
+        st.enterSymbol(new SubClass("element",null,null));
     }
 
     @Override
@@ -460,6 +461,7 @@ public class STBuilder extends DepthFirstAdapter {
             //Type is not a valid type
             throw new InvalidTypeException(node.getType(),"");
         }
+
     }
 
     @Override
@@ -529,7 +531,7 @@ public class STBuilder extends DepthFirstAdapter {
                 // get class variabel
                 var classV = type.substring(8).trim();
 
-                if(classV.equals("void")){
+                if(classV.equals("element")){
                     // unknown classvariable
                     type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
                 }
@@ -546,10 +548,6 @@ public class STBuilder extends DepthFirstAdapter {
             current = st.retrieveSymbol(type,SubClass.class);
             if(current == null){
                 current = st.retrieveSymbol(type,GenericClass.class);
-            }
-            if(current == null){
-                // Return type dont exist
-                throw new InvalidTypeException(node.getId(),((Function) dcl).getReturnType());
             }
         }
         else{

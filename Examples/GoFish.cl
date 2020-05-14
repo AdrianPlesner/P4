@@ -5,7 +5,6 @@ Setup{
     Player{
         // Alle spillere starter med 7 kort hver, fra bunken.
         bool ai = false;
-        List typeof card hand;
         int score = 0;
         Construct player(string name, bool ai ){
             this.name = name;
