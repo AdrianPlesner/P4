@@ -1,10 +1,7 @@
 package P4.CodeGenarator;
 
 import P4.Sable.analysis.DepthFirstAdapter;
-import P4.Sable.node.AProg;
-import P4.Sable.node.ASetup;
-import P4.Sable.node.AVarType;
-import P4.Sable.node.Start;
+import P4.Sable.node.*;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
 
@@ -144,5 +141,10 @@ public class CodeGenerator extends DepthFirstAdapter {
                 break;
         }
         emit(current,t + "\n");
+    }
+
+    @Override
+    public void caseAListType(AListType node) throws TypeException {
+        emit(current, "Ljava/util/LinkedList\n");
     }
 }
