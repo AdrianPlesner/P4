@@ -294,6 +294,15 @@ public class TypeChecker extends DepthFirstAdapter {
             typeTxt += type.toString().trim();
             node.type = typeTxt.trim();
         }
+        else if(dcl instanceof AForeachStmt){
+            var x = ((AForeachStmt) dcl).getList().type;
+            if(x.trim().startsWith("listof")){
+                node.type = x.substring(8);
+            }
+            else{
+                throw new TypeException(node.getId(), "Must be a collection");
+            }
+        }
         else if(dcl2 != null && dcl2.getType().equals("null")){
             node.type = "null";
         }
@@ -489,6 +498,8 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PSingleDcl dcl : node.getDcls()){
             dcl.apply(this);
         }
+        var type = node.getType();
+        type.apply(this);
     }
 
     @Override
@@ -518,7 +529,6 @@ public class TypeChecker extends DepthFirstAdapter {
         if (expr != null){
             expr.apply(this);
         }
-
 
     }
 
