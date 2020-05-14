@@ -340,6 +340,15 @@ public class TypeChecker extends DepthFirstAdapter {
         var pExpr = node.getExpr();
         pExpr.apply(this);
 
+
+        if(pExpr.type.equals("list of element")){
+            String[] type = pVal.type.split(" ");
+            pExpr.type = "list of " + type[type.length-1];
+        }
+        else if(pExpr.type.equals("element")){
+            pExpr.type = pVal.type;
+        }
+
         if (!pVal.type.equals(pExpr.type)){
             // If types are incompatible, throw exception.
             throw new TypeException(node.getOperation(), "Cannot assign type " + pVal.type + " to type " + pExpr.type);
@@ -435,7 +444,7 @@ public class TypeChecker extends DepthFirstAdapter {
         // Foreach stmt only works on collections
         var pVal = node.getList();
         pVal.apply(this);
-        if (!pVal.type.equals("list")){
+        if (!pVal.type.contains("list")){
             throw new TypeException(node.getId(), pVal.type + " is not a collection");
         }
     }
