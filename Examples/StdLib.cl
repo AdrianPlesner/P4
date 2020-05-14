@@ -40,7 +40,7 @@ Function GetStdDeck(int jokers) typeof List typeof card {
     return result;
 }
 
-Function chooseFrom(List typeof void l) typeof List typeof void {
+Function chooseFrom(List typeof void l) typeof element {
     // print
     MessageAll("Please choose one of the following by typing the number:");
     for int i = 0; i < l.length; i+= 1 {

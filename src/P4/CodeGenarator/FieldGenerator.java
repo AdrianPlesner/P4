@@ -46,7 +46,7 @@ public class FieldGenerator extends CodeGenerator {
 
     @Override
     public void caseADclStmt(ADclStmt node) throws TypeException {
-        // .field <access-spec> <field-name> <descriptor> [ = <value> ]
+        // .field <access-spec> <field-name> <descriptor> [ = <value> ] hej
 
         for(PSingleDcl sdcl : node.getDcls()){
             // field head

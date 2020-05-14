@@ -17,7 +17,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     private Start ast;
     private SymbolTable st;
 
-    private String name;
+    protected String name;
 
     protected HashMap<String,String> files = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
         files.put(name,"");
         fg = new FieldGenerator(files);
-        mg = new MethodGenerator(files);
+        mg = new MethodGenerator(files, name);
         sg = new SubClassGenerator(files);
     }
 
@@ -115,9 +115,9 @@ public class CodeGenerator extends DepthFirstAdapter {
         // fields fase
         node.apply(fg);
         // Methods fase
-        //node.apply(mg);
+        node.apply(mg);
         // Subclasses fase
-        //node.apply(sg);
+        node.apply(sg);
     }
 
 }
