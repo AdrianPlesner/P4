@@ -385,7 +385,8 @@ public class STBuilder extends DepthFirstAdapter {
             }
             else if(typeNode instanceof AListType){
                 // variable is a list
-                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list",type);
+
+                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list of " + type,type);
             }
             else{
                 throw new TypeException(null,"An unknown type error occurred");
@@ -529,7 +530,7 @@ public class STBuilder extends DepthFirstAdapter {
         }
         current = st.retrieveSymbol(dcl.getType(),SubClass.class);
         if(current==null){
-            current = st.retrieveSymbol(dcl.getType(),GenericClass.class);
+            current = st.retrieveSymbol("list",GenericClass.class);
         }
         // Handle generics(list)
         if(current instanceof GenericClass && dcl instanceof GenerecVariable){

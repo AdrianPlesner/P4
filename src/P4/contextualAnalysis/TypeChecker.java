@@ -299,7 +299,7 @@ public class TypeChecker extends DepthFirstAdapter {
         }
         else if(dcl instanceof AForeachStmt){
             var x = ((AForeachStmt) dcl).getList().type;
-            if(x.trim().startsWith("listof")){
+            if(x.trim().startsWith("list of")){
                 node.type = x.substring(8);
             }
             else{
@@ -448,17 +448,18 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void caseAForeachStmt(AForeachStmt node) throws TypeException{
-        // Apply on statement body
-        for (PStmt ps : node.getThen()){
-            ps.apply(this);
-        }
-
         // Foreach stmt only works on collections
         var pVal = node.getList();
         pVal.apply(this);
         if (!pVal.type.contains("list")){
             throw new TypeException(node.getId(), pVal.type + " is not a collection");
         }
+        // Apply on statement body
+        for (PStmt ps : node.getThen()){
+            ps.apply(this);
+        }
+
+
     }
 
     @Override
