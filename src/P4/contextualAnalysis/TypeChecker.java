@@ -27,6 +27,9 @@ public class TypeChecker extends DepthFirstAdapter {
     @Override
     public void caseAProg(AProg node) throws TypeException{
         //Apply everything!
+        for(Start s : node.includes){
+            s.apply(this);
+        }
         var setup = node.getSetup();
         setup.apply(this);
 
