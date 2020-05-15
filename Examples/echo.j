@@ -27,5 +27,15 @@
     invokestatic java/lang/System/console()Ljava/io/Console;
     invokevirtual java/io/Console/readLine()Ljava/lang/String;
     invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+    
     return
+.end method
+
+.method public foo(II)I
+    .limit locals 3
+    .limit stack 2
+    iload 1
+    iload 2
+    iadd
+    ireturn
 .end method
