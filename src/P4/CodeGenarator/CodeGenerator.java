@@ -1,9 +1,7 @@
 package P4.CodeGenarator;
 
 import P4.Sable.analysis.DepthFirstAdapter;
-import P4.Sable.node.AProg;
-import P4.Sable.node.ASetup;
-import P4.Sable.node.Start;
+import P4.Sable.node.*;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
 
@@ -17,7 +15,8 @@ public class CodeGenerator extends DepthFirstAdapter {
     private Start ast;
     private SymbolTable st;
 
-    private String name;
+    protected String name;
+    protected String current;
 
     protected HashMap<String,String> files = new HashMap<>();
 
@@ -38,7 +37,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
         files.put(name,"");
         fg = new FieldGenerator(files);
-        mg = new MethodGenerator(files);
+        mg = new MethodGenerator(files, name);
         sg = new SubClassGenerator(files);
     }
 
@@ -120,4 +119,32 @@ public class CodeGenerator extends DepthFirstAdapter {
         //node.apply(sg);
     }
 
+    @Override
+    public void caseAVarType(AVarType node) throws TypeException {
+        String t, type = node.getType().getText();
+
+        switch(type) {
+            case "int":
+                t = "I";
+                break;
+            case "float":
+                t = "F";
+                break;
+            case "string":
+                t = "Ljava/lang/String";
+                break;
+            case "bool":
+                t = "Z";
+                break;
+            default:
+                t = "L"+type;
+                break;
+        }
+        emit(current,t + "\n");
+    }
+
+    @Override
+    public void caseAListType(AListType node) throws TypeException {
+        emit(current, "Ljava/util/LinkedList\n");
+    }
 }

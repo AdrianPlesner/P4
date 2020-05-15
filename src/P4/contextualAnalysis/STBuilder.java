@@ -7,8 +7,11 @@ import P4.Sable.parser.Parser;
 import P4.contextualAnalysis.Symbol.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.PushbackReader;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class STBuilder extends DepthFirstAdapter {
@@ -20,6 +23,8 @@ public class STBuilder extends DepthFirstAdapter {
     private Symbol current;
 
     private String path;
+
+    private TokenFinder tf = new TokenFinder();
 
     public STBuilder(Start ast, String contentPath) {
         this.ast = ast;
@@ -72,53 +77,54 @@ public class STBuilder extends DepthFirstAdapter {
 
         var string = new SubClass("string",null,null);
         st.enterSymbol(string);
-        string.addLocal(new Variable("length",null,"int"));
+        string.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var stringIndex = new Function("index",null,"string");
+        var stringIndex = new Function("index",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("string")),new LinkedList<>()),"string");
         string.addMethod(stringIndex);
         stringIndex.addArg(new Variable("i",null,"int"));
 
         var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
-        list.addLocal(new Variable("length",null,"int"));
+        list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var take = new Function("take",null,"list of void");
+        var take = new Function("take",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("list of element")),new LinkedList<>()),"list of element");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
-        var add = new Function("add",null,"void");
+        var add = new Function("add",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(add);
         add.addArg(new Variable("e",null,"void"));
 
-        var remove = new Function("remove",null,"void");
+        var remove = new Function("remove",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(remove);
         remove.addArg(new Variable("e",null,"void"));
 
-        list.addMethod(new Function("clear",null,"void"));
+        list.addMethod(new Function("clear",new AMethodDcl(null,new LinkedList<>(),new AVarType(new TId("void")),new LinkedList<>()),"void"));
 
-        var index = new Function("index",null,"element");
+        var index = new Function("index",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("element")),new LinkedList<>()),"element");
         list.addMethod(index);
         index.addArg(new Variable("i",null,"int"));
 
         var Turn = new SubClass("Turn",null,null);
         st.enterSymbol(Turn);
-        Turn.addLocal(new Variable("current",null,"player"));
+        Turn.addLocal(new Variable("current",new ADclStmt(new AVarType(new TId("player")),new LinkedList<>()),"player"));
         st.enterSymbol(new Variable("turn",null,"Turn"));
 
-        var message = new Function("Message",null,"void");
+        var message = new Function("Message",new AMethodDcl(null,new LinkedList<PParamDcl>(Arrays.asList(new AParamDcl(new AVarType(new TId("player")), new TId("p")), new AParamDcl(new AVarType(new TId("string")), new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(message);
         message.addArg(new Variable("p",null,"player"));
         message.addArg(new Variable("m",null,"string"));
 
-        var messageAll = new Function("MessageAll",null,"void");
+        var messageAll = new Function("MessageAll",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("string")),new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(messageAll);
         messageAll.addArg(new Variable("m",null,"string"));
 
 
-        st.enterSymbol(new Function("Read",null,"string"));
+        st.enterSymbol(new Function("Read",new AMethodDcl(null,new LinkedList<PParamDcl>(),new AVarType(new TId("string")),new LinkedList<>()),"string"));
 
         st.enterSymbol(new SubClass("null",null,null));
         st.enterSymbol(new Variable("null",null,"null"));
+        st.enterSymbol(new SubClass("element",null,null));
     }
 
     @Override
@@ -130,7 +136,14 @@ public class STBuilder extends DepthFirstAdapter {
             for (TId inc : includes) {
                 // TODO: only include each file once
                 // Read included .cl file
-                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
+                File f = new File(path.concat(inc.getText()).concat(".cl"));
+                if(f.exists()){
+                    System.out.println("Found include: " + f.getAbsolutePath());
+                }
+                else{
+                    throw new TypeException(inc,"Could not find file to include: " + f.getPath());
+                }
+                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(f)), 1024));
 
                 // parser program
                 Parser parser = new Parser(lexer);
@@ -262,7 +275,7 @@ public class STBuilder extends DepthFirstAdapter {
             var returnType = node.getReturntype();
             //Check returntype
             returnType.apply(this);
-            var type = returnType.toString();
+            var type = returnType.toString().trim();
             // Handle list return type
             if(returnType instanceof AListType){
                 if(type.equals("void")){
@@ -321,8 +334,8 @@ public class STBuilder extends DepthFirstAdapter {
     @Override
     public void caseAClassBody(AClassBody node) throws TypeException {
         if(current != null){
-            st.openScope();
-            st.enterSymbol(new Variable("this",null,current.getIdentifier()));
+            //st.openScope();
+            st.enterSymbol(new Variable("this",new ADclStmt(new AVarType(new TId(current.getIdentifier())),new LinkedList<>()),current.getIdentifier()));
             // Add locals
             for(PStmt dcl : node.getDcls()){
                 // Check if statement is a declare
@@ -354,6 +367,7 @@ public class STBuilder extends DepthFirstAdapter {
             for(PSubclass sc : node.getSubclasses()){
                 sc.apply(this);
             }
+            //st.closeScope();
         }
         else {
             //report error
@@ -400,7 +414,6 @@ public class STBuilder extends DepthFirstAdapter {
         for(Symbol s : construct.getArgs()){
             st.enterSymbol(s);
         }
-        st.enterSymbol(new Variable("this",null,name.getText()));
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
@@ -449,6 +462,7 @@ public class STBuilder extends DepthFirstAdapter {
             //Type is not a valid type
             throw new InvalidTypeException(node.getType(),"");
         }
+
     }
 
     @Override
@@ -518,7 +532,7 @@ public class STBuilder extends DepthFirstAdapter {
                 // get class variabel
                 var classV = type.substring(8).trim();
 
-                if(classV.equals("void")){
+                if(classV.equals("element")){
                     // unknown classvariable
                     type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
                 }
@@ -535,10 +549,6 @@ public class STBuilder extends DepthFirstAdapter {
             current = st.retrieveSymbol(type,SubClass.class);
             if(current == null){
                 current = st.retrieveSymbol(type,GenericClass.class);
-            }
-            if(current == null){
-                // Return type dont exist
-                throw new InvalidTypeException(node.getId(),((Function) dcl).getReturnType());
             }
         }
         else{

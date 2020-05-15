@@ -12,10 +12,6 @@ public class FieldGenerator extends CodeGenerator {
         files = h;
     }
 
-    private String current = "";
-
-    private String value = null;
-
     @Override
     public void caseAProg(AProg node) throws TypeException {
         // Go through all includes
@@ -47,41 +43,30 @@ public class FieldGenerator extends CodeGenerator {
     @Override
     public void caseADclStmt(ADclStmt node) throws TypeException {
         // .field <access-spec> <field-name> <descriptor> [ = <value> ]
-        // field head
-        String s = ".field public ";
-        String prev = current;
-        current = s;
+
         for(PSingleDcl sdcl : node.getDcls()){
+            // field head
+            String s = ".field public ";
+            String prev = current;
+            current = s;
             sdcl.apply(this);
+            s = current;
+            current = prev;
+            emit(current,s);
+            node.getType().apply(this);
+
         }
-        s = current;
-        current = prev;
-        String type = node.getType().toString().trim();
-        String t;
-        switch(type) {
-            case "int":
-                t = "I";
-                break;
-            case "float":
-                t = "F";
-                break;
-            case "string":
-                t = "Ljava/lang/String";
-                break;
-            case "bool":
-                t = "Z";
-                break;
-            default:
-                t = "L"+type;
-                break;
-        }
-        s = s.concat(t + "\n");
-        emit(current,s);
+
     }
 
     @Override
     public void caseASingleDcl(ASingleDcl node) throws TypeException {
         current = current.concat(node.getId().getText() + " ");
+    }
+
+    @Override
+    public void caseAVarType(AVarType node) throws TypeException {
+        super.caseAVarType(node);
     }
 }
 
