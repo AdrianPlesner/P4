@@ -114,7 +114,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         // fields fase
         node.apply(fg);
         // Methods fase
-        //node.apply(mg);
+        node.apply(mg);
         // Subclasses fase
         //node.apply(sg);
     }
@@ -131,16 +131,20 @@ public class CodeGenerator extends DepthFirstAdapter {
                 t = "F";
                 break;
             case "string":
-                t = "Ljava/lang/String";
+                t = "Ljava/lang/String;";
                 break;
             case "bool":
                 t = "Z";
                 break;
             default:
-                t = "L"+type;
+                t = "L"+type+";";
                 break;
         }
-        emit(current,t + "\n");
+        if((node.parent() instanceof AParamDcl)){
+            emit(current, t);
+        }else{
+            emit(current, t + "\n");
+        }
     }
 
     @Override

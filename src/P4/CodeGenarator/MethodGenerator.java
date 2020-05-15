@@ -12,7 +12,6 @@ public class MethodGenerator extends CodeGenerator {
         name = n;
     }
 
-    private String current;
     private Boolean Static = false;
 
     public void SetStatic(Boolean b){
@@ -108,11 +107,22 @@ public class MethodGenerator extends CodeGenerator {
             st.apply(this);
         }
         outAMethodDcl(node);
-
     }
 
     @Override
-    public void defaultOut(Node node) {
-        emit(".end method");
+    public void outAConstruct(AConstruct node) {
+        emit(".end method\n");
     }
+
+    @Override
+    public void outAMethodDcl(AMethodDcl node) {
+        emit(".end method\n");
+    }
+
+    /*@Override
+    public void defaultOut(Node node) {
+        if (!(node instanceof AParamDcl)) {
+            emit(".end method\n");
+        }
+    }*/
 }
