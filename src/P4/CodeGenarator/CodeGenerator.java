@@ -136,6 +136,9 @@ public class CodeGenerator extends DepthFirstAdapter {
             case "bool":
                 t = "Z";
                 break;
+            case "void":
+                t = "V";
+                break;
             default:
                 t = "L"+type+";";
                 break;

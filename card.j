@@ -6,7 +6,7 @@
 .limit stack 2
 .end method
 
-.method public transfer(Lplayer;Lplayer;)Lvoid;
+.method public transfer(Lplayer;Lplayer;)V
 .limit stack 3
 .end method
 
