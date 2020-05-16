@@ -12,6 +12,8 @@ public class MethodGenerator extends CodeGenerator {
         name = n;
     }
 
+    private StackCounter sc = new StackCounter();
+
     private Boolean Static = false;
 
     public void SetStatic(Boolean b){
@@ -68,7 +70,7 @@ public class MethodGenerator extends CodeGenerator {
             p.apply(this);
         }
         emit(")V\n");
-        //TODO måske tælle stack idk
+        emit(".limit stack " + sc.Count(node) + "\n");
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
@@ -99,10 +101,8 @@ public class MethodGenerator extends CodeGenerator {
         }
         emit(")");
         node.getReturntype().apply(this);
-        emit("\n");
-        //TODO: get stack limit
 
-        // emit(".limit stack " + sc.count(node) + "\n");
+        emit(".limit stack " + sc.Count(node) + "\n");
         for(PStmt st : node.getBody()){
             st.apply(this);
         }
@@ -111,18 +111,12 @@ public class MethodGenerator extends CodeGenerator {
 
     @Override
     public void outAConstruct(AConstruct node) {
-        emit(".end method\n");
+        emit(".end method\n\n");
     }
 
     @Override
     public void outAMethodDcl(AMethodDcl node) {
-        emit(".end method\n");
+        emit(".end method\n\n");
     }
 
-    /*@Override
-    public void defaultOut(Node node) {
-        if (!(node instanceof AParamDcl)) {
-            emit(".end method\n");
-        }
-    }*/
 }

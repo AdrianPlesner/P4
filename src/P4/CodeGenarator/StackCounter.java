@@ -4,6 +4,8 @@ import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
 import P4.contextualAnalysis.TypeException;
 
+import java.util.List;
+
 
 public class StackCounter extends DepthFirstAdapter {
 
@@ -21,25 +23,24 @@ public class StackCounter extends DepthFirstAdapter {
         return count;
     }
 
-    @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+    private int visitList(List<? extends Node> l) throws TypeException {
         int c = -1;
-        for(PStmt s : node.getBody()){
+        for(var s : l){
             s.apply(this);
             c = Math.max(count,c);
         }
-        count = c;
+        return c;
+    }
+
+    @Override
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+        count = visitList(node.getBody());
 
     }
 
     @Override
     public void caseADclStmt(ADclStmt node) throws TypeException {
-        int c = -1;
-        for(PSingleDcl s : node.getDcls()){
-            s.apply(this);
-            c = Math.max(count,c);
-        }
-        count = c;
+        count = visitList(node.getDcls());
     }
 
     @Override
@@ -58,10 +59,7 @@ public class StackCounter extends DepthFirstAdapter {
         int c = 2; //Stack needed for comparison
         node.getPredicate().apply(this);
         c = Math.max(count, c);
-        for(PStmt s: node.getThen()){
-            s.apply(this);
-            c = Math.max(c,count);
-        }
+        c = Math.max(visitList(node.getThen()),c);
         count = c;
     }
 
@@ -72,6 +70,175 @@ public class StackCounter extends DepthFirstAdapter {
 
     @Override
     public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
-        super.caseASwitchStmt(node);
+        int c = -1;
+        node.getVariable().apply(this);
+        c = Math.max(count,c);
+        c = Math.max(visitList(node.getCases()),c);
+        count = c;
+    }
+
+    @Override
+    public void caseACaseCase(ACaseCase node) throws TypeException {
+        int c = -1;
+        node.getCase().apply(this);
+        c = Math.max(count,c);
+        c = Math.max(visitList(node.getThen()),c);
+        count = c;
+    }
+
+    @Override
+    public void caseADefaultCase(ADefaultCase node) throws TypeException {
+        count = visitList(node.getThen());
+    }
+
+    @Override
+    public void caseAIfStmt(AIfStmt node) throws TypeException {
+        int c = 2; // 2 stack needed for comparison
+        node.getPredicate().apply(this);
+        c = Math.max(count,c);
+        c = Math.max(visitList(node.getThen()),c);
+        c = Math.max(visitList(node.getElseifs()),c);
+        c = Math.max(visitList(node.getElse()),c);
+        count = c;
+    }
+
+    @Override
+    public void caseAElseIf(AElseIf node) throws TypeException {
+        int c = 2; // 2 stack needed for comparison
+        node.getPredicate().apply(this);
+        c = Math.max(count,c);
+        c = Math.max(visitList(node.getThen()),c);
+        count = c;
+    }
+
+    @Override
+    public void caseAForStmt(AForStmt node) throws TypeException {
+        int c = 2; // 2 stack needed for comparison
+        node.getInit().apply(this);
+        c = Math.max(count,c);
+        node.getPredicate().apply(this);
+        c = Math.max(count,c);
+        node.getUpdate().apply(this);
+        c = Math.max(count,c);
+        c = Math.max(visitList(node.getThen()),c);
+        count = c;
+    }
+
+    @Override
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
+        int c = 2; // 2 registers needed for comparison
+        node.getList().apply(this);
+        c = Math.max(count,c);
+        c = Math.max(visitList(node.getThen()),c);
+        count = c;
+    }
+
+    @Override
+    public void caseACallStmt(ACallStmt node) throws TypeException {
+        int c = -1;
+        node.getVal().apply(this);
+        count = Math.max(count,c);
+    }
+
+    @Override
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
+        // putfield takes at least 2 stack space
+        int c = 2;
+        node.getVar().apply(this);
+        c = Math.max(count,c);
+        node.getExpr().apply(this);
+        c = Math.max(count,c);
+        if(!node.getOperation().getText().trim().equals("=")){
+            // compound assignment needs at least 3 stack space
+            c = Math.max(c,3);
+        }
+        count = c;
+    }
+
+    @Override
+    public void caseAVal(AVal node) throws TypeException {
+        count = visitList(node.getCallField());
+    }
+
+    @Override
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
+        // getfield needs 1 stack space
+        count = 1;
+    }
+
+    @Override
+    public void caseACallCallField(ACallCallField node) throws TypeException {
+        // invoke virtual takes at least 1 stack space
+        int c = 1;
+        int exp = -1;
+        for(PExpr e : node.getParams()){
+            // For each parameter it needs 1 more
+            c++;
+            e.apply(this);
+            // A parameter might take a few stack spaces to calculate
+            exp = Math.max(exp,count+c);
+        }
+        count = Math.max(c,exp);
+    }
+
+    @Override
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
+        count = 1;
+    }
+
+    @Override
+    public void caseAValueExpr(AValueExpr node) throws TypeException {
+        node.getVal().apply(this);
+    }
+
+    @Override
+    public void caseAListExpr(AListExpr node) throws TypeException {
+        //Initiate new list, takes at least 2 stack space
+        count = Math.max(visitList(node.getElements()),2);
+    }
+
+    @Override
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
+        node.getL().apply(this);
+        int l = count;
+        node.getR().apply(this);
+        int r = count;
+        count = Math.max(l,r) + 1;
+    }
+
+    @Override
+    public void caseARelationExpr(ARelationExpr node) throws TypeException {
+        node.getL().apply(this);
+        int l = count;
+        node.getR().apply(this);
+        int r = count;
+        count = Math.max(l,r) + 1;
+    }
+
+    @Override
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException {
+        node.getL().apply(this);
+        int l = count;
+        node.getR().apply(this);
+        int r = count;
+        count = Math.max(l,r) + 1;
+    }
+
+    @Override
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
+        node.getL().apply(this);
+        int l = count;
+        node.getR().apply(this);
+        int r = count;
+        count = Math.max(l,r) + 1;
+    }
+
+    @Override
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
+        node.getL().apply(this);
+        int l = count;
+        node.getR().apply(this);
+        int r = count;
+        count = Math.max(l,r) + 1;
     }
 }
