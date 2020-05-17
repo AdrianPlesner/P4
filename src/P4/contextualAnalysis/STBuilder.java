@@ -16,15 +16,19 @@ import java.util.LinkedList;
 
 public class STBuilder extends DepthFirstAdapter {
 
-    private Start ast;
+    protected Start ast;
 
-    private SymbolTable st;
+    protected SymbolTable st;
 
-    private Symbol current;
+    protected Symbol current;
 
     private String path;
 
     private TokenFinder tf = new TokenFinder();
+
+    public STBuilder(Start ast){
+        this.ast = ast;
+    }
 
     public STBuilder(Start ast, String contentPath) {
         this.ast = ast;
@@ -36,6 +40,7 @@ public class STBuilder extends DepthFirstAdapter {
         this.st = st;
         // Add standard environment
         createStdEnv();
+
         ast.apply(this);
 
         return this.st;
@@ -55,7 +60,7 @@ public class STBuilder extends DepthFirstAdapter {
             throw new TypeException(null,"An unknown type error occurred");
         }
     }
-    private void addToCurrent(Function f) throws TypeException {
+    protected void addToCurrent(Function f) throws TypeException {
         if(current == null){
             st.enterSymbol(f);
         }
@@ -163,22 +168,10 @@ public class STBuilder extends DepthFirstAdapter {
             System.out.println("In "+includes.get(i).getText()+ "\n" + e);
         }
 
-        // Do method declarations
-        var methods = node.getMethods();
-        for(PMethodDcl m : methods){
-            m.apply(this);
-        }
-
+        this.st = new DeclarationBuilder(ast).BuildST(st);
         // Do Setup
         if(node.getSetup() != null){
             node.getSetup().apply(this);
-        }
-
-        // Do Move declarations
-        var moves = node.getMoves();
-        for(PMethodDcl move : moves)
-        {
-            move.apply(this);
         }
 
         // Do Turn
@@ -194,11 +187,11 @@ public class STBuilder extends DepthFirstAdapter {
         }
 
         // Check method bodies
-        for(PMethodDcl m : methods){
+        for(PMethodDcl m : node.getMethods()){
             m.apply(this);
         }
         // check move bodies
-        for(PMethodDcl move : moves)
+        for(PMethodDcl move : node.getMoves())
         {
             move.apply(this);
         }
@@ -211,8 +204,7 @@ public class STBuilder extends DepthFirstAdapter {
         SubClass card;
         card = (SubClass) st.retrieveSymbol("card", SubClass.class);
         if(card == null) {
-            card = new SubClass("card", node.getCard(), null);
-            st.enterSymbol(card);
+            throw new TypeException(null,"An unknown type error occurred");
         }
         current = card;
         node.getCard().apply(this);
@@ -222,8 +214,7 @@ public class STBuilder extends DepthFirstAdapter {
         SubClass player;
         player = (SubClass) st.retrieveSymbol("player", SubClass.class);
         if(player == null) {
-            player = new SubClass("player", node.getPlayer(), null);
-            st.enterSymbol(player);
+            throw new TypeException(null,"An unknown type error occurred");
         }
         current = player;
         node.getPlayer().apply(this);
@@ -233,8 +224,6 @@ public class STBuilder extends DepthFirstAdapter {
         for(PStmt ps : node.getGame()){
             ps.apply(this);
         }
-
-
     }
 
     @Override
@@ -243,6 +232,9 @@ public class STBuilder extends DepthFirstAdapter {
         var name = node.getName().getText();
         // check if name already exists
         Symbol local = st.retrieveSymbol(name);
+        if(current instanceof SubClass){
+            local = ((SubClass) current).containsMethod(name);
+        }
         if(local instanceof Function){
             // function with name exists
             var fun = (Function)local;
@@ -269,35 +261,6 @@ public class STBuilder extends DepthFirstAdapter {
             else {
                 throw new IdentifierAlreadyExistsException(node.getName(), fun + " already exsists");
             }
-        }
-        else if(local == null ) {
-            // Declare function
-            var returnType = node.getReturntype();
-            //Check returntype
-            returnType.apply(this);
-            var type = returnType.toString().trim();
-            // Handle list return type
-            if(returnType instanceof AListType){
-                if(type.equals("void")){
-                    type = "list";
-                }
-                else{
-                    type = "list of " + type;
-                }
-            }
-            // Create method symbol
-            var method = new Function(name, node, type);
-
-            var prev = current;
-            current = method;
-            // Check arguments
-            for (PParamDcl pd : node.getParams()) {
-                pd.apply(this);
-            }
-            // Globl function in current scope
-            current = prev;
-            // Add function to current scope
-            addToCurrent(method);
         }
         else{
             throw new IdentifierAlreadyExistsException(node.getName(),"");
@@ -334,30 +297,12 @@ public class STBuilder extends DepthFirstAdapter {
     @Override
     public void caseAClassBody(AClassBody node) throws TypeException {
         if(current != null){
-            //st.openScope();
-            st.enterSymbol(new Variable("this",new ADclStmt(new AVarType(new TId(current.getIdentifier())),new LinkedList<>()),current.getIdentifier()));
-            // Add locals
-            for(PStmt dcl : node.getDcls()){
-                // Check if statement is a declare
-                if(dcl instanceof ADclStmt){
-                    // Each var in declare statement
-                    dcl.apply(this);
-                }
-                else{
-                    // Statement is not a declare
-                    throw new TypeException(null,"A subclass can only have declare statements.");
-                }
-            }
 
             var construct = node.getConstruct();
             if(construct != null){
                 construct.apply(this);
             }
 
-            // Add method declarations
-            for(PMethodDcl md : node.getMethods()){
-                md.apply(this);
-            }
             // Do method bodies
             for(PMethodDcl md : node.getMethods()){
                 md.apply(this);
@@ -367,7 +312,6 @@ public class STBuilder extends DepthFirstAdapter {
             for(PSubclass sc : node.getSubclasses()){
                 sc.apply(this);
             }
-            //st.closeScope();
         }
         else {
             //report error
@@ -377,33 +321,37 @@ public class STBuilder extends DepthFirstAdapter {
 
     @Override
     public void caseASubclass(ASubclass node) throws TypeException {
-        // check name
         var name = node.getName().getText();
-        if(st.containsClass(name)){
-            // Name already exists
-            throw new TypeException(node.getName(),"A (sub)class named " + name + " already exists.");
-        }
         // Do class body
-        var sub = new SubClass(name,node, (SubClass) current);
-        st.enterSymbol(sub);
-        current = sub;
-        node.getBody().apply(this);
-        current = sub.getSuperClass();
-        // Add subclass to superclass
-        ((SubClass)current).addSubclass(sub);
+        var sub = st.retrieveSymbol(name);
+        if(sub instanceof SubClass) {
+            current = sub;
+            node.getBody().apply(this);
+            current = ((SubClass) sub).getSuperClass();
+        }
+        else{
+            throw new TypeException(node.getName(), "An unknown type error occurred.");
+        }
 
     }
 
     @Override
     public void caseAConstruct(AConstruct node) throws TypeException {
-        var name = node.getName();
-        if( !name.getText().equals(current.getIdentifier())){
-            throw new TypeException(name,"Constructor must have same name as class");
+        Function construct;
+        var sub = st.retrieveSymbol(node.getName().getText());
+        if(!(sub instanceof Function)){
+            if(sub instanceof SubClass){
+                construct = ((SubClass) sub).containsMethod(node.getName().getText());
+            }
+            else{
+                throw new TypeException(node.getName(), "An unknown type error occurred.");
+            }
         }
-        var construct = new Function(name.getText(),node,name.getText());
+        else{
+            construct = (Function)sub;
+        }
         var prev = current;
         current = null;
-        st.enterSymbol(construct);
         st.openScope();
         current = construct;
 
@@ -414,11 +362,12 @@ public class STBuilder extends DepthFirstAdapter {
         for(Symbol s : construct.getArgs()){
             st.enterSymbol(s);
         }
+        current = prev;
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
         st.closeScope();
-        current = prev;
+
     }
 
     @Override
@@ -437,7 +386,8 @@ public class STBuilder extends DepthFirstAdapter {
             }
             else if(typeNode instanceof AListType){
                 // variable is a list
-                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list",type);
+
+                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list of " + type,type);
             }
             else{
                 throw new TypeException(null,"An unknown type error occurred");
@@ -581,7 +531,7 @@ public class STBuilder extends DepthFirstAdapter {
         }
         current = st.retrieveSymbol(dcl.getType(),SubClass.class);
         if(current==null){
-            current = st.retrieveSymbol(dcl.getType(),GenericClass.class);
+            current = st.retrieveSymbol("list",GenericClass.class);
         }
         // Handle generics(list)
         if(current instanceof GenericClass && dcl instanceof GenerecVariable){
@@ -752,7 +702,10 @@ public class STBuilder extends DepthFirstAdapter {
 
     @Override
     public void caseAValueExpr(AValueExpr node) throws TypeException {
+        var prev = current;
+        current = null;
         node.getVal().apply(this);
+        current = prev;
     }
 
 }

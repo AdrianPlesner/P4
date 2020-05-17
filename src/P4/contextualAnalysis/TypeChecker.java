@@ -27,6 +27,9 @@ public class TypeChecker extends DepthFirstAdapter {
     @Override
     public void caseAProg(AProg node) throws TypeException{
         //Apply everything!
+        for(Start s : node.includes){
+            s.apply(this);
+        }
         var setup = node.getSetup();
         setup.apply(this);
 
@@ -294,6 +297,15 @@ public class TypeChecker extends DepthFirstAdapter {
             typeTxt += type.toString().trim();
             node.type = typeTxt.trim();
         }
+        else if(dcl instanceof AForeachStmt){
+            var x = ((AForeachStmt) dcl).getList().type;
+            if(x.trim().startsWith("list of")){
+                node.type = x.substring(8);
+            }
+            else{
+                throw new TypeException(node.getId(), "Must be a collection");
+            }
+        }
         else if(dcl2 != null && dcl2.getType().equals("null")){
             node.type = "null";
         }
@@ -436,17 +448,18 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void caseAForeachStmt(AForeachStmt node) throws TypeException{
-        // Apply on statement body
-        for (PStmt ps : node.getThen()){
-            ps.apply(this);
-        }
-
         // Foreach stmt only works on collections
         var pVal = node.getList();
         pVal.apply(this);
         if (!pVal.type.contains("list")){
             throw new TypeException(node.getId(), pVal.type + " is not a collection");
         }
+        // Apply on statement body
+        for (PStmt ps : node.getThen()){
+            ps.apply(this);
+        }
+
+
     }
 
     @Override
@@ -489,6 +502,8 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PSingleDcl dcl : node.getDcls()){
             dcl.apply(this);
         }
+        var type = node.getType();
+        type.apply(this);
     }
 
     @Override
@@ -518,7 +533,6 @@ public class TypeChecker extends DepthFirstAdapter {
         if (expr != null){
             expr.apply(this);
         }
-
 
     }
 
