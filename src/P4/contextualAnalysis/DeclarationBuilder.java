@@ -28,9 +28,6 @@ public class DeclarationBuilder extends STBuilder {
 
     @Override
     public void caseAProg(AProg node) throws TypeException {
-        for(Start s : node.includes){
-            s.apply(this);
-        }
 
         node.getSetup().apply(this);
         for(PMethodDcl m : node.getMethods()){

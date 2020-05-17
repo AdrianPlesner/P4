@@ -160,6 +160,7 @@ public class STBuilder extends DepthFirstAdapter {
             i = 0;
 
             for (Start ast : node.includes) {
+                this.st = new DeclarationBuilder(ast).BuildST(st);
                 ast.apply(this);
                 i++;
             }
@@ -251,7 +252,7 @@ public class STBuilder extends DepthFirstAdapter {
                 // Check body
                 var prev = current;
 
-                current = null;
+                current = local;
                 for (PStmt stmt : node.getBody()) {
                     stmt.apply(this);
                 }
@@ -392,7 +393,15 @@ public class STBuilder extends DepthFirstAdapter {
             else{
                 throw new TypeException(null,"An unknown type error occurred");
             }
-            addToCurrent(v);
+            if(current instanceof Function){
+                var prev = current;
+                current = null;
+                addToCurrent(v);
+                current = prev;
+            }
+            else {
+                addToCurrent(v);
+            }
         }
     }
 
@@ -425,6 +434,8 @@ public class STBuilder extends DepthFirstAdapter {
         if(node.getExpr() != null) {
             node.getExpr().apply(this);
         }
+        if(current instanceof Function)
+            ((Function) current).addLocal();
     }
 
     @Override
@@ -454,7 +465,7 @@ public class STBuilder extends DepthFirstAdapter {
     public void caseACallCallField(ACallCallField node) throws TypeException {
         var name = node.getId().getText();
         Symbol dcl;
-        if(current == null){
+        if(current == null ||current instanceof Function){
             // Base call, lookup at symbol table
             dcl = st.retrieveSymbol(name);
         }
@@ -513,7 +524,7 @@ public class STBuilder extends DepthFirstAdapter {
     public void caseAFieldCallField(AFieldCallField node) throws TypeException {
         var name = node.getId().getText();
         Symbol dcl = null;
-        if(current == null){
+        if(current == null ||current instanceof Function){
             // Base call, lookup at symboltable
             dcl = st.retrieveSymbol(name);
         }
@@ -602,7 +613,6 @@ public class STBuilder extends DepthFirstAdapter {
     @Override
     public void caseAForStmt(AForStmt node) throws TypeException {
         st.openScope();
-
         node.getInit().apply(this);
 
         node.getPredicate().apply(this);
