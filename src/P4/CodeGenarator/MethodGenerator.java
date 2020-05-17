@@ -66,6 +66,7 @@ public class MethodGenerator extends CodeGenerator {
         }
         emit(")V\n");
         emit(".limit stack " + sc.Count(node) + "\n");
+        //TODO: count locals
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
@@ -89,18 +90,24 @@ public class MethodGenerator extends CodeGenerator {
 
     @Override
     public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+        // emit method head
         inAMethodDcl(node);
         emit("(");
+        // emit parameters
         for(PParamDcl pd : node.getParams()){
             pd.apply(this);
         }
         emit(")");
+        // emit return type
         node.getReturntype().apply(this);
-
+        emit("\n");
+        // count stack size
         emit(".limit stack " + sc.Count(node) + "\n");
+        // emit body
         for(PStmt st : node.getBody()){
             st.apply(this);
         }
+        // emit method tail
         outAMethodDcl(node);
     }
 

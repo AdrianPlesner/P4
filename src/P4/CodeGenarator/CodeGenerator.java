@@ -81,19 +81,14 @@ public class CodeGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseStart(Start node) throws TypeException {
-        super.caseStart(node);
-    }
-
-    @Override
-    public void inStart(Start node) {
+    public void inAProg(AProg node) {
         String s = ".class " + name + "\n"
                 + ".super java/lang/Object\n"
                 + ".method public <init>()V\n"
                     + "aload_0\n"
                     + "invokeonvirtual java/lang/Object/<init>()V\n"
                     + "return\n"
-                + ".end method\n";
+                + ".end method\n\n";
         emit(name,s);
         files.put("player","");
         s = ".class player\n"
@@ -108,18 +103,38 @@ public class CodeGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void outStart(Start node) {
-        emit(name,".end method\n");
-    }
-
-    @Override
     public void caseAProg(AProg node) throws TypeException {
+        inAProg(node);
         // fields fase
         node.apply(fg);
         // Methods fase
         node.apply(mg);
         // Subclasses fase
         node.apply(sg);
+        current = name;
+        //todo: emit stack and locals sizes
+
+        node.getSetup().apply(this);
+
+        //TODO: turn - endcondition loop
+
+        // main end
+        emit(name,".end method\n\n");
+        mg.current = name;
+        mg.SetStatic(true);
+        for(PMethodDcl s : node.getMethods()){
+            s.apply(mg);
+        }
+        for(PMethodDcl s : node.getMoves()){
+            s.apply(mg);
+        }
+    }
+
+    @Override
+    public void caseASetup(ASetup node) throws TypeException {
+        for(PStmt s : node.getGame()){
+            s.apply(this);
+        }
     }
 
     @Override
@@ -146,15 +161,11 @@ public class CodeGenerator extends DepthFirstAdapter {
                 t = "L"+type+";";
                 break;
         }
-        if((node.parent() instanceof AParamDcl)){
-            emit(current, t);
-        }else{
-            emit(current, t + "\n");
-        }
+        emit(current, t);
     }
 
     @Override
-    public void caseAListType(AListType node) throws TypeException {
-        emit(current, "Ljava/util/LinkedList\n");
+    public void caseAListType(AListType node) {
+        emit(current, "Ljava/util/LinkedList;");
     }
 }

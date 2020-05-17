@@ -52,8 +52,9 @@ public class FieldGenerator extends CodeGenerator {
             sdcl.apply(this);
             s = current;
             current = prev;
-            emit(current,s);
+            emit(s);
             node.getType().apply(this);
+            emit("\n");
 
         }
 

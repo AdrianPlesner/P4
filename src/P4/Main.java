@@ -35,7 +35,7 @@ public class Main {
             STBuilder stBuilder = new STBuilder(ast,contentPath);
             SymbolTable st = stBuilder.BuildST(new SymbolTable());
 
-            //TypeChecker tc = new TypeChecker(ast,st);
+            TypeChecker tc = new TypeChecker(ast,st);
 
             //TODO: code generation
             CodeGenerator cg;
