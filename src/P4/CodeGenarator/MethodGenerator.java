@@ -7,9 +7,8 @@ import P4.contextualAnalysis.TypeException;
 import java.util.HashMap;
 
 public class MethodGenerator extends CodeGenerator {
-    public MethodGenerator(HashMap<String,String> h, String n){
+    public MethodGenerator(HashMap<String,String> h){
         files = h;
-        name = n;
     }
 
     private StackCounter sc = new StackCounter();
@@ -18,10 +17,6 @@ public class MethodGenerator extends CodeGenerator {
 
     public void SetStatic(Boolean b){
         Static = b;
-    }
-
-    private void emit(String s){
-        super.emit(current,s);
     }
 
     @Override

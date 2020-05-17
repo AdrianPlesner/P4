@@ -37,7 +37,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
         files.put(name,"");
         fg = new FieldGenerator(files);
-        mg = new MethodGenerator(files, name);
+        mg = new MethodGenerator(files);
         sg = new SubClassGenerator(files);
     }
 
@@ -75,6 +75,9 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     protected void emit(String file, String s){
         files.put(file,files.get(file).concat(s));
+    }
+    protected void emit(String s){
+        emit(current,s);
     }
 
     @Override
@@ -116,7 +119,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         // Methods fase
         node.apply(mg);
         // Subclasses fase
-        //node.apply(sg);
+        node.apply(sg);
     }
 
     @Override
