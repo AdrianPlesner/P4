@@ -37,7 +37,6 @@ public class Main {
 
             TypeChecker tc = new TypeChecker(ast,st);
 
-            //TODO: code generation
             CodeGenerator cg;
             if(args.length == 2){
                 cg = new CodeGenerator(ast,st,args[2]);

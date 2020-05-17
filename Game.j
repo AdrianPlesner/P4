@@ -11,17 +11,21 @@ Ljava/util/LinkedList;Ljava/util/LinkedList;.end method
 
 .method public static CheckForTrick(Lplayer;)V
 .limit stack 3
+.limit locals 3
 Ljava/util/LinkedList;I.end method
 
 .method public static InitPlayers()Ljava/util/LinkedList;
 .limit stack 6
+.limit locals 5
 Ljava/util/LinkedList;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z.end method
 
 .method public static find(Ljava/lang/String;Ljava/util/LinkedList;)Lplayer;
 .limit stack 2
+.limit locals 2
 .end method
 
 .method public static ChooseMove(Lcard;Lplayer;)Z
 .limit stack 4
+.limit locals 3
 Z.end method
 

@@ -1,6 +1,8 @@
 package P4.CodeGenarator;
 
 import P4.Sable.node.*;
+import P4.contextualAnalysis.Symbol.Function;
+import P4.contextualAnalysis.Symbol.SubClass;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
 
@@ -8,7 +10,12 @@ import java.util.HashMap;
 
 public class MethodGenerator extends CodeGenerator {
     public MethodGenerator(HashMap<String,String> h){
+        new MethodGenerator(h,null);
+    }
+
+    public MethodGenerator(HashMap<String,String> h, SymbolTable st){
         files = h;
+        this.st = st;
     }
 
     private StackCounter sc = new StackCounter();
@@ -67,6 +74,7 @@ public class MethodGenerator extends CodeGenerator {
         emit(")V\n");
         emit(".limit stack " + sc.Count(node) + "\n");
         //TODO: count locals
+        emit(".limit locals " +((Function)st.retrieveSymbol(current, Function.class)).getLocals() + "\n");
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
@@ -103,6 +111,17 @@ public class MethodGenerator extends CodeGenerator {
         emit("\n");
         // count stack size
         emit(".limit stack " + sc.Count(node) + "\n");
+        var fun = st.retrieveSymbol(node.getName().getText());
+        if(fun == null){
+            var c = st.retrieveSymbol(current,SubClass.class);
+            if(c == null){
+                //TODO: some error
+            }
+            else{
+                fun = ((SubClass)c).containsMethod(node.getName().getText());
+            }
+        }
+        emit(".limit locals " +((Function)fun).getLocals() + "\n");
         // emit body
         for(PStmt st : node.getBody()){
             st.apply(this);

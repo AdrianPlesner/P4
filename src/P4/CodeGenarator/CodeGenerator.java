@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class CodeGenerator extends DepthFirstAdapter {
 
     private Start ast;
-    private SymbolTable st;
+    protected SymbolTable st;
 
     protected String name;
     protected String current;
@@ -37,7 +37,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
         files.put(name,"");
         fg = new FieldGenerator(files);
-        mg = new MethodGenerator(files);
+        mg = new MethodGenerator(files,st);
         sg = new SubClassGenerator(files);
     }
 

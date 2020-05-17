@@ -11,5 +11,6 @@
 .end method
 .method public <init>(Ljava/lang/String;Z)V
 .limit stack 2
+.limit locals 2
 .end method
 
