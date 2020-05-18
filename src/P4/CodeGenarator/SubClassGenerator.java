@@ -18,7 +18,7 @@ public class SubClassGenerator extends CodeGenerator {
     private MethodGenerator mg;
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
         for(Start s : node.includes){
             s.getPProg().apply(this);
         }
@@ -26,7 +26,7 @@ public class SubClassGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         current = "player";
         for(PSubclass s : ((AClassBody) node.getPlayer()).getSubclasses()){
             s.apply(this);
@@ -38,7 +38,7 @@ public class SubClassGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseASubclass(ASubclass node) throws TypeException {
+    public void caseASubclass(ASubclass node) throws TypeException, SemanticException {
         var name = node.getName().getText();
         files.put(name,"");
         String s = ".class " + name + "\n"
@@ -49,7 +49,7 @@ public class SubClassGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException {
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException {
         fg.current = current;
         node.apply(fg);
         mg.current = current;

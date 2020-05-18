@@ -13,7 +13,7 @@ public class FieldGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
         // Go through all includes
         for(Start s : node.includes){
             s.getPProg().apply(this);
@@ -24,7 +24,7 @@ public class FieldGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         // Card fields
         current = "card";
         node.getCard().apply(this);
@@ -34,14 +34,14 @@ public class FieldGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException {
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException {
         for(PStmt dcl : node.getDcls()){
             dcl.apply(this);
         }
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node) throws TypeException {
+    public void caseADclStmt(ADclStmt node) throws TypeException, SemanticException {
         // .field <access-spec> <field-name> <descriptor> [ = <value> ]
 
         for(PSingleDcl sdcl : node.getDcls()){

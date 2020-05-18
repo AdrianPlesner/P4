@@ -1,5 +1,6 @@
 package P4.contextualAnalysis;
 
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.node.*;
 import P4.contextualAnalysis.Symbol.Function;
 import P4.contextualAnalysis.Symbol.SubClass;
@@ -15,19 +16,19 @@ public class DeclarationBuilder extends STBuilder {
     }
 
     @Override
-    public SymbolTable BuildST(SymbolTable st) throws TypeException {
+    public SymbolTable BuildST(SymbolTable st) throws TypeException, SemanticException {
         this.st = st;
         ast.apply(this);
         return this.st;
     }
 
     @Override
-    public void caseStart(Start node) throws TypeException {
+    public void caseStart(Start node) throws TypeException, SemanticException {
         node.getPProg().apply(this);
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
 
         node.getSetup().apply(this);
         for(PMethodDcl m : node.getMethods()){
@@ -39,7 +40,7 @@ public class DeclarationBuilder extends STBuilder {
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         // Add card
         SubClass card;
         card = (SubClass) st.retrieveSymbol("card", SubClass.class);
@@ -64,7 +65,7 @@ public class DeclarationBuilder extends STBuilder {
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException {
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException {
         if(current != null) {
             var th = new Variable("this", new ADclStmt(new AVarType(new TId(current.getIdentifier())), new LinkedList<>()), current.getIdentifier());
             st.enterSymbol(th);
@@ -88,7 +89,7 @@ public class DeclarationBuilder extends STBuilder {
     }
 
     @Override
-    public void caseAConstruct(AConstruct node) throws TypeException {
+    public void caseAConstruct(AConstruct node) throws TypeException, SemanticException {
         var name = node.getName();
         if( !name.getText().equals(current.getIdentifier())){
             throw new TypeException(name,"Constructor must have same name as class");
@@ -101,7 +102,7 @@ public class DeclarationBuilder extends STBuilder {
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException {
         // get name
         var name = node.getName().getText();
         // check if name already exists
@@ -136,7 +137,7 @@ public class DeclarationBuilder extends STBuilder {
     }
 
     @Override
-    public void caseASubclass(ASubclass node) throws TypeException {
+    public void caseASubclass(ASubclass node) throws TypeException, SemanticException {
         // check name
         var name = node.getName().getText();
         if(st.containsClass(name)){

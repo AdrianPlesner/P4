@@ -2,10 +2,11 @@
 
 package P4.Sable.node;
 
+import P4.CodeGenarator.SemanticException;
 import P4.contextualAnalysis.TypeException;
 
 public interface Switchable
 {
-    void apply(Switch sw) throws TypeException;
+    void apply(Switch sw) throws TypeException, SemanticException;
 
 }

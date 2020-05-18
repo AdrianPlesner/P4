@@ -1,5 +1,6 @@
 package P4.contextualAnalysis;
 
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
 import P4.contextualAnalysis.Symbol.Function;
@@ -13,19 +14,19 @@ public class TypeChecker extends DepthFirstAdapter {
     SymbolTable st;
     private TokenFinder tf = new TokenFinder();
 
-    public TypeChecker(Start ast, SymbolTable _st) throws TypeException {
+    public TypeChecker(Start ast, SymbolTable _st) throws TypeException, SemanticException {
         st = _st;
         ast.apply(this);
     }
 
     @Override
-    public void caseStart(Start node) throws TypeException {
+    public void caseStart(Start node) throws TypeException, SemanticException {
         // Check everything. No need to change anything
         super.caseStart(node);
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException{
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
         //Apply everything!
         for(Start s : node.includes){
             s.apply(this);
@@ -50,7 +51,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException{
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException{
         // Apply everything
         for (PStmt ps : node.getDcls()){
             ps.apply(this);
@@ -69,7 +70,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAConstruct(AConstruct node) throws TypeException{
+    public void caseAConstruct(AConstruct node) throws TypeException, SemanticException{
         for (PStmt ps : node.getBody()){
             ps.apply(this);
         }
@@ -82,7 +83,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException, SemanticException {
         // Set type of literal
         node.getValue().apply(this);
 
@@ -116,7 +117,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAValueExpr(AValueExpr node) throws TypeException {
+    public void caseAValueExpr(AValueExpr node) throws TypeException, SemanticException {
         // visit children
         node.getVal().apply(this);
         // Set type to type of child
@@ -124,7 +125,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException, SemanticException {
         // check children
         var L = node.getL();
         L.apply(this);
@@ -161,7 +162,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException{
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException, SemanticException{
         var L = node.getL();
         L.apply(this);
         var R = node.getR();
@@ -192,7 +193,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAListExpr(AListExpr node) throws TypeException{
+    public void caseAListExpr(AListExpr node) throws TypeException, SemanticException{
         // Each element is an expression
         for (PExpr p : node.getElements()){
             p.apply(this);
@@ -201,7 +202,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException, SemanticException {
         var L = node.getL();
         L.apply(this);
         var R = node.getR();
@@ -216,7 +217,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseARelationExpr(ARelationExpr node) throws TypeException {
+    public void caseARelationExpr(ARelationExpr node) throws TypeException, SemanticException {
         var L = node.getL();
         L.apply(this);
         var R = node.getR();
@@ -245,7 +246,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node) throws  TypeException {
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException, SemanticException {
         // Check children
         var L = node.getL();
         L.apply(this);
@@ -263,7 +264,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAVal(AVal node) throws TypeException {
+    public void caseAVal(AVal node) throws TypeException, SemanticException {
         // Check children
         node.getCallField().getLast().apply(this);
         // Node type = type of last element in call sequence
@@ -272,7 +273,7 @@ public class TypeChecker extends DepthFirstAdapter {
 
 
     @Override
-    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException {
         // Get declaration node
         var dcl = node.getId().declarationNode;
         var dcl2 = st.retrieveSymbol(node.getId().getText());
@@ -317,7 +318,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACallCallField(ACallCallField node) throws TypeException{
+    public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException{
         // Apply on parameters
         for (PExpr p: node.getParams()){
             p.apply(this);
@@ -338,7 +339,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException{
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException{
         // Apply on method body
         for(PStmt s: node.getBody()){
             s.apply(this);
@@ -346,7 +347,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAAssignStmt(AAssignStmt node) throws TypeException{
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException, SemanticException{
         var pVal = node.getVar();
         pVal.apply(this);
         var pExpr = node.getExpr();
@@ -371,14 +372,14 @@ public class TypeChecker extends DepthFirstAdapter {
 
 
     @Override
-    public void caseAReturnStmt(AReturnStmt node) throws TypeException{
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException, SemanticException{
         var expr = node.getExpr();
         expr.apply(this);
         //TODO: Fix this
     }
 
     @Override
-    public void caseAForStmt(AForStmt node) throws TypeException{
+    public void caseAForStmt(AForStmt node) throws TypeException, SemanticException{
         // Apply to the statement body
         for (PStmt s : node.getThen()){
             s.apply(this);
@@ -401,7 +402,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAWhileStmt(AWhileStmt node) throws TypeException{
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException{
         // Apply on statement body
         for (PStmt s : node.getThen()){
             s.apply(this);
@@ -416,7 +417,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseASwitchStmt(ASwitchStmt node) throws TypeException{
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException, SemanticException{
         // Apply on each case
         for (PCase pc : node.getCases()){
             pc.apply(this);
@@ -426,7 +427,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACaseCase(ACaseCase node) throws TypeException{
+    public void caseACaseCase(ACaseCase node) throws TypeException, SemanticException{
         // Apply on body of each case
         for (PStmt s : node.getThen()){
             s.apply(this);
@@ -439,7 +440,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseADefaultCase(ADefaultCase node) throws TypeException{
+    public void caseADefaultCase(ADefaultCase node) throws TypeException, SemanticException{
         // Apply to body of the default statement
         for (PStmt ps : node.getThen()){
             ps.apply(this);
@@ -447,7 +448,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAForeachStmt(AForeachStmt node) throws TypeException{
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException, SemanticException{
         // Foreach stmt only works on collections
         var pVal = node.getList();
         pVal.apply(this);
@@ -463,7 +464,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAIfStmt(AIfStmt node) throws TypeException{
+    public void caseAIfStmt(AIfStmt node) throws TypeException, SemanticException{
         var expr = node.getPredicate();
         expr.apply(this);
         for (PStmt ps : node.getThen()){
@@ -483,7 +484,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAElseIf(AElseIf node) throws TypeException{
+    public void caseAElseIf(AElseIf node) throws TypeException, SemanticException{
         // Apply on statement body
         for (PStmt ps : node.getThen()){
             ps.apply(this);
@@ -498,7 +499,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node) throws TypeException{
+    public void caseADclStmt(ADclStmt node) throws TypeException, SemanticException{
         for (PSingleDcl dcl : node.getDcls()){
             dcl.apply(this);
         }
@@ -507,13 +508,13 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseASubclass(ASubclass node) throws TypeException{
+    public void caseASubclass(ASubclass node) throws TypeException, SemanticException{
         var body = node.getBody();
         body.apply(this);
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException{
+    public void caseASetup(ASetup node) throws TypeException, SemanticException{
         var card = node.getCard();
         card.apply(this);
         var player = node.getPlayer();
@@ -527,7 +528,7 @@ public class TypeChecker extends DepthFirstAdapter {
 
 
     @Override
-    public void caseASingleDcl(ASingleDcl node) throws TypeException{
+    public void caseASingleDcl(ASingleDcl node) throws TypeException, SemanticException{
         var expr = node.getExpr();
 
         if (expr != null){
@@ -537,7 +538,7 @@ public class TypeChecker extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACallStmt(ACallStmt node) throws TypeException{
+    public void caseACallStmt(ACallStmt node) throws TypeException, SemanticException{
         var val = node.getVal();
         val.apply(this);
     }

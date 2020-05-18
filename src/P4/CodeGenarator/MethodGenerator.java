@@ -2,6 +2,7 @@ package P4.CodeGenarator;
 
 import P4.Sable.node.*;
 import P4.contextualAnalysis.Symbol.Function;
+import P4.contextualAnalysis.Symbol.GenericClass;
 import P4.contextualAnalysis.Symbol.SubClass;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
@@ -27,7 +28,7 @@ public class MethodGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
         for(Start s: node.includes){
             s.getPProg().apply(this);
         }
@@ -36,7 +37,7 @@ public class MethodGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         SetStatic(false);
         current = "card";
         node.getCard().apply(this);
@@ -45,7 +46,7 @@ public class MethodGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException {
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException {
         var cons = node.getConstruct();
         if(cons == null){
             // default constructor
@@ -65,7 +66,7 @@ public class MethodGenerator extends CodeGenerator {
     }
 
     @Override
-    public void caseAConstruct(AConstruct node) throws TypeException {
+    public void caseAConstruct(AConstruct node) throws TypeException, SemanticException {
         inAConstruct(node);
         emit("(");
         for(PParamDcl p : node.getParams()){
@@ -97,7 +98,7 @@ public class MethodGenerator extends CodeGenerator {
 
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException {
         // emit method head
         inAMethodDcl(node);
         emit("(");
@@ -115,11 +116,13 @@ public class MethodGenerator extends CodeGenerator {
         if(fun == null){
             var c = st.retrieveSymbol(current,SubClass.class);
             if(c == null){
-                //TODO: some error
+                c = st.retrieveSymbol(current, GenericClass.class);
+                if(c == null){
+                    throw new SemanticException(node,"Function " + node.getName().getText() + " not found");
+                }
             }
-            else{
-                fun = ((SubClass)c).containsMethod(node.getName().getText());
-            }
+            fun = ((SubClass)c).containsMethod(node.getName().getText());
+
         }
         emit(".limit locals " +((Function)fun).getLocals() + "\n");
         // emit body

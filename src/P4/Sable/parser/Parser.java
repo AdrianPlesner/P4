@@ -2,6 +2,7 @@
 
 package P4.Sable.parser;
 
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.lexer.*;
 import P4.Sable.node.*;
 import P4.Sable.analysis.*;
@@ -96,14 +97,14 @@ public class Parser
         return ((State) this.stack.previous()).nodes;
     }
 
-    private int index(Switchable token) throws TypeException {
+    private int index(Switchable token) throws TypeException, SemanticException {
         this.converter.index = -1;
         token.apply(this.converter);
         return this.converter.index;
     }
 
     @SuppressWarnings("unchecked")
-    public Start parse() throws ParserException, LexerException, IOException, TypeException {
+    public Start parse() throws ParserException, LexerException, IOException, TypeException, SemanticException {
         push(0, null);
         List<Node> ign = null;
         while(true)

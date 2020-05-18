@@ -31,7 +31,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseStart(Start node) throws TypeException {
+    public void caseStart(Start node) throws TypeException, SemanticException {
         inStart(node);
         node.getPProg().apply(this);
         node.getEOF().apply(this);
@@ -49,7 +49,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
         inAProg(node);
         {
             List<TId> copy = new ArrayList<TId>(node.getIncludes());
@@ -104,7 +104,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         inASetup(node);
         if(node.getCard() != null)
         {
@@ -135,7 +135,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException {
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException {
         inAClassBody(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getDcls());
@@ -176,7 +176,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASubclass(ASubclass node) throws TypeException {
+    public void caseASubclass(ASubclass node) throws TypeException, SemanticException {
         inASubclass(node);
         if(node.getName() != null)
         {
@@ -200,7 +200,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAConstruct(AConstruct node) throws TypeException {
+    public void caseAConstruct(AConstruct node) throws TypeException, SemanticException {
         inAConstruct(node);
         if(node.getName() != null)
         {
@@ -234,7 +234,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAListExpr(AListExpr node) throws TypeException {
+    public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
         inAListExpr(node);
         {
             List<PExpr> copy = new ArrayList<PExpr>(node.getElements());
@@ -257,7 +257,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException {
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException, SemanticException {
         inAMultOpExpr(node);
         if(node.getL() != null)
         {
@@ -285,7 +285,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException, SemanticException {
         inALiteralExpr(node);
         if(node.getValue() != null)
         {
@@ -305,7 +305,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAValueExpr(AValueExpr node) throws TypeException {
+    public void caseAValueExpr(AValueExpr node) throws TypeException, SemanticException {
         inAValueExpr(node);
         if(node.getVal() != null)
         {
@@ -325,7 +325,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException, SemanticException {
         inAAddOpExpr(node);
         if(node.getL() != null)
         {
@@ -353,7 +353,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseARelationExpr(ARelationExpr node) throws TypeException {
+    public void caseARelationExpr(ARelationExpr node) throws TypeException, SemanticException {
         inARelationExpr(node);
         if(node.getL() != null)
         {
@@ -381,7 +381,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException, SemanticException {
         inAEqualityExpr(node);
         if(node.getL() != null)
         {
@@ -409,7 +409,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException, SemanticException {
         inABoolOpExpr(node);
         if(node.getL() != null)
         {
@@ -521,7 +521,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAVal(AVal node) throws TypeException {
+    public void caseAVal(AVal node) throws TypeException, SemanticException {
         inAVal(node);
         {
             List<PCallField> copy = new ArrayList<PCallField>(node.getCallField());
@@ -544,7 +544,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException {
         inAFieldCallField(node);
         if(node.getId() != null)
         {
@@ -564,7 +564,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseACallCallField(ACallCallField node) throws TypeException {
+    public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException {
         inACallCallField(node);
         if(node.getId() != null)
         {
@@ -591,7 +591,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASingleDcl(ASingleDcl node) throws TypeException{
+    public void caseASingleDcl(ASingleDcl node) throws TypeException, SemanticException {
         inASingleDcl(node);
         if(node.getId() != null)
         {
@@ -615,7 +615,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAListType(AListType node) throws TypeException {
+    public void caseAListType(AListType node) throws TypeException, SemanticException {
         inAListType(node);
         if(node.getType() != null)
         {
@@ -635,7 +635,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAVarType(AVarType node) throws TypeException {
+    public void caseAVarType(AVarType node) throws TypeException, SemanticException {
         inAVarType(node);
         if(node.getType() != null)
         {
@@ -655,7 +655,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAElseIf(AElseIf node) throws TypeException {
+    public void caseAElseIf(AElseIf node) throws TypeException, SemanticException {
         inAElseIf(node);
         if(node.getPredicate() != null)
         {
@@ -682,7 +682,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node) throws TypeException {
+    public void caseADclStmt(ADclStmt node) throws TypeException, SemanticException {
         inADclStmt(node);
         if(node.getType() != null)
         {
@@ -709,7 +709,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException, SemanticException {
         inAAssignStmt(node);
         if(node.getVar() != null)
         {
@@ -737,7 +737,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseACallStmt(ACallStmt node) throws TypeException {
+    public void caseACallStmt(ACallStmt node) throws TypeException, SemanticException {
         inACallStmt(node);
         if(node.getVal() != null)
         {
@@ -757,7 +757,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAIfStmt(AIfStmt node) throws TypeException {
+    public void caseAIfStmt(AIfStmt node) throws TypeException, SemanticException {
         inAIfStmt(node);
         if(node.getPredicate() != null)
         {
@@ -798,7 +798,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException, SemanticException {
         inASwitchStmt(node);
         if(node.getVariable() != null)
         {
@@ -825,7 +825,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAForStmt(AForStmt node) throws TypeException {
+    public void caseAForStmt(AForStmt node) throws TypeException, SemanticException {
         inAForStmt(node);
         if(node.getInit() != null)
         {
@@ -860,7 +860,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException, SemanticException {
         inAForeachStmt(node);
         if(node.getId() != null)
         {
@@ -891,7 +891,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAWhileStmt(AWhileStmt node) throws TypeException {
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException {
         inAWhileStmt(node);
         if(node.getPredicate() != null)
         {
@@ -918,7 +918,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAReturnStmt(AReturnStmt node) throws TypeException {
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException, SemanticException {
         inAReturnStmt(node);
         if(node.getExpr() != null)
         {
@@ -938,7 +938,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseACaseCase(ACaseCase node) throws TypeException {
+    public void caseACaseCase(ACaseCase node) throws TypeException, SemanticException {
         inACaseCase(node);
         if(node.getCase() != null)
         {
@@ -965,7 +965,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseADefaultCase(ADefaultCase node) throws TypeException {
+    public void caseADefaultCase(ADefaultCase node) throws TypeException, SemanticException {
         inADefaultCase(node);
         {
             List<PStmt> copy = new ArrayList<PStmt>(node.getThen());
@@ -988,7 +988,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException {
         inAMethodDcl(node);
         if(node.getName() != null)
         {
@@ -1026,7 +1026,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseAParamDcl(AParamDcl node) throws TypeException {
+    public void caseAParamDcl(AParamDcl node) throws TypeException, SemanticException {
         inAParamDcl(node);
         if(node.getType() != null)
         {

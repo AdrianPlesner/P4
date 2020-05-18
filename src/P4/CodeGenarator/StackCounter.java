@@ -11,7 +11,7 @@ public class StackCounter extends DepthFirstAdapter {
 
     private int count;
 
-    public int Count(Node node) throws TypeException {
+    public int Count(Node node) throws TypeException, SemanticException {
         count = 0;
         if(!(node instanceof AMethodDcl)) {
             System.out.println("WARNING! Applying StackCounter to a node that is not a method declaration");
@@ -23,7 +23,7 @@ public class StackCounter extends DepthFirstAdapter {
         return count;
     }
 
-    private int visitList(List<? extends Node> l) throws TypeException {
+    private int visitList(List<? extends Node> l) throws TypeException, SemanticException {
         int c = -1;
         for(var s : l){
             s.apply(this);
@@ -33,18 +33,18 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException {
         count = visitList(node.getBody());
 
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node) throws TypeException {
+    public void caseADclStmt(ADclStmt node) throws TypeException, SemanticException {
         count = visitList(node.getDcls());
     }
 
     @Override
-    public void caseASingleDcl(ASingleDcl node) throws TypeException {
+    public void caseASingleDcl(ASingleDcl node) throws TypeException, SemanticException {
         var exp = node.getExpr();
         if(exp == null){
             count = 0;
@@ -55,7 +55,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAWhileStmt(AWhileStmt node) throws TypeException {
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException {
         int c = 2; //Stack needed for comparison
         node.getPredicate().apply(this);
         c = Math.max(count, c);
@@ -64,12 +64,12 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAReturnStmt(AReturnStmt node) throws TypeException {
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException, SemanticException {
         node.getExpr().apply(this);
     }
 
     @Override
-    public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException, SemanticException {
         int c = -1;
         node.getVariable().apply(this);
         c = Math.max(count,c);
@@ -78,7 +78,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACaseCase(ACaseCase node) throws TypeException {
+    public void caseACaseCase(ACaseCase node) throws TypeException, SemanticException {
         int c = -1;
         node.getCase().apply(this);
         c = Math.max(count,c);
@@ -87,12 +87,12 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseADefaultCase(ADefaultCase node) throws TypeException {
+    public void caseADefaultCase(ADefaultCase node) throws TypeException, SemanticException {
         count = visitList(node.getThen());
     }
 
     @Override
-    public void caseAIfStmt(AIfStmt node) throws TypeException {
+    public void caseAIfStmt(AIfStmt node) throws TypeException, SemanticException {
         int c = 2; // 2 stack needed for comparison
         node.getPredicate().apply(this);
         c = Math.max(count,c);
@@ -103,7 +103,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAElseIf(AElseIf node) throws TypeException {
+    public void caseAElseIf(AElseIf node) throws TypeException, SemanticException {
         int c = 2; // 2 stack needed for comparison
         node.getPredicate().apply(this);
         c = Math.max(count,c);
@@ -112,7 +112,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAForStmt(AForStmt node) throws TypeException {
+    public void caseAForStmt(AForStmt node) throws TypeException, SemanticException {
         int c = 2; // 2 stack needed for comparison
         node.getInit().apply(this);
         c = Math.max(count,c);
@@ -125,7 +125,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException, SemanticException {
         int c = 2; // 2 registers needed for comparison
         node.getList().apply(this);
         c = Math.max(count,c);
@@ -134,14 +134,14 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACallStmt(ACallStmt node) throws TypeException {
+    public void caseACallStmt(ACallStmt node) throws TypeException, SemanticException {
         int c = -1;
         node.getVal().apply(this);
         count = Math.max(count,c);
     }
 
     @Override
-    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException, SemanticException {
         // putfield takes at least 2 stack space
         int c = 2;
         node.getVar().apply(this);
@@ -156,7 +156,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAVal(AVal node) throws TypeException {
+    public void caseAVal(AVal node) throws TypeException, SemanticException {
         count = visitList(node.getCallField());
     }
 
@@ -167,7 +167,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACallCallField(ACallCallField node) throws TypeException {
+    public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException {
         // invoke virtual takes at least 1 stack space
         int c = 1;
         int exp = -1;
@@ -187,18 +187,18 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAValueExpr(AValueExpr node) throws TypeException {
+    public void caseAValueExpr(AValueExpr node) throws TypeException, SemanticException {
         node.getVal().apply(this);
     }
 
     @Override
-    public void caseAListExpr(AListExpr node) throws TypeException {
+    public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
         //Initiate new list, takes at least 2 stack space
         count = Math.max(visitList(node.getElements()),2);
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         int l = count;
         node.getR().apply(this);
@@ -207,7 +207,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseARelationExpr(ARelationExpr node) throws TypeException {
+    public void caseARelationExpr(ARelationExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         int l = count;
         node.getR().apply(this);
@@ -216,7 +216,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException {
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         int l = count;
         node.getR().apply(this);
@@ -225,7 +225,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         int l = count;
         node.getR().apply(this);
@@ -234,7 +234,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         int l = count;
         node.getR().apply(this);

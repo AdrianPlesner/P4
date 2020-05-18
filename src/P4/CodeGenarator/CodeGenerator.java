@@ -41,7 +41,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         sg = new SubClassGenerator(files);
     }
 
-    public void generate() throws TypeException {
+    public void generate() throws TypeException, SemanticException {
         ast.apply(this);
     }
 
@@ -103,7 +103,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
         inAProg(node);
         // fields fase
         node.apply(fg);
@@ -131,7 +131,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         for(PStmt s : node.getGame()){
             s.apply(this);
         }
