@@ -12,6 +12,7 @@ public class SymbolTable {
     private HashMap<String, LinkedList<Symbol>> table = new HashMap<>();
     private int scope = 0;
 
+
     public SymbolTable() {
 
     }

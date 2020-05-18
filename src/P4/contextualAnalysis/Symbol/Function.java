@@ -28,6 +28,7 @@ public class Function extends Symbol {
         return locals;
     }
 
+
     public String getReturnType(){
         return this.returnType;
     }

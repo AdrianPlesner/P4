@@ -27,15 +27,17 @@
     invokestatic java/lang/System/console()Ljava/io/Console;
     invokevirtual java/io/Console/readLine()Ljava/lang/String;
     invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
-    
     return
 .end method
 
-.method public foo(II)I
-    .limit locals 3
-    .limit stack 2
+.method public foo(I)V
+    .limit locals 2
+    .limit stack 10
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc "hej"
     iload 1
-    iload 2
-    iadd
-    ireturn
+    invokestatic java/lang/String/valueOf(I)Ljava/lang/String;
+    invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;
+    invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+    return
 .end method

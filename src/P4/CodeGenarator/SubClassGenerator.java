@@ -4,7 +4,6 @@ import P4.Sable.node.*;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class SubClassGenerator extends CodeGenerator {

@@ -5,6 +5,8 @@
 .method public <init>(Ljava/lang/String;I)V
 .limit stack 2
 .limit locals 2
+astore 
+istore 
 .end method
 
 .method public transfer(Lplayer;Lplayer;)V

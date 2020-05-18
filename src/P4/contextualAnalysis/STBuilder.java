@@ -160,9 +160,8 @@ public class STBuilder extends DepthFirstAdapter {
             }
             i = 0;
 
-            for (Start ast : node.includes) {
-                this.st = new DeclarationBuilder(ast).BuildST(st);
-                ast.apply(this);
+            for (Start s : node.includes) {
+                s.apply(this);
                 i++;
             }
         }
@@ -170,7 +169,7 @@ public class STBuilder extends DepthFirstAdapter {
             System.out.println("In "+includes.get(i).getText()+ "\n" + e);
         }
 
-        this.st = new DeclarationBuilder(ast).BuildST(st);
+        this.st = new DeclarationBuilder((Start)node.parent()).BuildST(st);
         // Do Setup
         if(node.getSetup() != null){
             node.getSetup().apply(this);
@@ -437,6 +436,7 @@ public class STBuilder extends DepthFirstAdapter {
         }
         if(current instanceof Function)
             ((Function) current).addLocal();
+
     }
 
     @Override
@@ -605,6 +605,9 @@ public class STBuilder extends DepthFirstAdapter {
 
         st.openScope();
         st.enterSymbol(new Variable(node.getId().getText(),node,type.trim()));
+        if(current instanceof Function){
+            ((Function) current).addLocal();
+        }
         for(PStmt s : node.getThen()){
             s.apply(this);
         }

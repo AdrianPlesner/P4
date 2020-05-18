@@ -6,7 +6,9 @@ import P4.contextualAnalysis.Symbol.GenericClass;
 import P4.contextualAnalysis.Symbol.SubClass;
 import P4.contextualAnalysis.SymbolTable;
 import P4.contextualAnalysis.TypeException;
+import org.javatuples.Pair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MethodGenerator extends CodeGenerator {
@@ -76,6 +78,9 @@ public class MethodGenerator extends CodeGenerator {
         emit(".limit stack " + sc.Count(node) + "\n");
         //TODO: count locals
         emit(".limit locals " +((Function)st.retrieveSymbol(current, Function.class)).getLocals() + "\n");
+        locals.clear();
+        scope = 0;
+        locals.add(Pair.with("this",scope));
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
@@ -90,10 +95,16 @@ public class MethodGenerator extends CodeGenerator {
     @Override
     public void inAMethodDcl(AMethodDcl node) {
         emit(".method public ");
+        locals.clear();
+        scope = 0;
         if(Static){
             emit("static ");
         }
+        else{
+            locals.add(Pair.with("this",scope));
+        }
         emit(node.getName().getText());
+
     }
 
 
