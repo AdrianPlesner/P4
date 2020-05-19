@@ -85,7 +85,7 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(string);
         string.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var stringIndex = new Function("index",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("string")),new LinkedList<>()),"string");
+        var stringIndex = new Function("index",new AMethodDcl(new TId("index"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("string")),new LinkedList<>()),"string");
         string.addMethod(stringIndex);
         stringIndex.addArg(new Variable("i",null,"int"));
 
@@ -93,40 +93,40 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(list);
         list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var take = new Function("take",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("list of element")),new LinkedList<>()),"list of element");
+        var take = new Function("take",new AMethodDcl(new TId("take"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("list of element")),new LinkedList<>()),"list of element");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
-        var add = new Function("add",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
+        var add = new Function("add",new AMethodDcl(new TId("add"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(add);
         add.addArg(new Variable("e",null,"void"));
 
-        var remove = new Function("remove",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
+        var remove = new Function("remove",new AMethodDcl(new TId("remove"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(remove);
         remove.addArg(new Variable("e",null,"void"));
 
-        list.addMethod(new Function("clear",new AMethodDcl(null,new LinkedList<>(),new AVarType(new TId("void")),new LinkedList<>()),"void"));
+        list.addMethod(new Function("clear",new AMethodDcl(new TId("clear"),new LinkedList<>(),new AVarType(new TId("void")),new LinkedList<>()),"void"));
 
-        var index = new Function("index",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("element")),new LinkedList<>()),"element");
+        var index = new Function("index",new AMethodDcl(new TId("index"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("element")),new LinkedList<>()),"element");
         list.addMethod(index);
         index.addArg(new Variable("i",null,"int"));
 
         var Turn = new SubClass("Turn",null,null);
         st.enterSymbol(Turn);
         Turn.addLocal(new Variable("current",new ADclStmt(new AVarType(new TId("player")),new LinkedList<>()),"player"));
-        st.enterSymbol(new Variable("turn",null,"Turn"));
+        st.enterSymbol(new Variable("turn",new ADclStmt(new AVarType(new TId("Turn")),new LinkedList<>()),"Turn"));
 
-        var message = new Function("Message",new AMethodDcl(null,new LinkedList<PParamDcl>(Arrays.asList(new AParamDcl(new AVarType(new TId("player")), new TId("p")), new AParamDcl(new AVarType(new TId("string")), new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
+        var message = new Function("Message",new AMethodDcl(new TId("Message"),new LinkedList<PParamDcl>(Arrays.asList(new AParamDcl(new AVarType(new TId("player")), new TId("p")), new AParamDcl(new AVarType(new TId("string")), new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(message);
         message.addArg(new Variable("p",null,"player"));
         message.addArg(new Variable("m",null,"string"));
 
-        var messageAll = new Function("MessageAll",new AMethodDcl(null,new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("string")),new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
+        var messageAll = new Function("MessageAll",new AMethodDcl(new TId("MessageAll"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("string")),new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(messageAll);
         messageAll.addArg(new Variable("m",null,"string"));
 
 
-        st.enterSymbol(new Function("Read",new AMethodDcl(null,new LinkedList<PParamDcl>(),new AVarType(new TId("string")),new LinkedList<>()),"string"));
+        st.enterSymbol(new Function("Read",new AMethodDcl(new TId("Read"),new LinkedList<PParamDcl>(),new AVarType(new TId("string")),new LinkedList<>()),"string"));
 
         st.enterSymbol(new SubClass("null",null,null));
         st.enterSymbol(new Variable("null",null,"null"));

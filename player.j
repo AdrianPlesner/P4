@@ -12,7 +12,7 @@
 .method public <init>(Ljava/lang/String;Z)V
 .limit stack 2
 .limit locals 2
-astore 
-istore 
+aload -1aload -1aload -1putfield player/name Ljava/lang/String;
+aload -1aload -1aload -1putfield player/ai Z
 .end method
 

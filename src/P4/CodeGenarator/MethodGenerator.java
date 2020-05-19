@@ -151,6 +151,9 @@ public class MethodGenerator extends CodeGenerator {
 
     @Override
     public void outAMethodDcl(AMethodDcl node) {
+        if(node.getReturntype().toString().trim().equals("void")){
+            emit("return\n");
+        }
         emit(".end method\n\n");
     }
 
