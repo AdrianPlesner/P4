@@ -160,8 +160,7 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseABoolLiteral(ABoolLiteral node)
-    {
+    public void caseABoolLiteral(ABoolLiteral node) throws SemanticException {
         defaultCase(node);
     }
 

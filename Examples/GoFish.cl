@@ -31,7 +31,7 @@ Setup{
 // Mulige træk
 Moves{
     // input = et kort ( fra egen hånd) og en anden spiller
-    Function ChooseMove(card c, player p) typeof bool{
+    Function ChooseMove(card c, player p, List typeof card deck) typeof bool{
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
         for pCard in p.hand {
@@ -43,7 +43,7 @@ Moves{
         CheckForTrick(p.hand);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
         if(p.hand.length == 0){
-            p.hand = Deck.take(1);
+            p.hand = deck.take(1);
          }
          return result;
     }
@@ -54,7 +54,7 @@ Turn{
     player chosen;
     while turn.current.hand.length > 0 & continue {
         chosen = chooseFrom(Players);
-        continue = ChooseMove(chooseFrom(turn.current.hand),chosen);
+        continue = ChooseMove(chooseFrom(turn.current.hand),chosen,Deck);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt

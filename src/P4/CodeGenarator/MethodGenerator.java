@@ -70,7 +70,6 @@ public class MethodGenerator extends CodeGenerator {
     @Override
     public void caseAConstruct(AConstruct node) throws TypeException, SemanticException {
         inAConstruct(node);
-        emit("(");
         for(PParamDcl p : node.getParams()){
             p.apply(this);
         }
@@ -78,7 +77,7 @@ public class MethodGenerator extends CodeGenerator {
         emit(".limit stack " + sc.Count(node) + "\n");
         //TODO: count locals
         emit(".limit locals " +((Function)st.retrieveSymbol(current, Function.class)).getLocals() + "\n");
-        locals.clear();
+
         scope = 0;
         locals.add(Pair.with("this",scope));
         for(PStmt s : node.getBody()){
@@ -89,7 +88,9 @@ public class MethodGenerator extends CodeGenerator {
 
     @Override
     public void inAConstruct(AConstruct node) {
-        emit(".method public <init>");
+        emit(".method public <init>(");
+        locals.clear();
+        scope = 0;
     }
 
     @Override
@@ -147,6 +148,7 @@ public class MethodGenerator extends CodeGenerator {
     @Override
     public void outAConstruct(AConstruct node) {
         emit(".end method\n\n");
+        closeScope();
     }
 
     @Override
@@ -155,6 +157,7 @@ public class MethodGenerator extends CodeGenerator {
             emit("return\n");
         }
         emit(".end method\n\n");
+        closeScope();
     }
 
 }

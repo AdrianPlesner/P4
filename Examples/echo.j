@@ -10,7 +10,7 @@
 
 .method public static main([Ljava/lang/String;)V
     .limit stack 10
-    hej:
+hej:
     new java/util/LinkedList
     dup
     dup
@@ -30,13 +30,14 @@
     invokevirtual java/io/Console/readLine()Ljava/lang/String;
     invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
     invokestatic examples/echo/bar()V
+    invokestatic examples/echo/lolz()V
     return
 .end method
 
 .method public foo(I)V
     .limit locals 2
     .limit stack 10
-    hej:
+hej:
     getstatic java/lang/System/out Ljava/io/PrintStream;
     ldc "hej"
     iload 1
@@ -69,4 +70,22 @@
    swap
    invokevirtual java/io/PrintStream/println(I)V
    return
+.end method
+
+.method public static lolz()V
+    .limit stack 5
+    .limit locals 1
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aconst_null
+    dup
+    astore 0
+    aload 0
+    if_acmpeq true
+    ldc "false"
+    goto done
+true:
+    ldc "true"
+done:
+    invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V
+    return
 .end method

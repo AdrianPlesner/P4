@@ -30,7 +30,7 @@ public interface Analysis extends Switch
     void caseAIntLiteral(AIntLiteral node);
     void caseAFloatLiteral(AFloatLiteral node);
     void caseAStringLiteral(AStringLiteral node);
-    void caseABoolLiteral(ABoolLiteral node);
+    void caseABoolLiteral(ABoolLiteral node) throws SemanticException;
     void caseAVal(AVal node) throws TypeException, SemanticException;
     void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException;
     void caseACallCallField(ACallCallField node) throws TypeException, SemanticException;

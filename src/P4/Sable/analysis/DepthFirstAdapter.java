@@ -500,8 +500,7 @@ public class DepthFirstAdapter extends AnalysisAdapter
     }
 
     @Override
-    public void caseABoolLiteral(ABoolLiteral node)
-    {
+    public void caseABoolLiteral(ABoolLiteral node) throws SemanticException {
         inABoolLiteral(node);
         if(node.getValue() != null)
         {

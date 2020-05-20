@@ -28,8 +28,8 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     protected int labelcounter = 0;
 
-    private int getLocal(String name){
-        for(int i = locals.size() -1; i > 0; i--){
+    protected int getLocal(String name){
+        for(int i = locals.size()-1; i >= 0; i--){
             var c = locals.get(i);
             if(c.getValue0().equals(name)){
                 return i;
@@ -38,11 +38,11 @@ public class CodeGenerator extends DepthFirstAdapter {
         return -1;
     }
 
-    private int addLocal(String name){
+    protected int addLocal(String name){
         locals.add(Pair.with(name,scope));
         return locals.size()-1;
     }
-    private void closeScope(){
+    protected void closeScope(){
         var remove = new ArrayList<Pair<String,Integer>>();
         for(var l : locals){
             if(l.getValue1() == scope){
@@ -218,14 +218,79 @@ public class CodeGenerator extends DepthFirstAdapter {
             return null;
     }
 
+    private String operationType(PExpr l, PExpr r) throws SemanticException {
+        var ltype = l.type;
+        var rtype = r.type;
+        String optype;
+        if(ltype.equals(rtype)){
+            optype = ltype;
+        }
+        else if(ltype.equals("null") || rtype.equals("null")){
+            optype = "null";
+        }
+        else {
+            switch (ltype) {
+                case "int":
+                    if (rtype.equals("float")) {
+                        emit("\tswap\n" +
+                                "\ti2f\n" +
+                                "\tswap\n"
+                        );
+                        optype = "float";
+                    }
+                    else if(rtype.equals("string")){
+                        emit("\tswap\n"+
+                                "\tinvokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n"+
+                                "\tswap\n"
+                        );
+                        optype = "string";
+                    }
+                    else {
+                        throw new SemanticException(r, "An unknown error occurred");
+                    }
+                    break;
+                case "float":
+                    if (rtype.equals("int")) {
+                        emit("\ti2f\n");
+                    }
+                    else if(rtype.equals("string")){
+                        emit("\tswap\n"+
+                                "\tinvokestatic java/lang/String/valueOf(F)Ljava/lang/String;\n"+
+                                "\tswap\n"
+                        );
+                        optype = "string";
+                    }
+                    else {
+                        throw new SemanticException(r, "An unknown error occurred");
+                    }
+                    optype = "float";
+                    break;
+                case "string":
+                    if(rtype.equals("int")){
+                        emit("\tinvokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n");
+                    }
+                    else if(rtype.equals("float")) {
+                        emit("\tinvokestatic java/lang/String/valueOf(F)Ljava/lang/String;\n");
+                    }
+                    else{
+                        throw new SemanticException(r, "An unknown error occurred");
+                    }
+                    optype = "string";
+                default:
+                    throw new SemanticException(r, "An unknown error occurred");
+            }
+        }
+        return optype;
+    }
+
     @Override
     public void inAProg(AProg node) {
         String s = ".class " + name + "\n"
                 + ".super java/lang/Object\n"
                 + ".method public <init>()V\n"
-                    + "aload_0\n"
-                    + "invokeonvirtual java/lang/Object/<init>()V\n"
-                    + "return\n"
+                    + "\taload_0\n"
+                    + "\tinvokeonvirtual java/lang/Object/<init>()V\n"
+                    + "\treturn\n"
                 + ".end method\n\n";
         emit(name,s);
         files.put("player","");
@@ -259,6 +324,8 @@ public class CodeGenerator extends DepthFirstAdapter {
         // main end
         emit(name,".end method\n\n");
         mg.current = name;
+        mg.locals = locals;
+        mg.scope = scope;
         mg.SetStatic(true);
         for(PMethodDcl s : node.getMethods()){
             s.apply(mg);
@@ -301,9 +368,9 @@ public class CodeGenerator extends DepthFirstAdapter {
                 case "int":
                     if (!rtype.equals("int")) {
                         if (rtype.equals("float")) {
-                            emit("swap\n" +
-                                    "i2f\n" +
-                                    "swap\n"
+                            emit("\tswap\n" +
+                                    "\ti2f\n" +
+                                    "\tswap\n"
                             );
                             restype = "float";
                         } else if (rtype.equals("string")) {
@@ -318,7 +385,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                 case "float":
                     if (!rtype.equals("float")) {
                         if (rtype.equals("int")) {
-                            emit("i2f\n");
+                            emit("\ti2f\n");
                             restype = "float";
                         } else if (rtype.equals("string")) {
                             restype = "fstring";
@@ -349,36 +416,36 @@ public class CodeGenerator extends DepthFirstAdapter {
                 case "+=":
                     switch(restype){
                         case "int":
-                            emit("iadd\n");
+                            emit("\tiadd\n");
                             break;
                         case "float":
-                            emit("fadd\n");
+                            emit("\tfadd\n");
                             break;
                         case "string":
-                            emit("invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n");
+                            emit("\tinvokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n");
                             break;
                         case "istring":
-                            emit("swap\n"+
-                                    "invokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n"+
-                                    "swap"+
-                                    "invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
+                            emit("\tswap\n"+
+                                    "\tinvokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n"+
+                                    "\tswap\n"+
+                                    "\tinvokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
                             );
                             break;
                         case "fstring":
-                            emit("swap\n"+
-                                    "invokestatic java/lang/String/valueOf(F)Ljava/lang/String;\n"+
-                                    "swap"+
-                                    "invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
+                            emit("\tswap\n"+
+                                    "\tinvokestatic java/lang/String/valueOf(F)Ljava/lang/String;\n"+
+                                    "\tswap"+
+                                    "\tinvokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
                             );
                             break;
                         case "stringi":
-                            emit("invokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n"+
-                                    "invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
+                            emit("\tinvokestatic java/lang/String/valueOf(I)Ljava/lang/String;\n"+
+                                    "\tinvokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
                             );
                             break;
                         case "stringf":
-                            emit("invokestatic java/lang/String/valueOf(F)Ljava/lang/String;\n"+
-                                    "invokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
+                            emit("\tinvokestatic java/lang/String/valueOf(F)Ljava/lang/String;\n"+
+                                    "\tinvokevirtual java/lang/String/concat(Ljava/lang/String;)Ljava/lang/String;\n"
                             );
                             break;
                         default:
@@ -388,10 +455,10 @@ public class CodeGenerator extends DepthFirstAdapter {
                 case "-=":
                     switch(restype){
                         case "int":
-                            emit("isub\n");
+                            emit("\tisub\n");
                             break;
                         case "float":
-                            emit("fsub\n");
+                            emit("\tfsub\n");
                             break;
                         default:
                             throw new SemanticException(node, "An unknown error occurred");
@@ -400,10 +467,10 @@ public class CodeGenerator extends DepthFirstAdapter {
                 case "*=":
                     switch(restype){
                         case "int":
-                            emit("imul\n");
+                            emit("\timul\n");
                             break;
                         case "float":
-                            emit("fmul\n");
+                            emit("\tfmul\n");
                             break;
                         default:
                             throw new SemanticException(node, "An unknown error occurred");
@@ -412,10 +479,10 @@ public class CodeGenerator extends DepthFirstAdapter {
                 case "/=":
                     switch(restype){
                         case "int":
-                            emit("idiv\n");
+                            emit("\tidiv\n");
                             break;
                         case "float":
-                            emit("fdiv\n");
+                            emit("\tfdiv\n");
                             break;
                         default:
                             throw new SemanticException(node, "An unknown error occurred");
@@ -423,31 +490,31 @@ public class CodeGenerator extends DepthFirstAdapter {
                     break;
                 case "%=":
                     if(restype.equals("int")){
-                        emit("irem\n");
+                        emit("\tirem\n");
                     }
                     else{
                         throw new SemanticException(node, "An unknown error occurred");
                     }
                     break;
                 case "&=":
-                    emit("iadd\n"+
-                            "iconst_2\n"+
-                            "isub\n"+
-                            "ifeq true" + ++labelcounter + "\n" +
-                            "iconst_0\n" +
-                            "goto done" + labelcounter +"\n"+
+                    emit("\tiadd\n"+
+                            "\ticonst_2\n"+
+                            "\tisub\n"+
+                            "\tifeq true" + ++labelcounter + "\n" +
+                            "\ticonst_0\n" +
+                            "\tgoto done" + labelcounter +"\n"+
                             "true" + labelcounter + ":\n"+
-                            "iconst_1\n"+
+                            "\ticonst_1\n"+
                             "done" + labelcounter+":\n"
                     );
                     break;
                 case "|=":
-                    emit("iadd\n"+
-                            "ifgt true" + ++labelcounter + "\n"+
-                            "iconst_0\n"+
-                            "goto done" + labelcounter + "\n" +
+                    emit("\tiadd\n"+
+                            "\tifgt true" + ++labelcounter + "\n"+
+                            "\ticonst_0\n"+
+                            "\tgoto done" + labelcounter + "\n" +
                             "true" + labelcounter + ":\n"+
-                            "iconst_1\n"+
+                            "\ticonst_1\n"+
                             "done" + labelcounter + ":\n"
                     );
                     break;
@@ -459,7 +526,7 @@ public class CodeGenerator extends DepthFirstAdapter {
             // Field
             LHSVisitor(node.getVar());
             node.getExpr().apply(this);
-            emit("putfield ");
+            emit("\tputfield ");
             var v = ((AVal) node.getVar()).getCallField().get(size-2);
             emit(extractType(v)+"/");
 
@@ -480,7 +547,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         else{
             // local variable
             node.getExpr().apply(this);
-            emit(extractPrefix(node.getExpr().type));
+            emit("\t" + extractPrefix(node.getExpr().type));
             emit("store ");
             // Get variable number
             LHSVisitor(node.getVar());
@@ -498,18 +565,18 @@ public class CodeGenerator extends DepthFirstAdapter {
                 boolean instance = st.retrieveSymbol(((AMethodDcl) dcl).getName().getText().trim())==null;
                 if(instance){
                     // get object reference
-                    emit("aload 0\n");
+                    emit("\taload 0\n");
                 }
                 for(PExpr e : ((ACallCallField) first).getParams()){
                     e.apply(this);
                 }
                 if(instance){
                     // instance method
-                    emit("invokevirtual ");
+                    emit("\tinvokevirtual ");
                 }
                 else{
                     // static method
-                    emit("invokestatic ");
+                    emit("\tinvokestatic ");
 
                 }
                 emit(current + "/" + ((AMethodDcl) dcl).getName().getText() + "(");
@@ -522,12 +589,12 @@ public class CodeGenerator extends DepthFirstAdapter {
             }
             else if(dcl instanceof AConstruct){
                 String type = ((AConstruct) dcl).getName().getText().trim();
-                emit("new " + type + "\n"+
-                        "dup\n");
+                emit("\tnew " + type + "\n"+
+                        "\tdup\n");
                 for(PExpr e : ((ACallCallField) first).getParams()){
                     e.apply(this);
                 }
-                emit("invokespecial " + type + "/<init(");
+                emit("\tinvokespecial " + type + "/<init(");
                 for(PParamDcl p : ((AConstruct) dcl).getParams()){
                     ((AParamDcl)p).getType().apply(this);
                 }
@@ -555,14 +622,14 @@ public class CodeGenerator extends DepthFirstAdapter {
                 type = extractType(((AParamDcl) dcl).getType());
             }
             else if(node.type.equals("null")){
-                emit("aconst_null\n");
+                emit("\taconst_null\n");
             }
             else {
                 throw new SemanticException(node,"An unknown error occurred");
             }
             if(type != null) {
-                emit(extractPrefix(type) + "load " +
-                        getLocal(((AFieldCallField) first).getId().getText().trim()));
+                emit("\t" + extractPrefix(type) + "load " +
+                        getLocal(((AFieldCallField) first).getId().getText().trim()) + "\n");
             }
         }
         for(int i = 1; i < cfList.size(); i++){
@@ -582,26 +649,26 @@ public class CodeGenerator extends DepthFirstAdapter {
                 String type = extractType(node.getType());
                 switch(type){
                     case "I": case "Z":
-                        emit("iconst_0\n");
+                        emit("\ticonst_0\n");
                         break;
                     case "F":
-                        emit("fconst_0\n");
+                        emit("\tfconst_0\n");
                         break;
                     case "java/lang/String":
-                        emit("ldc \"\"\n");
+                        emit("\tldc \"\"\n");
                         break;
                     case "java/util/LinkedList":
-                        emit("new java/util/LinkedList\n"+
-                                "dup\n" +
-                                "invokespecial java/util/LinkedList/<init>()V\n");
+                        emit("\tnew java/util/LinkedList\n"+
+                                "\tdup\n" +
+                                "\tinvokespecial java/util/LinkedList/<init>()V\n");
                         break;
                     default :
-                        emit("new " + type + "\n");
+                        emit("\tnew " + type + "\n");
                         break;
                 }
             }
 
-            emit(extractPrefix(node.getType()) + "store " +
+            emit("\t" +extractPrefix(node.getType()) + "store " +
                     addLocal(((ASingleDcl)s).getId().getText().trim()) + "\n");
         }
     }
@@ -612,14 +679,14 @@ public class CodeGenerator extends DepthFirstAdapter {
         node.getPredicate().apply(this);
         // jump if true
         var truelbl = ++labelcounter;
-        emit("ifgt true"+ truelbl + "\n");
+        emit("\tifgt true"+ truelbl + "\n");
         var elseifs = node.getElseifs();
         int[] elselbl = new int[elseifs.size()];
 
         for(int i = 0; i < elseifs.size(); i++){
             elselbl[i] = ++labelcounter;
             ((AElseIf)elseifs.get(i)).getPredicate().apply(this);
-            emit("ifgt else" + labelcounter + "\n");
+            emit("\tifgt else" + labelcounter + "\n");
         }
 
         scope++;
@@ -627,7 +694,7 @@ public class CodeGenerator extends DepthFirstAdapter {
             s.apply(this);
         }
         closeScope();
-        emit("goto done" + ++labelcounter +"\n");
+        emit("\tgoto done" + truelbl +"\n");
 
         scope++;
         emit("true" + truelbl + ":\n");
@@ -635,7 +702,7 @@ public class CodeGenerator extends DepthFirstAdapter {
             s.apply(this);
         }
         closeScope();
-        emit("goto done" + labelcounter + "\n");
+        emit("\tgoto done" + truelbl + "\n");
 
         for(int i = 0; i < elseifs.size(); i++){
             scope++;
@@ -644,10 +711,10 @@ public class CodeGenerator extends DepthFirstAdapter {
                 s.apply(this);
             }
             closeScope();
-            emit("goto done" + labelcounter + "\n");
+            emit("\tgoto done" + truelbl + "\n");
         }
 
-        emit("done" + labelcounter + ":\n");
+        emit("done" + truelbl + ":\n");
 
 
 
@@ -662,51 +729,53 @@ public class CodeGenerator extends DepthFirstAdapter {
     public void caseAForStmt(AForStmt node) throws TypeException, SemanticException {
         scope++;
         node.getInit().apply(this);
-        String loopLbl = "loop" + ++labelcounter;
-        emit(loopLbl + ":\n" );
+        int loopLbl =  ++labelcounter;
+        emit("loop" +loopLbl + ":\n" );
         node.getPredicate().apply(this);
-        emit("ifeq done" + labelcounter + "\n");
+        emit("\tifeq done" + loopLbl + "\n");
         for(PStmt s : node.getThen()){
             s.apply(this);
         }
         node.getUpdate().apply(this);
-        emit("goto " + loopLbl + "\n");
-        emit("done" + labelcounter + ":\n");
+        emit("\tgoto " + "loop" + loopLbl + "\n");
+        emit("done" + loopLbl + ":\n");
         closeScope();
     }
 
     @Override
     public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException {
         scope++;
-        String loopLbl = "loop" + ++labelcounter;
-        emit(loopLbl + ":\n");
+        int loopLbl = ++labelcounter;
+        emit("loop" + loopLbl + ":\n");
         node.getPredicate().apply(this);
-        emit("ifeq done" + labelcounter + "\n");
+        emit("\tifeq done" + loopLbl + "\n");
         for(PStmt s : node.getThen()){
             s.apply(this);
         }
-        emit("goto " + loopLbl + "\n");
-        emit("done" + labelcounter + ":\n");
+        emit("\tgoto " + loopLbl + "\n");
+        emit("done" + loopLbl + ":\n");
         closeScope();
     }
 
     @Override
     public void caseAForeachStmt(AForeachStmt node) throws TypeException, SemanticException {
         scope++;
+        addLocal(node.getId().getText().trim());
         // initialise iteration variable
-        emit("iconst_0\n" +
-                "loop"+ ++labelcounter + ":\n" +
-                "dup\n");
+        int loopLbl = ++labelcounter;
+        emit("\ticonst_0\n" +
+                "loop"+ loopLbl + ":\n" +
+                "\tdup\n");
         // get list reference
         node.getList().apply(this);
         // retrieve item from list
-        emit("dup2\n" +
-                "invokevirtual java/util/LinkedList/size()I\n" +
-                "isub\n" +
-                "ifgt done" + labelcounter + "\n" +
-                "swap\n" +
-                "invokevirtual java/util/LinkedList/get(I)Ljava/lang/Object;\n"+
-                "checkcast "
+        emit("\tdup2\n" +
+                "\tinvokevirtual java/util/LinkedList/size()I\n" +
+                "\tisub\n" +
+                "\tifgt done" + loopLbl + "\n" +
+                "\tswap\n" +
+                "\tinvokevirtual java/util/LinkedList/get(I)Ljava/lang/Object;\n"+
+                "\tcheckcast "
                 );
         // retrieve list type
         var listType = node.getList().type.split(" ");
@@ -714,25 +783,25 @@ public class CodeGenerator extends DepthFirstAdapter {
         switch(listType[2]){
             case "int":
                 emit("java/lang/Integer\n"+
-                        "invokevirtual java/lang/Integer/intValue()I" +
-                        "istore");
+                        "\tinvokevirtual java/lang/Integer/intValue()I" +
+                        "\tistore");
                 break;
             case "float":
                 emit("java/lang/Float\n"+
-                        "invokevirtual java/lang/Float/floatValue()F"+
-                        "fstore");
+                        "\tinvokevirtual java/lang/Float/floatValue()F"+
+                        "\tfstore");
                 break;
             case "string":
                 emit("java/lang/String\n"+
-                        "astore");
+                        "\tastore");
                 break;
             case "list":
                 emit("java/util/LinkedList\n"+
-                        "astore");
+                        "\tastore");
                 break;
             default:
                 emit(listType[2] + "\n" +
-                        "astore");
+                        "\tastore");
                 break;
         }
         // get local variable number
@@ -742,21 +811,19 @@ public class CodeGenerator extends DepthFirstAdapter {
         for(PStmt s : node.getThen()){
             s.apply(this);
         }
-
         // increment iteration variable
-        emit("iconst_1\n" +
-                "iadd\n");
+        emit("\ticonst_1\n" +
+                "\tiadd\n");
         //jump to loop start and done label
-        emit("goto loop" + labelcounter + "\n" +
-                "done" + labelcounter +":\n");
-
+        emit("\tgoto loop" + loopLbl + "\n" +
+                "done" + loopLbl +":\n");
         closeScope();
     }
 
     @Override
     public void caseAReturnStmt(AReturnStmt node) throws TypeException, SemanticException {
         node.getExpr().apply(this);
-        emit(extractPrefix(node.getExpr().type)+ "return\n");
+        emit("\t" + extractPrefix(node.getExpr().type)+ "return\n");
     }
 
     @Override
@@ -770,24 +837,24 @@ public class CodeGenerator extends DepthFirstAdapter {
         // Compare to each case
         for(PCase c : caseList){
             if(c instanceof ACaseCase){
-                emit("dup\n");
+                emit("\tdup\n");
                 ((ACaseCase) c).getCase().apply(this);
                 switch(type){
                     case "int":
-                        emit("isub\n");
+                        emit("\tisub\n");
                         break;
                     case "float":
-                        emit("fsub\n"+
-                                "f2i\n");
+                        emit("\tfsub\n"+
+                                "\tf2i\n");
                         break;
                     case "string":
-                        emit("invokevirtual java/lang/String/equals(Ljava/lang/Object)Z\n"+
-                                "iconst_1\n"+
-                                "isub\n");
+                        emit("\tinvokevirtual java/lang/String/equals(Ljava/lang/Object)Z\n"+
+                                "\ticonst_1\n"+
+                                "\tisub\n");
                     default:
                         throw new SemanticException(node,"An unknown error occured");
                 }
-                emit("ifeq case" + ++ labelcounter + "\n");
+                emit("\tifeq case" + ++ labelcounter + "\n");
             }
             // save default case to end
             else if(c instanceof ADefaultCase){
@@ -801,7 +868,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         for(PStmt s : def.getThen()){
             s.apply(this);
         }
-        emit("goto done" + labelOffset + "\n");
+        emit("\tgoto done" + labelOffset + "\n");
         // emit each case body
         for(int i = 0; i < caseList.size(); i++){
             PCase c = caseList.get(i);
@@ -811,7 +878,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                 for(PStmt s : ((ACaseCase)c).getThen()){
                     s.apply(this);
                 }
-                emit("goto done" + labelOffset + "\n");
+                emit("\tgoto done" + labelOffset + "\n");
                 closeScope();
             }
         }
@@ -819,5 +886,296 @@ public class CodeGenerator extends DepthFirstAdapter {
         emit("done" + labelOffset + ":\n");
     }
 
+    @Override
+    public void caseARelationExpr(ARelationExpr node) throws TypeException, SemanticException {
+        node.getL().apply(this);
+        node.getR().apply(this);
+        String optype = operationType(node.getL(),node.getR());
+        var op = node.getOperator().getText().trim();
+        if(optype.equals("int")){
+            switch(op){
+                case "<":
+                    emit("\tif_icmplt ");
+                    break;
+                case ">":
+                    emit("\tif_icmpgt ");
+                    break;
+                case "<=":
+                    emit("\tif_icmple ");
+                    break;
+                case ">=":
+                    emit("\tif_icmpge ");
+                    break;
+                default:
+                    throw new SemanticException(node,"An unknown error occurred");
+            }
+        }
+        else if(optype.equals("float")) {
+            emit("\tfcmpg\n");
+            switch(op){
+                case "<":
+                    emit("\tiflt ");
+                    break;
+                case "<=":
+                    emit("\tifle ");
+                    break;
+                case ">":
+                    emit("\tifgt ");
+                    break;
+                case ">=":
+                    emit("\tifge ");
+                default :
+                    throw new SemanticException(node,"An unknown error occurred");
+            }
+        }
+        else{
+            throw new SemanticException(node,"An unknown error occurred");
+        }
+        emit("true" + ++labelcounter + "\n"+
+                "\ticonst_0\n"+
+                "\tgoto done" + labelcounter + "\n" +
+                "true" + labelcounter + ":\n"+
+                "\ticonst_1\n"+
+                "done" + labelcounter + ":\n"
+        );
+    }
 
+    @Override
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException, SemanticException {
+        node.getL().apply(this);
+        node.getR().apply(this);
+        var op = node.getOperator().getText().trim();
+        String optype = operationType(node.getL(),node.getR());
+        switch (optype) {
+            case "string":
+                emit("\tinvokevirtual java/lang/String/equals(Ljava/lang/Object;)Z\n");
+                if (op.equals("!=")) {
+                    emit("\ticonst_1\n" +
+                            "\tisub\n" +
+                            "\tifeq done" + ++labelcounter + "\n" +
+                            "\tineg\n" +
+                            "done" + labelcounter + ":\n"
+                    );
+                } else if (!op.equals("==")) {
+                    throw new SemanticException(node, "An unknown error occurred");
+                }
+                break;
+            case "int":
+            case "bool":
+                if (op.equals("==")) {
+                    emit("\tif_icmpeq ");
+                } else if (op.equals("!=")) {
+                    emit("\tif_icmpne ");
+                } else {
+                    throw new SemanticException(node, "An unknown error occurred");
+                }
+                emit("true" + ++labelcounter + "\n" +
+                        "\ticonst_0\n" +
+                        "\tgoto done" + labelcounter + "\n" +
+                        "true" + labelcounter + ":\n" +
+                        "\ticonst_1\n" +
+                        "done" + labelcounter + ":\n"
+                );
+                break;
+            case "float":
+                emit("\tfcmpg\n");
+                if (op.equals("==")) {
+                    emit("\tifeq ");
+                } else if (op.equals("!=")) {
+                    emit("\tifne ");
+                } else {
+                    throw new SemanticException(node, "An unknown error occurred");
+                }
+                emit("true" + ++labelcounter + "\n" +
+                        "\ticonst_0\n" +
+                        "\tgoto done" + labelcounter + "\n" +
+                        "true" + labelcounter + ":\n" +
+                        "\ticonst_1\n" +
+                        "done" + labelcounter + ":\n"
+                );
+                break;
+            default:
+                if(op.equals("==")){
+                    emit("\tif_acmpeq ");
+                }
+                else if(op.equals("!=")){
+                    emit("\tif_acmpne ");
+                }
+                else{
+                    throw new SemanticException(node, "An unknown error occurred");
+                }
+                emit("true" + ++labelcounter + "\n" +
+                        "\ticonst_0\n" +
+                        "\tgoto done" + labelcounter + "\n" +
+                        "true" + labelcounter + ":\n" +
+                        "\ticonst_1\n" +
+                        "done" + labelcounter + ":\n"
+                );
+                break;
+        }
+    }
+
+    @Override
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException, SemanticException {
+        node.getL().apply(this);
+        node.getR().apply(this);
+        var op = node.getOperator().getText().trim();
+        var optype = operationType(node.getL(),node.getR());
+        if(optype.equals("int") || optype.equals("float")) {
+            switch (op) {
+                case "*":
+                    emit("\t" +extractPrefix(optype) + "mul\n");
+                    break;
+                case "/":
+                    emit("\t" +extractPrefix(optype) + "div\n");
+                    break;
+                case "%":
+                    if (optype.equals("int")) {
+                        emit("\tirem\n");
+                    } else {
+                        throw new SemanticException(node, "An unknown error occurred");
+                    }
+                default:
+                    throw new SemanticException(node, "An unknown error occurred");
+            }
+        }
+        else{
+            throw new SemanticException(node,"An unknown error occurred");
+        }
+    }
+
+    @Override
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException, SemanticException {
+        node.getL().apply(this);
+        node.getR().apply(this);
+        var op = node.getOperator().getText().trim();
+        var optype = operationType(node.getL(),node.getR());
+        if(optype.equals("bool")){
+            emit("\tiadd\n");
+            if(op.equals("&")){
+                emit("\ticonst_2\n"+
+                        "\tif_icmpeq true" + ++labelcounter + "\n"+
+                        "\ticonst_0\n"+
+                        "\tgoto done" + labelcounter + "\n"+
+                        "true" + labelcounter + ":\n"+
+                        "\ticonst_1\n"+
+                        "done" + labelcounter + ":\n"
+                );
+            }
+            else if(!op.equals("|")){
+                throw new SemanticException(node,"An unknown error occurred");
+            }
+        }
+        else{
+            throw new SemanticException(node,"An unknown error occurred");
+        }
+    }
+
+    @Override
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException, SemanticException {
+        node.getL().apply(this);
+        node.getR().apply(this);
+        var op = node.getOperator().getText().trim();
+        var optype = operationType(node.getL(),node.getR());
+        switch(op){
+            case "+":
+                if(optype.equals("string")){
+                    emit("\tinvokevirtual java/lang/Strig/concat(Ljava/lang/String;)Ljava/lang/String;\n");
+                }
+                else{
+                    emit("\t" +extractPrefix(optype) + "add\n");
+                }
+                break;
+            case "-":
+                emit("\t" +extractPrefix(optype) + "sub\n");
+                break;
+            default:
+                throw new SemanticException(node, "An unknown error occurred");
+        }
+
+    }
+
+    @Override
+    public void caseAValueExpr(AValueExpr node) throws TypeException, SemanticException {
+        node.getVal().apply(this);
+    }
+
+    @Override
+    public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
+        emit("\tnew java/util/LinkedList\n"+
+                "\tdup\n"+
+                "\tinvokespecial java/util/LinkedList/<init>()V\n"
+        );
+        for(PExpr e : node.getElements()){
+            emit("\tdup\n");
+            e.apply(this);
+            switch(e.type){
+                case "int":
+                    emit("\tnew java/lang/Integer\n"+
+                            "\tdup_x1\n"+
+                            "\tswap\n"+
+                            "\tinvokespecial java/lang/Integer/<init>(I)V\n"+
+                            "\tinvokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z\n" +
+                            "\tpop\n"
+                    );
+                    break;
+                case "float":
+                    emit("\tnew java/lang/Float\n"+
+                            "\tdup_x1\n"+
+                            "\tswap\n"+
+                            "\tinvokespecial java/lang/Float/<init>(F)V\n"+
+                            "\tinvokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z\n" +
+                            "\tpop\n"
+                    );
+                    break;
+                default:
+                    emit("\tinvokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z\n" +
+                            "\tpop\n"
+                    );
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException, SemanticException {
+        node.getValue().apply(this);
+    }
+
+    @Override
+    public void caseAStringLiteral(AStringLiteral node) {
+        emit("\tldc " + node.getValue().getText() + "\n");
+    }
+
+    @Override
+    public void caseAIntLiteral(AIntLiteral node) {
+        emit("\tldc " + node.getValue().getText() + "\n");
+    }
+
+    @Override
+    public void caseAFloatLiteral(AFloatLiteral node) {
+        emit("\tldc " + node.getValue().getText() + "\n");
+    }
+
+    @Override
+    public void caseABoolLiteral(ABoolLiteral node) throws SemanticException {
+        var val = node.getValue().getText();
+        String con;
+        if(val.equals("true")){
+            con = "iconst_1";
+        }
+        else if(val.equals("false")){
+            con = "iconst_0";
+        }
+        else{
+            throw new SemanticException(node, "An unknown error occurred");
+        }
+        emit("\t"+con + " \n");
+
+    }
+
+    @Override
+    public void caseAParamDcl(AParamDcl node) throws TypeException, SemanticException {
+        addLocal(node.getName().getText().trim());
+    }
 }
