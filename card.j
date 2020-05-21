@@ -17,13 +17,13 @@
 .limit stack 3
 .limit locals 2
 	aload 1
-	getfield player/hand Ljava/util/LinkedList;
+	getfield player/hand LList;
 	aload 0
-	invokevirtual java/util/LinkedList/remove(Lplayer;)V
+	invokevirtual List/remove(Lplayer;)V
 	aload 2
-	getfield player/hand Ljava/util/LinkedList;
+	getfield player/hand LList;
 	aload 0
-	invokevirtual java/util/LinkedList/add(Lplayer;)V
+	invokevirtual List/add(Lplayer;)V
 	return
 .end method
 

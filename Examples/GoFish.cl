@@ -22,6 +22,8 @@ Setup{
             MessageAll("You need at least 2 players to play");
             Players = InitPlayers();
         }
+        List typeof int nums = {1;2;3;};
+        int n = nums.index(2);
         //Sæt start spiller
         current = find("Adrian", Players);
         for p in Players {

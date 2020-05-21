@@ -170,6 +170,12 @@ public class CodeGenerator extends DepthFirstAdapter {
                 return "Z";
             case "void":
                 return "V";
+            case "element":
+                if(type){
+                    return "Ljava/lang/Object;";
+                }
+                return "java/lang/Object";
+
             default:
                 if(type)
                     return "L"+s+";";
@@ -203,7 +209,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     }
     private String extractClass(PType node){
         if(node instanceof AListType){
-            return "java/util/LinkedList";
+            return "List";
         }
         else if (node instanceof AVarType){
             return ((AVarType) node).getType().getText().trim();
@@ -403,11 +409,22 @@ public class CodeGenerator extends DepthFirstAdapter {
         mg.locals = locals;
         mg.scope = scope;
         mg.SetStatic(true);
+        mg.setMove(false);
         for(PMethodDcl s : node.getMethods()){
             s.apply(mg);
         }
+        mg.setMove(true);
         for(PMethodDcl s : node.getMoves()){
             s.apply(mg);
+        }
+        for(Start s : node.includes){
+            for(PMethodDcl m : ((AProg)s.getPProg()).getMoves()){
+                m.apply(mg);
+            }
+            mg.setMove(false);
+            for(PMethodDcl m : ((AProg)s.getPProg()).getMethods()){
+                m.apply(mg);
+            }
         }
     }
 
@@ -425,7 +442,7 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     @Override
     public void caseAListType(AListType node) {
-        emit("Ljava/util/LinkedList;");
+        emit("LList;");
     }
 
     @Override
@@ -700,9 +717,14 @@ public class CodeGenerator extends DepthFirstAdapter {
             else {
                 String type = extractDclType(dcl);
                 if (type != null) {
-                    emit("\t" + extractPrefix(type) + "load " +
-                            getLocal(((AFieldCallField) first).getId().getText().trim()) + "\n");
-                    typeOnStack = type;
+                    var localnr = getLocal(((AFieldCallField) first).getId().getText().trim());
+                    if(localnr == -1){
+                        emit("\tgetstatic " + current + "/" + Fname + " L" + typeOnStack + ";\n");
+                    }
+                    else {
+                        emit("\t" + extractPrefix(type) + "load " + localnr + "\n");
+                        typeOnStack = type;
+                    }
                 } else if (first.type.equals("null")) {
                     emit("\taconst_null\n");
                 } else {
@@ -731,10 +753,10 @@ public class CodeGenerator extends DepthFirstAdapter {
                     case "java/lang/String":
                         emit("\tldc \"\"\n");
                         break;
-                    case "java/util/LinkedList":
-                        emit("\tnew java/util/LinkedList\n"+
+                    case "List":
+                        emit("\tnew List\n"+
                                 "\tdup\n" +
-                                "\tinvokespecial java/util/LinkedList/<init>()V\n");
+                                "\tinvokespecial List/<init>()V\n");
                         break;
                     default :
                         emit("\tnew " + type + "\n");
@@ -853,11 +875,11 @@ public class CodeGenerator extends DepthFirstAdapter {
         node.getList().apply(this);
         // retrieve item from list
         emit("\tdup2\n" +
-                "\tinvokevirtual java/util/LinkedList/size()I\n" +
+                "\tgetfield List/length I\n" +
                 "\tisub\n" +
                 "\tifgt done" + loopLbl + "\n" +
                 "\tswap\n" +
-                "\tinvokevirtual java/util/LinkedList/get(I)Ljava/lang/Object;\n"+
+                "\tinvokevirtual List/index(I)Ljava/lang/Object;\n"+
                 "\tcheckcast "
                 );
         // retrieve list type
@@ -879,7 +901,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                         "\tastore");
                 break;
             case "list":
-                emit("java/util/LinkedList\n"+
+                emit("List\n"+
                         "\tastore");
                 break;
             default:
@@ -934,6 +956,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                         emit("\tinvokevirtual java/lang/String/equals(Ljava/lang/Object)Z\n"+
                                 "\ticonst_1\n"+
                                 "\tisub\n");
+                        break;
                     default:
                         throw new SemanticException(node,"An unknown error occured");
                 }
@@ -1185,9 +1208,9 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     @Override
     public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
-        emit("\tnew java/util/LinkedList\n"+
+        emit("\tnew List\n"+
                 "\tdup\n"+
-                "\tinvokespecial java/util/LinkedList/<init>()V\n"
+                "\tinvokespecial List/<init>()V\n"
         );
         for(PExpr e : node.getElements()){
             emit("\tdup\n");
@@ -1198,8 +1221,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                             "\tdup_x1\n"+
                             "\tswap\n"+
                             "\tinvokespecial java/lang/Integer/<init>(I)V\n"+
-                            "\tinvokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z\n" +
-                            "\tpop\n"
+                            "\tinvokevirtual List/add(Ljava/lang/Object;)V\n"
                     );
                     break;
                 case "float":
@@ -1207,14 +1229,11 @@ public class CodeGenerator extends DepthFirstAdapter {
                             "\tdup_x1\n"+
                             "\tswap\n"+
                             "\tinvokespecial java/lang/Float/<init>(F)V\n"+
-                            "\tinvokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z\n" +
-                            "\tpop\n"
+                            "\tinvokevirtual List/add(Ljava/lang/Object;)V\n"
                     );
                     break;
                 default:
-                    emit("\tinvokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z\n" +
-                            "\tpop\n"
-                    );
+                    emit("\tinvokevirtual List/add(Ljava/lang/Object;)V\n");
                     break;
             }
         }
