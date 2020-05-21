@@ -266,7 +266,16 @@ public class TypeChecker extends DepthFirstAdapter {
     @Override
     public void caseAVal(AVal node) throws TypeException, SemanticException {
         // Check children
-        node.getCallField().getLast().apply(this);
+        var cfs = node.getCallField();
+        cfs.getFirst().apply(this);
+        for(int i = 1; i < cfs.size() ; i++ ){
+            var c = cfs.get(i);
+            c.apply(this);
+            if(c.type.endsWith("element")){
+                var element = cfs.get(i-1).type.split(" ");
+                c.type = c.type.replace("element",element[element.length-1]);
+            }
+        }
         // Node type = type of last element in call sequence
         node.type = node.getCallField().getLast().type;
     }
@@ -533,14 +542,20 @@ public class TypeChecker extends DepthFirstAdapter {
 
         if (expr != null){
             expr.apply(this);
+            var parentType = ((ADclStmt)node.parent()).getType();
+            String pType = "";
+            if (parentType instanceof AListType){
+                pType = "list of ";
+            }
+            pType += parentType.toString().trim();
             if(expr instanceof AListExpr){
                 for (PExpr p : ((AListExpr) expr).getElements()){
-                    if(p.type.equals(st.retrieveSymbol(node.getId().getText()).getType())){
+                    if(!parentType.toString().trim().equals(p.type)) {
                         throw new TypeException(node.getId(), "Variable type does not match the expression type");
                     }
                 }
             }
-            else if(!st.retrieveSymbol(node.getId().getText()).getType().equals(expr.type)){
+            else if(!pType.equals(expr.type)){
                 throw new TypeException(node.getId(), "Variable type does not match the expression type");
             }
         }

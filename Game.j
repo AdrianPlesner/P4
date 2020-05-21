@@ -73,6 +73,8 @@ done1:
 	getstatic Game/nums LList;
 	ldc 2
 	invokevirtual List/index(I)Ljava/lang/Object;
+	checkcast java/lang/Integer
+	invokevirtual java/lang/Integer/intValue()I
 	putstatic Game/n I
 	ldc "Adrian"
 	getstatic Game/Players LList;
@@ -99,6 +101,20 @@ loop4:
 	iadd
 	goto loop4
 done4:
+.end method
+
+.method public static choosePlayer(LList;)Lplayer;
+.limit stack 1
+.limit locals 1
+	aconst_null
+	areturn
+.end method
+
+.method public static chooseCard(LList;)Lcard;
+.limit stack 1
+.limit locals 1
+	aconst_null
+	areturn
 .end method
 
 .method public static CheckForTrick(Lplayer;)V
@@ -447,6 +463,7 @@ done23:
 	aload 1
 	aload 4
 	invokevirtual List/index(I)Ljava/lang/Object;
+	checkcast java/lang/String
 	aload 3
 	invokespecial card/<init(Ljava/lang/String;I)V
 	astore 5
@@ -497,42 +514,6 @@ done24:
 	areturn
 .end method
 
-.method public static chooseFrom(LList;)Ljava/lang/Object;
-.limit stack 5
-.limit locals 3
-	ldc "Please choose one of the following by typing the number:"
-	invokestatic Game/MessageAll(Ljava/lang/String;)V
-	ldc 0
-	istore 1
-loop26:
-	aload 1
-	aload 0
-	getfield List/length I
-	if_icmplt true27
-	iconst_0
-	goto done27
-true27:
-	iconst_1
-done27:
-	ifeq done26
-	aload 1
-	invokestatic Game/MessageAll(Ljava/lang/String;)V
-	aload 1
-	ldc 1
-	iadd
-	ldc 1
-	istore 1
-	goto loop26
-done26:
-	invokestatic Game/Read()Ljava/lang/String;
-	astore 1
-	aload 0
-	aload 1
-	invokestatic Game/ParseInt(Ljava/lang/String;)I
-	invokevirtual List/index(I)Ljava/lang/Object;
-	areturn
-.end method
-
 .method public static AskAll(Ljava/lang/String;)Ljava/lang/String;
 .limit stack 3
 .limit locals 1
@@ -562,16 +543,16 @@ done26:
 	ldc 1
 	isub
 	istore 2
-loop28:
+loop26:
 	aload 2
 	ldc 0
-	if_icmpge true29
+	if_icmpge true27
 	iconst_0
-	goto done29
-true29:
+	goto done27
+true27:
 	iconst_1
-done29:
-	ifeq done28
+done27:
+	ifeq done26
 	aload 0
 	getfield java/lang/String/length I
 	ldc 1
@@ -587,214 +568,214 @@ done29:
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case30
+	ifeq case28
 	dup
 	ldc "2"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case31
+	ifeq case29
 	dup
 	ldc "3"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case32
+	ifeq case30
 	dup
 	ldc "4"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case33
+	ifeq case31
 	dup
 	ldc "5"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case34
+	ifeq case32
 	dup
 	ldc "6"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case35
+	ifeq case33
 	dup
 	ldc "7"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case36
+	ifeq case34
 	dup
 	ldc "8"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case37
+	ifeq case35
 	dup
 	ldc "9"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case38
+	ifeq case36
 	dup
 	ldc "0"
 	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
 	iconst_1
 	isub
-	ifeq case39
+	ifeq case37
 	ldc 0
 	ireturn
-	goto done30
+	goto done28
+case28:
+	aload 1
+	ldc 1
+	ldc 10
+	aload 3
+	invokestatic Game/Power(II)I
+	imul
+	iadd
+	ldc 1
+	ldc 10
+	aload 3
+	invokestatic Game/Power(II)I
+	imul
+	istore 1
+	goto done28
+case29:
+	aload 1
+	ldc 2
+	ldc 10
+	aload 3
+	invokestatic Game/Power(II)I
+	imul
+	iadd
+	ldc 2
+	ldc 10
+	aload 3
+	invokestatic Game/Power(II)I
+	imul
+	istore 1
+	goto done28
 case30:
 	aload 1
-	ldc 1
+	ldc 3
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	iadd
-	ldc 1
+	ldc 3
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	istore 1
-	goto done30
+	goto done28
 case31:
 	aload 1
-	ldc 2
+	ldc 4
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	iadd
-	ldc 2
+	ldc 4
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	istore 1
-	goto done30
+	goto done28
 case32:
 	aload 1
-	ldc 3
+	ldc 5
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	iadd
-	ldc 3
+	ldc 5
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	istore 1
-	goto done30
+	goto done28
 case33:
 	aload 1
-	ldc 4
+	ldc 6
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	iadd
-	ldc 4
+	ldc 6
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	istore 1
-	goto done30
+	goto done28
 case34:
 	aload 1
-	ldc 5
+	ldc 7
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	iadd
-	ldc 5
+	ldc 7
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	istore 1
-	goto done30
+	goto done28
 case35:
 	aload 1
-	ldc 6
+	ldc 8
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	iadd
-	ldc 6
+	ldc 8
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	istore 1
-	goto done30
+	goto done28
 case36:
 	aload 1
-	ldc 7
+	ldc 9
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	iadd
-	ldc 7
+	ldc 9
 	ldc 10
 	aload 3
 	invokestatic Game/Power(II)I
 	imul
 	istore 1
-	goto done30
+	goto done28
 case37:
 	aload 1
-	ldc 8
-	ldc 10
-	aload 3
-	invokestatic Game/Power(II)I
-	imul
-	iadd
-	ldc 8
-	ldc 10
-	aload 3
-	invokestatic Game/Power(II)I
-	imul
-	istore 1
-	goto done30
-case38:
-	aload 1
-	ldc 9
-	ldc 10
-	aload 3
-	invokestatic Game/Power(II)I
-	imul
-	iadd
-	ldc 9
-	ldc 10
-	aload 3
-	invokestatic Game/Power(II)I
-	imul
-	istore 1
-	goto done30
-case39:
-	aload 1
 	ldc 0
 	iadd
 	ldc 0
 	istore 1
-	goto done30
-done30:
+	goto done28
+done28:
 	aload 2
 	ldc 1
 	isub
 	ldc 1
 	istore 2
-	goto loop28
-done28:
+	goto loop26
+done26:
 	aload 1
 	ireturn
 .end method
@@ -806,25 +787,57 @@ done28:
 	istore 2
 	aload 1
 	ldc 0
-	if_icmpeq true40
+	if_icmpeq true38
 	iconst_0
-	goto done40
-true40:
+	goto done38
+true38:
 	iconst_1
-done40:
-	ifgt true41
+done38:
+	ifgt true39
 	aload 1
 	ldc 0
-	if_icmpgt true43
+	if_icmpgt true41
+	iconst_0
+	goto done41
+true41:
+	iconst_1
+done41:
+	ifgt else41
+	ldc 1
+	istore 2
+	ldc 0
+	istore 3
+loop42:
+	aload 3
+	aload 1
+	if_icmplt true43
 	iconst_0
 	goto done43
 true43:
 	iconst_1
 done43:
-	ifgt else43
-	ldc 1
+	ifeq done42
+	aload 2
+	aload 0
+	idiv
+	aload 0
 	istore 2
-	ldc 0
+	aload 3
+	ldc 1
+	iadd
+	ldc 1
+	istore 3
+	goto loop42
+done42:
+	goto done39
+true39:
+	ldc 1
+	ireturn
+	goto done39
+else40:
+	aload 0
+	istore 2
+	ldc 1
 	istore 3
 loop44:
 	aload 3
@@ -838,7 +851,7 @@ done45:
 	ifeq done44
 	aload 2
 	aload 0
-	idiv
+	imul
 	aload 0
 	istore 2
 	aload 3
@@ -848,40 +861,8 @@ done45:
 	istore 3
 	goto loop44
 done44:
-	goto done41
-true41:
-	ldc 1
-	ireturn
-	goto done41
-else42:
-	aload 0
-	istore 2
-	ldc 1
-	istore 3
-loop46:
-	aload 3
-	aload 1
-	if_icmplt true47
-	iconst_0
-	goto done47
-true47:
-	iconst_1
-done47:
-	ifeq done46
-	aload 2
-	aload 0
-	imul
-	aload 0
-	istore 2
-	aload 3
-	ldc 1
-	iadd
-	ldc 1
-	istore 3
-	goto loop46
-done46:
-	goto done41
-done41:
+	goto done39
+done39:
 	aload 2
 	ireturn
 .end method

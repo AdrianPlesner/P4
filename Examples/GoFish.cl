@@ -56,8 +56,8 @@ Turn{
     bool continue = true;
     player chosen;
     while current.hand.length > 0 & continue {
-        chosen = chooseFrom(Players);
-        continue = ChooseMove(chooseFrom(current.hand),chosen,Deck);
+        chosen = choosePlayer(Players);
+        continue = ChooseMove(chooseCard(current.hand),chosen,Deck);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
@@ -78,6 +78,15 @@ EndCondition{
     return end;
 	// Vinderen(e) er de(n) spiller(e) med flest point
 }
+
+Function choosePlayer(List typeof player l) typeof player{
+    return null;
+}
+
+Function chooseCard(List typeof card l) typeof card{
+    return null;
+}
+
 
 Function CheckForTrick(player p) typeof void{
     List typeof card trick;

@@ -40,18 +40,6 @@ Function GetStdDeck(int jokers) typeof List typeof card {
     return result;
 }
 
-Function chooseFrom(List typeof element l) typeof  element{
-    // print
-    MessageAll("Please choose one of the following by typing the number:");
-    for int i = 0; i < l.length; i+= 1 {
-        MessageAll(i);
-    }
-    // input
-    string s = Read();
-    // return element
-    return l.index(ParseInt(s));
-}
-
 Function AskAll(string s) typeof string{
     MessageAll(s);
     return Read();

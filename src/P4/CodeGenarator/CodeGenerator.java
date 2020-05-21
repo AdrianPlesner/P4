@@ -953,7 +953,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                                 "\tf2i\n");
                         break;
                     case "string":
-                        emit("\tinvokevirtual java/lang/String/equals(Ljava/lang/Object)Z\n"+
+                        emit("\tinvokevirtual java/lang/String/equals(Ljava/lang/Object;)Z\n"+
                                 "\ticonst_1\n"+
                                 "\tisub\n");
                         break;
@@ -1296,6 +1296,27 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
         emit(")" + nextStackType + "\n");
         typeOnStack = nextStackType;
+        if(typeOnStack.contains("java/lang/Object")){
+            emit("\tcheckcast ");
+            switch(node.type){
+                case "int":
+                    emit("java/lang/Integer\n"+
+                            "\tinvokevirtual java/lang/Integer/intValue()I\n"
+                    );
+                    break;
+                case "float":
+                    emit("java/lang/Float\n"+
+                            "\tinvokevirtual java/lang/Float/floatValue()F\n"
+                    );
+                    break;
+                case "string":
+                    emit("java/lang/String\n");
+                    break;
+                default:
+                    emit(node.type + "\n");
+                    break;
+            }
+        }
 
     }
 
