@@ -177,10 +177,12 @@ public class STBuilder extends DepthFirstAdapter {
         }
 
         // Do EndCondition
+        st.openScope();
         var endcon = node.getEndCondition();
         for(PStmt stmt : endcon){
             stmt.apply(this);
         }
+        st.closeScope();
 
         // Check method bodies
         for(PMethodDcl m : node.getMethods()){

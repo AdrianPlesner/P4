@@ -101,6 +101,117 @@ loop4:
 	iadd
 	goto loop4
 done4:
+Turn:
+	iconst_1 
+	putstatic Game/continue Z
+	new player
+loop5:
+	getstatic Game/current Lplayer;
+	getfield player/hand LList;
+	getfield List/length I
+	ldc 0
+	if_icmpgt true6
+	iconst_0
+	goto done6
+true6:
+	iconst_1
+done6:
+	getstatic Game/continue LZ;
+	iadd
+	iconst_2
+	if_icmpeq true7
+	iconst_0
+	goto done7
+true7:
+	iconst_1
+done7:
+	ifeq done5
+	getstatic Game/Players LList;
+	invokestatic Game/choosePlayer(LList;)Lplayer;
+	putstatic Game/chosen Lplayer;
+	getstatic Game/current Lplayer;
+	getfield player/hand LList;
+	invokestatic Game/chooseCard(LList;)Lcard;
+	getstatic Game/chosen Lplayer;
+	getstatic Game/Deck LList;
+	invokestatic Game/ChooseMove(Lcard;Lplayer;)Z
+	putstatic Game/continue Z
+	goto 5
+done5:
+	getstatic Game/current Lplayer;
+	getfield player/hand LList;
+	getstatic Game/Deck LList;
+	ldc 1
+	invokevirtual List/take(I)LList;
+	invokevirtual List/add(Llist of card;)V
+	getstatic Game/chosen Lplayer;
+	putstatic Game/current Lplayer;
+	invokestatic Game/EndConditon()Z
+	ifeq Turn
+.end method
+
+.method public static EndCondition()Z
+	iconst_1 
+	istore 0
+	iconst_0
+loop8:
+	dup
+	getstatic Game/Players LList;
+	dup2
+	getfield List/length I
+	isub
+	ifgt done8
+	swap
+	invokevirtual List/index(I)Ljava/lang/Object;
+	checkcast player
+	astore1
+	aload 1
+	getfield List/hand LList;
+	getfield List/length I
+	ldc 0
+	if_icmpeq true9
+	iconst_0
+	goto done9
+true9:
+	iconst_1
+done9:
+	ifgt true10
+	aload 0
+	iconst_0 
+	iadd
+	iconst_2
+	isub
+	ifeq true11
+	iconst_0
+	goto done11
+true11:
+	iconst_1
+done11:
+	iconst_0 
+	istore 0
+	goto done10
+true10:
+	aload 0
+	iconst_1 
+	iadd
+	iconst_2
+	isub
+	ifeq true12
+	iconst_0
+	goto done12
+true12:
+	iconst_1
+done12:
+	iconst_1 
+	istore 0
+	goto done10
+done10:
+	iconst_1
+	iadd
+	goto loop8
+done8:
+	aload 0
+	ireturn
 .end method
 
 .method public static choosePlayer(LList;)Lplayer;
@@ -389,7 +500,7 @@ done15:
 	invokestatic Game/CheckForTrick(Lplayer;)V
 	aload 1
 	getfield player/hand LList;
-	getfield LList;/length I
+	getfield List/length I
 	ldc 0
 	if_icmpeq true18
 	iconst_0
@@ -565,61 +676,61 @@ done27:
 	invokevirtual java/lang/String/index(V)Ljava/lang/String;
 	dup
 	ldc "1"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case28
 	dup
 	ldc "2"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case29
 	dup
 	ldc "3"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case30
 	dup
 	ldc "4"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case31
 	dup
 	ldc "5"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case32
 	dup
 	ldc "6"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case33
 	dup
 	ldc "7"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case34
 	dup
 	ldc "8"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case35
 	dup
 	ldc "9"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case36
 	dup
 	ldc "0"
-	invokevirtual java/lang/String/equals(Ljava/lang/Object)Z
+	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	iconst_1
 	isub
 	ifeq case37

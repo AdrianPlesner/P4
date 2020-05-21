@@ -402,9 +402,23 @@ public class CodeGenerator extends DepthFirstAdapter {
         node.getSetup().apply(this);
 
         //TODO: turn - endcondition loop
+        emit("Turn:\n");
+        for(PStmt s : node.getTurn()){
+            s.apply(this);
+        }
+        emit("\tinvokestatic " + name + "/EndConditon()Z\n"+
+                "\tifeq Turn\n"
+        );
 
         // main end
-        emit(name,".end method\n\n");
+        emit(".end method\n\n");
+
+        emit(".method public static EndCondition()Z\n");
+        for(PStmt s : node.getEndCondition()){
+            s.apply(this);
+        }
+        emit(".end method\n\n");
+
         mg.current = name;
         mg.locals = locals;
         mg.scope = scope;
@@ -1317,12 +1331,14 @@ public class CodeGenerator extends DepthFirstAdapter {
                     break;
             }
         }
-
     }
 
     @Override
     public void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException {
         var nextStackType = extractDclType(node.getId().declarationNode,true);
+        if(typeOnStack.endsWith(";")){
+            typeOnStack = typeOnStack.substring(1,typeOnStack.length()-1);
+        }
         emit("\tgetfield " + typeOnStack + "/" + node.getId().getText().trim() +
                 " " + nextStackType + "\n");
         typeOnStack = nextStackType;
