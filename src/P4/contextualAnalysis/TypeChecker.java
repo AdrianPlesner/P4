@@ -533,6 +533,16 @@ public class TypeChecker extends DepthFirstAdapter {
 
         if (expr != null){
             expr.apply(this);
+            if(expr instanceof AListExpr){
+                for (PExpr p : ((AListExpr) expr).getElements()){
+                    if(p.type.equals(st.retrieveSymbol(node.getId().getText()).getType())){
+                        throw new TypeException(node.getId(), "Variable type does not match the expression type");
+                    }
+                }
+            }
+            else if(!st.retrieveSymbol(node.getId().getText()).getType().equals(expr.type)){
+                throw new TypeException(node.getId(), "Variable type does not match the expression type");
+            }
         }
 
     }
