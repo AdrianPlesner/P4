@@ -59,6 +59,8 @@ public class CodeGenerator extends DepthFirstAdapter {
     private MethodGenerator mg;
     private SubClassGenerator sg;
 
+    private String typeOnStack ="";
+
     public CodeGenerator(){}
 
     public CodeGenerator(Start ast, SymbolTable st, String n) {
@@ -128,7 +130,8 @@ public class CodeGenerator extends DepthFirstAdapter {
                 emit(""+getLocal(((AFieldCallField)c).getId().getText()));
             }
             else {
-                for (int i = 0; i < cfs.size() - 1; i++) {
+                firstPCallField(cfs.getFirst());
+                for (int i = 1; i < cfs.size() - 1; i++) {
                     cfs.get(i).apply(this);
                 }
             }
@@ -185,15 +188,49 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
         return null;
     }
-    private String extractType(PType node){
+    private String extractType(PType node, boolean type){
         if(node instanceof AListType){
+            if(type)
+                return "L"+"java/util/LinkedList"+";";
             return "java/util/LinkedList";
         }
         else if (node instanceof AVarType){
-            return extractType(((AVarType) node).getType().getText().trim(),false);
+            return extractType(((AVarType) node).getType().getText().trim(),type);
         }
         else
             return null;
+    }
+    private String extractType(PType node){
+        return extractType(node, false);
+    }
+
+    private String extractDclType(Node dcl, boolean type) throws SemanticException {
+        String result;
+        if(dcl == null) {
+            return null;
+        }
+        else {
+            if (dcl instanceof ADclStmt) {
+                result = extractType(((ADclStmt) dcl).getType(), type);
+            } else if (dcl instanceof AForeachStmt) {
+                result = extractType(((AForeachStmt) dcl).getList().toString(),type);
+            } else if (dcl instanceof AParamDcl) {
+                result = extractType(((AParamDcl) dcl).getType());
+            }
+            else if(dcl instanceof AMethodDcl){
+                result = extractType(((AMethodDcl) dcl).getReturntype(),type);
+            }
+            else if(dcl instanceof AConstruct){
+                result = "V";
+            }
+            else{
+                throw new SemanticException(dcl,"An unknown error occurred");
+            }
+            return result;
+        }
+    }
+    private String extractDclType(Node dcl) throws SemanticException {
+        return extractDclType(dcl, false);
     }
 
     private String extractPrefix(String s){
@@ -355,7 +392,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     @Override
     public void caseAAssignStmt(AAssignStmt node) throws TypeException, SemanticException {
         var op = node.getOperation().getText();
-        if(!op.equals("==")){
+        if(!op.equals("=")){
             node.getVar().apply(this);
             node.getExpr().apply(this);
             var ltype = extractType( node.getVar());
@@ -518,6 +555,8 @@ public class CodeGenerator extends DepthFirstAdapter {
                             "done" + labelcounter + ":\n"
                     );
                     break;
+                default:
+                    throw new SemanticException(node,"An unknown error occurred");
             }
 
         }
@@ -559,6 +598,14 @@ public class CodeGenerator extends DepthFirstAdapter {
     public void caseAVal(AVal node) throws TypeException, SemanticException {
         var cfList = node.getCallField();
         var first = cfList.getFirst();
+        firstPCallField(first);
+        for(int i = 1; i < cfList.size(); i++){
+            cfList.get(i).apply(this);
+        }
+
+    }
+
+    public void firstPCallField(PCallField first) throws SemanticException, TypeException {
         if(first instanceof ACallCallField){
             var dcl = ((ACallCallField) first).getId().declarationNode;
             if(dcl instanceof AMethodDcl){
@@ -566,6 +613,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                 if(instance){
                     // get object reference
                     emit("\taload 0\n");
+                    typeOnStack = current;
                 }
                 for(PExpr e : ((ACallCallField) first).getParams()){
                     e.apply(this);
@@ -601,41 +649,25 @@ public class CodeGenerator extends DepthFirstAdapter {
                 emit(")V\n");
             }
             else{
-                throw new SemanticException(node,"An unknown error occurred");
+                throw new SemanticException(first,"An unknown error occurred");
             }
         }
         else if(first instanceof AFieldCallField){
             var dcl = ((AFieldCallField) first).getId().declarationNode;
-            String type = null;
-            if(dcl instanceof ADclStmt){
-                if(((ADclStmt) dcl).getType() instanceof AListType){
-                    type = "list";
-                }
-                else{
-                    type = ((ADclStmt) dcl).getType().toString().trim();
-                }
-            }
-            else if(dcl instanceof AForeachStmt){
-                type = ((AForeachStmt) dcl).getList().toString();
-            }
-            else if(dcl instanceof AParamDcl){
-                type = extractType(((AParamDcl) dcl).getType());
-            }
-            else if(node.type.equals("null")){
-                emit("\taconst_null\n");
-            }
-            else {
-                throw new SemanticException(node,"An unknown error occurred");
-            }
+            String type = extractDclType(dcl);
+
             if(type != null) {
                 emit("\t" + extractPrefix(type) + "load " +
                         getLocal(((AFieldCallField) first).getId().getText().trim()) + "\n");
+                typeOnStack = type;
+            }
+            else if(first.type.equals("null")){
+                emit("\taconst_null\n");
+            }
+            else {
+                throw new SemanticException(first,"An unknown error occurred");
             }
         }
-        for(int i = 1; i < cfList.size(); i++){
-            cfList.get(i).apply(this);
-        }
-
     }
 
     @Override
@@ -1177,5 +1209,31 @@ public class CodeGenerator extends DepthFirstAdapter {
     @Override
     public void caseAParamDcl(AParamDcl node) throws TypeException, SemanticException {
         addLocal(node.getName().getText().trim());
+        emit(extractType(node.getType(),true));
+    }
+
+    @Override
+    public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException {
+        var nextStackType = extractDclType(node.getId().declarationNode,true);
+        var currentStackType = typeOnStack.substring(1,typeOnStack.length()-1);
+        for(PExpr e : node.getParams()){
+            e.apply(this);
+        }
+        emit("\tinvokevirtual " + currentStackType + "/" + node.getId().getText().trim() +
+                "(");
+        for(PExpr e : node.getParams()){
+            emit(extractType(e.type,true));
+        }
+        emit(")" + nextStackType + "\n");
+        typeOnStack = nextStackType;
+
+    }
+
+    @Override
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException {
+        var nextStackType = extractDclType(node.getId().declarationNode,true);
+        emit("\tgetfield " + typeOnStack + "/" + node.getId().getText().trim() +
+                " " + nextStackType + "\n");
+        typeOnStack = nextStackType;
     }
 }

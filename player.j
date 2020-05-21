@@ -9,16 +9,14 @@
     invokenonvirtual java/lang/Object/<init>()V
     return
 .end method
-.method public <init>()V
+.method public <init>(Ljava/lang/String;Z)V
 .limit stack 2
 .limit locals 2
-	aload 2
 	aload 0
-	aload 0
+	aload 1
 	putfield player/name Ljava/lang/String;
+	aload 0
 	aload 2
-	aload 1
-	aload 1
 	putfield player/ai Z
 .end method
 
