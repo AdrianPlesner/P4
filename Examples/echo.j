@@ -1,9 +1,9 @@
 ;The purpose of this is to test out jasmin and to make a program that prints the input.
 .class public examples/echo
 .super java/lang/Object
-
+.field public static bob I
 .method public <init>()V
-    aload_0
+    aload 0
     invokenonvirtual java/lang/Object/<init>()V
     return
 .end method
@@ -14,7 +14,8 @@ hej:
     new java/util/LinkedList
     dup
     dup
-
+    iconst_1
+    putstatic examples/echo/bob I
     invokespecial java/util/LinkedList/<init>()V
     ldc "lolx du hader mig"
     invokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z

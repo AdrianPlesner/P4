@@ -111,11 +111,6 @@ public class STBuilder extends DepthFirstAdapter {
         list.addMethod(index);
         index.addArg(new Variable("i",null,"int"));
 
-        var Turn = new SubClass("Turn",null,null);
-        st.enterSymbol(Turn);
-        Turn.addLocal(new Variable("current",new ADclStmt(new AVarType(new TId("player")),new LinkedList<>()),"player"));
-        st.enterSymbol(new Variable("turn",new ADclStmt(new AVarType(new TId("Turn")),new LinkedList<>()),"Turn"));
-
         var message = new Function("Message",new AMethodDcl(new TId("Message"),new LinkedList<PParamDcl>(Arrays.asList(new AParamDcl(new AVarType(new TId("player")), new TId("p")), new AParamDcl(new AVarType(new TId("string")), new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(message);
         message.addArg(new Variable("p",null,"player"));

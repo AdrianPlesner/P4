@@ -13,6 +13,7 @@ Setup{
     }
 //public er “spillepladen” (tilgængelig for alle spillere)
     Game{
+        player current;
         // Der er en bunke i spillet, trækbunken til når man fisker
         List typeof card Deck = GetStdDeck(0);
         // Definer spillere, initaliserer en List<Player> Players
@@ -22,7 +23,7 @@ Setup{
             Players = InitPlayers();
         }
         //Sæt start spiller
-        turn.current = find("Adrian", Players);
+        current = find("Adrian", Players);
         for p in Players {
             p.hand = Deck.take(7);
         }
@@ -31,19 +32,19 @@ Setup{
 // Mulige træk
 Moves{
     // input = et kort ( fra egen hånd) og en anden spiller
-    Function ChooseMove(card c, player p, List typeof card deck) typeof bool{
+    Function ChooseMove(card c, player p) typeof bool{
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
         for pCard in p.hand {
             if pCard.value == c.value {
-                pCard.transfer(p, turn.current);
+                pCard.transfer(p, current);
                 result = true;
             }
         }
         CheckForTrick(p.hand);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
         if(p.hand.length == 0){
-            p.hand = deck.take(1);
+            p.hand = Deck.take(1);
          }
          return result;
     }
@@ -52,14 +53,14 @@ Moves{
 Turn{
     bool continue = true;
     player chosen;
-    while turn.current.hand.length > 0 & continue {
+    while current.hand.length > 0 & continue {
         chosen = chooseFrom(Players);
-        continue = ChooseMove(chooseFrom(turn.current.hand),chosen,Deck);
+        continue = ChooseMove(chooseFrom(current.hand),chosen,Deck);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
-    turn.current.hand.add(Deck.take(1));
-    turn.current = chosen;
+    current.hand.add(Deck.take(1));
+    current = chosen;
 }
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.

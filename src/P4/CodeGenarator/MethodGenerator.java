@@ -23,7 +23,7 @@ public class MethodGenerator extends CodeGenerator {
 
     private StackCounter sc = new StackCounter();
 
-    private Boolean Static = false;
+
 
     public void SetStatic(Boolean b){
         Static = b;

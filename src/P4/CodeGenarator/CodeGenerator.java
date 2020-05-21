@@ -27,6 +27,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     protected int scope = 0;
 
     protected int labelcounter = 0;
+    protected Boolean Static = false;
 
     protected int getLocal(String name){
         for(int i = locals.size()-1; i >= 0; i--){
@@ -126,8 +127,20 @@ public class CodeGenerator extends DepthFirstAdapter {
                 if(c instanceof ACallCallField) {
                     throw new SemanticException(node, "Function call cannot be on left hand side og assignment");
                 }
-                //AFieldCallField
-                emit(""+getLocal(((AFieldCallField)c).getId().getText()));
+                else if(c instanceof AFieldCallField) {
+                    //AFieldCallField
+                    if(st.retrieveSymbol(((AFieldCallField) c).getId().getText().trim()) == null) {
+                        emit("\t" + extractPrefix(extractClass(c)) + "store " + getLocal(((AFieldCallField) c).getId().getText()) + "\n");
+                    }
+                    else{
+                        emit("\tputstatic " + name +"/" + ((AFieldCallField)c).getId().getText().trim() +
+                                " " + extractType(c,true) + "\n"
+                        );
+                    }
+                }
+                else{
+                    throw new SemanticException(node, "Function call cannot be on left hand side og assignment");
+                }
             }
             else {
                 firstPCallField(cfs.getFirst());
@@ -165,11 +178,11 @@ public class CodeGenerator extends DepthFirstAdapter {
 
         }
     }
-    private String extractType(PVal node){
+    private String extractClass(PVal node){
         var last = ((AVal)node).getCallField().getLast();
-        return extractType(last);
+        return extractClass(last);
     }
-    private String extractType(PCallField node){
+    private String extractClass(PCallField node){
         if(node instanceof ACallCallField){
             var mdcl =(AMethodDcl)((ACallCallField) node).getId().declarationNode;
             return mdcl.getReturntype().toString().trim();
@@ -177,31 +190,43 @@ public class CodeGenerator extends DepthFirstAdapter {
         else if(node instanceof AFieldCallField){
             var dcl = ((AFieldCallField) node).getId().declarationNode;
             if(dcl instanceof ADclStmt){
-                return ((ADclStmt) dcl).getType().toString().trim();
+                return extractClass(((ADclStmt) dcl).getType());
             }
             else if(dcl instanceof AForeachStmt){
-                return extractType(((AForeachStmt) dcl).getList());
+                return extractClass(((AForeachStmt) dcl).getList());
             }
             else if(dcl instanceof AParamDcl){
-                return extractType(((AParamDcl) dcl).getType());
+                return extractClass(((AParamDcl) dcl).getType());
             }
         }
         return null;
     }
-    private String extractType(PType node, boolean type){
+    private String extractClass(PType node){
         if(node instanceof AListType){
-            if(type)
-                return "L"+"java/util/LinkedList"+";";
             return "java/util/LinkedList";
         }
         else if (node instanceof AVarType){
-            return extractType(((AVarType) node).getType().getText().trim(),type);
+            return ((AVarType) node).getType().getText().trim();
         }
         else
             return null;
     }
-    private String extractType(PType node){
-        return extractType(node, false);
+    private String extractType(Node node,boolean type){
+        if(node instanceof PType){
+            return extractType(extractClass((PType)node),type);
+        }
+        else if(node instanceof  PCallField){
+            return extractType(extractClass((PCallField) node),type);
+        }
+        else if(node instanceof  PVal){
+            return extractType(extractClass((PVal)node),type);
+        }
+        else
+            return null;
+
+    }
+    private String extractType(Node node){
+        return extractType(node,false);
     }
 
     private String extractDclType(Node dcl, boolean type) throws SemanticException {
@@ -213,7 +238,7 @@ public class CodeGenerator extends DepthFirstAdapter {
             if (dcl instanceof ADclStmt) {
                 result = extractType(((ADclStmt) dcl).getType(), type);
             } else if (dcl instanceof AForeachStmt) {
-                result = extractType(((AForeachStmt) dcl).getList().toString(),type);
+                result = extractType(((AForeachStmt) dcl).getList(),type);
             } else if (dcl instanceof AParamDcl) {
                 result = extractType(((AParamDcl) dcl).getType());
             }
@@ -323,13 +348,11 @@ public class CodeGenerator extends DepthFirstAdapter {
     @Override
     public void inAProg(AProg node) {
         String s = ".class " + name + "\n"
-                + ".super java/lang/Object\n"
-                + ".method public <init>()V\n"
-                    + "\taload_0\n"
-                    + "\tinvokeonvirtual java/lang/Object/<init>()V\n"
-                    + "\treturn\n"
-                + ".end method\n\n";
+                + ".super java/lang/Object\n";
         emit(name,s);
+
+
+
         files.put("player","");
         s = ".class player\n"
             + ".super java/lang/Object\n";
@@ -338,20 +361,36 @@ public class CodeGenerator extends DepthFirstAdapter {
         s = ".class card\n"
             + ".super java/Lang/Object\n";
         emit("card",s);
-        s = ".method public static main([Ljava/lang/String)V\n";
-        emit(name,s);
+
     }
 
     @Override
     public void caseAProg(AProg node) throws TypeException, SemanticException {
         inAProg(node);
+        current = name;
+        fg.current = current;
+        fg.Static = true;
+        for(PStmt s : ((ASetup)node.getSetup()).getGame()){
+            if(s instanceof ADclStmt){
+                s.apply(fg);
+            }
+        }
+        fg.Static = false;
+
+        emit("\n" +
+                ".method public <init>()V\n"
+                + "\taload_0\n"
+                + "\tinvokenonvirtual java/lang/Object/<init>()V\n"
+                + "\treturn\n"
+                + ".end method\n\n");
+        emit(".method public static main([Ljava/lang/String)V\n");
         // fields fase
         node.apply(fg);
         // Methods fase
         node.apply(mg);
         // Subclasses fase
         node.apply(sg);
-        current = name;
+
         //todo: emit stack and locals sizes
 
         node.getSetup().apply(this);
@@ -395,7 +434,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         if(!op.equals("=")){
             node.getVar().apply(this);
             node.getExpr().apply(this);
-            var ltype = extractType( node.getVar());
+            var ltype = extractClass( node.getVar());
             var rtype = node.getExpr().type;
             String restype = "";
             if(ltype == null || rtype == null){
@@ -586,11 +625,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         else{
             // local variable
             node.getExpr().apply(this);
-            emit("\t" + extractPrefix(node.getExpr().type));
-            emit("store ");
-            // Get variable number
             LHSVisitor(node.getVar());
-            emit("\n");
         }
     }
 
@@ -654,18 +689,25 @@ public class CodeGenerator extends DepthFirstAdapter {
         }
         else if(first instanceof AFieldCallField){
             var dcl = ((AFieldCallField) first).getId().declarationNode;
-            String type = extractDclType(dcl);
-
-            if(type != null) {
-                emit("\t" + extractPrefix(type) + "load " +
-                        getLocal(((AFieldCallField) first).getId().getText().trim()) + "\n");
-                typeOnStack = type;
-            }
-            else if(first.type.equals("null")){
-                emit("\taconst_null\n");
+            String Fname = ((AFieldCallField) first).getId().getText().trim();
+            boolean staticfield = current.equals(this.name) && (!Fname.equals("this") && !Fname.equals("null"));
+            if(staticfield && st.retrieveSymbol(Fname) != null){
+                typeOnStack = extractDclType(dcl,false);
+                emit("\tgetstatic " + name + "/" + ((AFieldCallField) first).getId().getText().trim() +
+                        " L" + typeOnStack + ";\n"
+                );
             }
             else {
-                throw new SemanticException(first,"An unknown error occurred");
+                String type = extractDclType(dcl);
+                if (type != null) {
+                    emit("\t" + extractPrefix(type) + "load " +
+                            getLocal(((AFieldCallField) first).getId().getText().trim()) + "\n");
+                    typeOnStack = type;
+                } else if (first.type.equals("null")) {
+                    emit("\taconst_null\n");
+                } else {
+                    throw new SemanticException(first, "An unknown error occurred");
+                }
             }
         }
     }
@@ -700,8 +742,17 @@ public class CodeGenerator extends DepthFirstAdapter {
                 }
             }
 
-            emit("\t" +extractPrefix(node.getType()) + "store " +
-                    addLocal(((ASingleDcl)s).getId().getText().trim()) + "\n");
+            if(current.equals(name) && st.retrieveSymbol(dcl.getId().getText().trim()) != null){
+                if(dcl.getExpr() != null){
+                    emit("\tputstatic " + name +"/" + dcl.getId().getText().trim() +
+                            " " + extractType(node.getType(),true) + "\n"
+                    );
+                }
+            }
+            else {
+                emit("\t" + extractPrefix(node.getType()) + "store " +
+                        addLocal(((ASingleDcl) s).getId().getText().trim()) + "\n");
+            }
         }
     }
 
@@ -861,7 +912,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     @Override
     public void caseASwitchStmt(ASwitchStmt node) throws TypeException, SemanticException {
         var caseList = node.getCases();
-        var type = extractType(node.getVariable());
+        var type = extractClass(node.getVariable());
         // put switch variable on top of stack
         node.getVariable().apply(this);
         ADefaultCase def = new ADefaultCase();
@@ -1215,7 +1266,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     @Override
     public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException {
         var nextStackType = extractDclType(node.getId().declarationNode,true);
-        var currentStackType = typeOnStack.substring(1,typeOnStack.length()-1);
+        var currentStackType = typeOnStack.endsWith(";") ? typeOnStack.substring(1,typeOnStack.length()-1) : typeOnStack;
         for(PExpr e : node.getParams()){
             e.apply(this);
         }

@@ -47,6 +47,9 @@ public class FieldGenerator extends CodeGenerator {
         for(PSingleDcl sdcl : node.getDcls()){
             // field head
             String s = ".field public ";
+            if(Static){
+                s += "static ";
+            }
             String prev = current;
             current = s;
             sdcl.apply(this);

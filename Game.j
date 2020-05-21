@@ -1,19 +1,31 @@
 .class Game
 .super java/lang/Object
+.field public static current Lplayer;
+.field public static Deck Ljava/util/LinkedList;
+.field public static Players Ljava/util/LinkedList;
+
 .method public <init>()V
 	aload_0
 	invokeonvirtual java/lang/Object/<init>()V
 	return
 .end method
 
+new java/util/LinkedList
+	dup
+	invokespecial java/util/LinkedList/<init>()V
+	putfield List/list Ljava/util/LinkedList
+	iconst_0
+	putfield List/length I
+
 .method public static main([Ljava/lang/String)V
+	new player
 	ldc 0
 	invokestatic Game/GetStdDeck(I)Ljava/util/LinkedList;
-	astore 0
+	putstatic Game/Deck Ljava/util/LinkedList;
 	invokestatic Game/InitPlayers()Ljava/util/LinkedList;
-	astore 1
+	putstatic Game/Players Ljava/util/LinkedList;
 loop1:
-	aload 1
+	getstatic Game/Players Ljava/util/LinkedList;
 	aconst_null
 	if_acmpeq true2
 	iconst_0
@@ -21,7 +33,7 @@ loop1:
 true2:
 	iconst_1
 done2:
-	aload 1
+	getstatic Game/Players Ljava/util/LinkedList;
 	getfield java/util/LinkedList/length I
 	ldc 2
 	if_icmplt true3
@@ -35,18 +47,17 @@ done3:
 	ldc "You need at least 2 players to play"
 	invokestatic Game/MessageAll(Ljava/lang/String;)V
 	invokestatic Game/InitPlayers()Ljava/util/LinkedList;
-	astore 1
+	putstatic Game/Players Ljava/util/LinkedList;
 	goto 1
 done1:
-	aload -1
 	ldc "Adrian"
-	aload 1
+	getstatic Game/Players Ljava/util/LinkedList;
 	invokestatic Game/find(Ljava/lang/String;Ljava/util/LinkedList;)Lplayer;
-	putfield Turn/current Lplayer;
+	putstatic Game/current Lplayer;
 	iconst_0
 loop4:
 	dup
-	aload 1
+	getstatic Game/Players Ljava/util/LinkedList;
 	dup2
 	invokevirtual java/util/LinkedList/size()I
 	isub
@@ -54,12 +65,12 @@ loop4:
 	swap
 	invokevirtual java/util/LinkedList/get(I)Ljava/lang/Object;
 	checkcast player
-	astore2
-	aload 2
+	astore0
 	aload 0
+	getstatic Game/Deck Ljava/util/LinkedList;
 	ldc 7
-	invokevirtual ava/util/LinkedLis/take(I)Ljava/util/LinkedList;
-	putfield player/hand Ljava/util/LinkedList;
+	invokevirtual java/util/LinkedList/take(I)Ljava/util/LinkedList;
+	putfield java/util/LinkedList/hand Ljava/util/LinkedList;
 	iconst_1
 	iadd
 	goto loop4
@@ -86,7 +97,7 @@ true2:
 done2:
 	ifeq done1
 	aload 1
-	invokevirtual ava/util/LinkedLis/clear()V
+	invokevirtual java/util/LinkedList/clear()V
 	iconst_0
 loop3:
 	dup
@@ -102,7 +113,7 @@ loop3:
 	astore3
 	aload 2
 	aload 3
-	getfield p hand /value I
+	getfield java/util/LinkedList/value I
 	if_icmpeq true4
 	iconst_0
 	goto done4
@@ -114,7 +125,7 @@ done4:
 true5:
 	aload 1
 	aload 3
-	invokevirtual ava/util/LinkedLis/add(Lcard;)V
+	invokevirtual java/util/LinkedList/add(Lcard;)V
 	goto done5
 done5:
 	iconst_1
@@ -204,7 +215,7 @@ loop10:
 	astore2
 	aload 2
 	aload 2
-	getfield result /ai Z
+	getfield java/util/LinkedList/ai Z
 	invokestatic Game/Message(Lplayer;Ljava/lang/String;)V
 	iconst_1
 	iadd
@@ -246,7 +257,7 @@ done11:
 	aload 2
 	aload 4
 	invokespecial player/<init(Ljava/lang/String;Z)V
-	invokevirtual ava/util/LinkedLis/add(Lplayer;)V
+	invokevirtual java/util/LinkedList/add(Lplayer;)V
 	ldc "Are there any more players?"
 	invokestatic Game/AskAll(Ljava/lang/String;)Ljava/lang/String;
 	astore 1
@@ -272,7 +283,7 @@ loop13:
 	checkcast player
 	astore2
 	aload 2
-	getfield ps /name Ljava/lang/String;
+	getfield java/util/LinkedList/name Ljava/lang/String;
 	aload 0
 	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	ifgt true14
@@ -290,11 +301,11 @@ done13:
 	areturn
 .end method
 
-.method public static ChooseMove(Lcard;Lplayer;Ljava/util/LinkedList;)Z
+.method public static ChooseMove(Lcard;Lplayer;)Z
 .limit stack 4
-.limit locals 5
+.limit locals 4
 	iconst_0 
-	istore 3
+	istore 2
 	iconst_0
 loop15:
 	dup
@@ -307,9 +318,9 @@ loop15:
 	swap
 	invokevirtual java/util/LinkedList/get(I)Ljava/lang/Object;
 	checkcast card
-	astore4
-	aload 4
-	getfield p hand /value I
+	astore3
+	aload 3
+	getfield java/util/LinkedList/value I
 	aload 0
 	getfield card/value I
 	if_icmpeq true16
@@ -321,13 +332,12 @@ done16:
 	ifgt true17
 	goto done17
 true17:
-	aload 4
+	aload 3
 	aload 1
 	aload -1
-	getfield Turn/current Lplayer;
-	invokevirtual  hand/transfer(Lplayer;Lplayer;)V
+	invokevirtual java/util/LinkedList/transfer(Lplayer;Lplayer;)V
 	iconst_1 
-	istore 3
+	istore 2
 	goto done17
 done17:
 	iconst_1
@@ -351,13 +361,13 @@ done18:
 	goto done19
 true19:
 	aload 1
-	aload 2
+	aload -1
 	ldc 1
-	invokevirtual ava/util/LinkedLis/take(I)Ljava/util/LinkedList;
+	invokevirtual java/util/LinkedList/take(I)Ljava/util/LinkedList;
 	putfield player/hand Ljava/util/LinkedList;
 	goto done19
 done19:
-	aload 3
+	aload 2
 	ireturn
 .end method
 
