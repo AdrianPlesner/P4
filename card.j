@@ -19,11 +19,11 @@
 	aload 1
 	getfield player/hand LList;
 	aload 0
-	invokevirtual List/remove(Lplayer;)V
+	invokevirtual List/remove(Ljava/lang/Object;)V
 	aload 2
 	getfield player/hand LList;
 	aload 0
-	invokevirtual List/add(Lplayer;)V
+	invokevirtual List/add(Ljava/lang/Object;)V
 	return
 .end method
 

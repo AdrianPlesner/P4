@@ -1,4 +1,4 @@
-.class Game
+.class Main
 .super java/lang/Object
 .field public static current Lplayer;
 .field public static Deck LList;
@@ -17,12 +17,12 @@
 .method public static main([Ljava/lang/String;)V
 	new player
 	ldc 0
-	invokestatic Game/GetStdDeck(I)LList;
-	putstatic Game/Deck LList;
-	invokestatic Game/InitPlayers()LList;
-	putstatic Game/Players LList;
+	invokestatic Main/GetStdDeck(I)LList;
+	putstatic Main/Deck LList;
+	invokestatic Main/InitPlayers()LList;
+	putstatic Main/Players LList;
 loop1:
-	getstatic Game/Players LList;
+	getstatic Main/Players LList;
 	aconst_null
 	if_acmpeq true2
 	iconst_0
@@ -30,7 +30,7 @@ loop1:
 true2:
 	iconst_1
 done2:
-	getstatic Game/Players LList;
+	getstatic Main/Players LList;
 	getfield List/length I
 	ldc 2
 	if_icmplt true3
@@ -42,9 +42,9 @@ done3:
 	iadd
 	ifeq done1
 	ldc "You need at least 2 players to play"
-	invokestatic Game/MessageAll(Ljava/lang/String;)V
-	invokestatic Game/InitPlayers()LList;
-	putstatic Game/Players LList;
+	invokestatic Main/MessageAll(Ljava/lang/String;)V
+	invokestatic Main/InitPlayers()LList;
+	putstatic Main/Players LList;
 	goto loop1
 done1:
 	new List
@@ -71,21 +71,21 @@ done1:
 	swap
 	invokespecial java/lang/Integer/<init>(I)V
 	invokevirtual List/add(Ljava/lang/Object;)V
-	putstatic Game/nums LList;
-	getstatic Game/nums LList;
+	putstatic Main/nums LList;
+	getstatic Main/nums LList;
 	ldc 2
 	invokevirtual List/index(I)Ljava/lang/Object;
 	checkcast java/lang/Integer
 	invokevirtual java/lang/Integer/intValue()I
-	putstatic Game/n I
+	putstatic Main/n I
 	ldc "Adrian"
-	getstatic Game/Players LList;
-	invokestatic Game/find(Ljava/lang/String;LList;)Lplayer;
-	putstatic Game/current Lplayer;
+	getstatic Main/Players LList;
+	invokestatic Main/find(Ljava/lang/String;LList;)Lplayer;
+	putstatic Main/current Lplayer;
 	iconst_0
 loop4:
 	dup
-	getstatic Game/Players LList;
+	getstatic Main/Players LList;
 	dup2
 	getfield List/length I
 	isub
@@ -95,7 +95,7 @@ loop4:
 	checkcast player
 	astore 0
 	aload 0
-	getstatic Game/Deck LList;
+	getstatic Main/Deck LList;
 	ldc 7
 	invokevirtual List/take(I)LList;
 	putfield List/hand LList;
@@ -105,10 +105,10 @@ loop4:
 done4:
 Turn:
 	iconst_1 
-	putstatic Game/continue Z
+	putstatic Main/continue Z
 	new player
 loop5:
-	getstatic Game/current Lplayer;
+	getstatic Main/current Lplayer;
 	getfield player/hand LList;
 	getfield List/length I
 	ldc 0
@@ -118,7 +118,7 @@ loop5:
 true6:
 	iconst_1
 done6:
-	getstatic Game/continue LZ;
+	getstatic Main/continue LZ;
 	iadd
 	iconst_2
 	if_icmpeq true7
@@ -128,27 +128,27 @@ true7:
 	iconst_1
 done7:
 	ifeq done5
-	getstatic Game/Players LList;
-	invokestatic Game/choosePlayer(LList;)Lplayer;
-	putstatic Game/chosen Lplayer;
-	getstatic Game/current Lplayer;
+	getstatic Main/Players LList;
+	invokestatic Main/choosePlayer(LList;)Lplayer;
+	putstatic Main/chosen Lplayer;
+	getstatic Main/current Lplayer;
 	getfield player/hand LList;
-	invokestatic Game/chooseCard(LList;)Lcard;
-	getstatic Game/chosen Lplayer;
-	getstatic Game/Deck LList;
-	invokestatic Game/ChooseMove(Lcard;Lplayer;)Z
-	putstatic Game/continue Z
+	invokestatic Main/chooseCard(LList;)Lcard;
+	getstatic Main/chosen Lplayer;
+	getstatic Main/Deck LList;
+	invokestatic Main/ChooseMove(Lcard;Lplayer;)Z
+	putstatic Main/continue Z
 	goto loop5
 done5:
-	getstatic Game/current Lplayer;
+	getstatic Main/current Lplayer;
 	getfield player/hand LList;
-	getstatic Game/Deck LList;
+	getstatic Main/Deck LList;
 	ldc 1
 	invokevirtual List/take(I)LList;
 	invokevirtual List/add(Ljava/lang/Object;)V
-	getstatic Game/chosen Lplayer;
-	putstatic Game/current Lplayer;
-	invokestatic Game/EndConditon()Z
+	getstatic Main/chosen Lplayer;
+	putstatic Main/current Lplayer;
+	invokestatic Main/EndConditon()Z
 	ifeq Turn
 .end method
 
@@ -158,7 +158,7 @@ done5:
 	iconst_0
 loop8:
 	dup
-	getstatic Game/Players LList;
+	getstatic Main/Players LList;
 	dup2
 	getfield List/length I
 	isub
@@ -344,7 +344,7 @@ done1:
 	invokespecial List/<init>()V
 	astore 0
 	ldc "So who is playing today?"
-	invokestatic Game/MessageAll(Ljava/lang/String;)V
+	invokestatic Main/MessageAll(Ljava/lang/String;)V
 	ldc "y"
 	astore 1
 loop9:
@@ -353,7 +353,7 @@ loop9:
 	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	ifeq done9
 	ldc "Already in the game is:"
-	invokestatic Game/MessageAll(Ljava/lang/String;)V
+	invokestatic Main/MessageAll(Ljava/lang/String;)V
 	iconst_0
 loop10:
 	dup
@@ -369,16 +369,16 @@ loop10:
 	aload 2
 	aload 2
 	getfield List/ai Z
-	invokestatic Game/Message(Lplayer;Ljava/lang/String;)V
+	invokestatic Main/Message(Lplayer;Ljava/lang/String;)V
 	iconst_1
 	iadd
 	goto loop10
 done10:
 	ldc "Next players name: "
-	invokestatic Game/AskAll(Ljava/lang/String;)Ljava/lang/String;
+	invokestatic Main/AskAll(Ljava/lang/String;)Ljava/lang/String;
 	astore 2
 	ldc "Are they an ai (y/n)"
-	invokestatic Game/AskAll(Ljava/lang/String;)Ljava/lang/String;
+	invokestatic Main/AskAll(Ljava/lang/String;)Ljava/lang/String;
 	astore 3
 	iconst_0
 	istore 4
@@ -391,7 +391,7 @@ done10:
 	invokevirtual java/lang/String/equals(Ljava/lang/Object;)Z
 	ifgt else12
 	ldc "Thats not right"
-	invokestatic Game/MessageAll(Ljava/lang/String;)V
+	invokestatic Main/MessageAll(Ljava/lang/String;)V
 	aconst_null
 	areturn
 	goto done11
@@ -412,7 +412,7 @@ done11:
 	invokespecial player/<init>(Ljava/lang/String;Z)V
 	invokevirtual List/add(Ljava/lang/Object;)V
 	ldc "Are there any more players?"
-	invokestatic Game/AskAll(Ljava/lang/String;)Ljava/lang/String;
+	invokestatic Main/AskAll(Ljava/lang/String;)Ljava/lang/String;
 	astore 1
 	goto loop9
 done9:
@@ -487,7 +487,7 @@ done16:
 true17:
 	aload 3
 	aload 1
-	getstatic Game/current Lplayer;
+	getstatic Main/current Lplayer;
 	invokevirtual List/transfer(Lplayer;Lplayer;)V
 	iconst_1 
 	istore 2
@@ -499,7 +499,7 @@ done17:
 done15:
 	aload 1
 	getfield player/hand LList;
-	invokestatic Game/CheckForTrick(Lplayer;)V
+	invokestatic Main/CheckForTrick(Lplayer;)V
 	aload 1
 	getfield player/hand LList;
 	getfield List/length I
@@ -514,9 +514,9 @@ done18:
 	goto done19
 true19:
 	aload 1
-	getstatic Game/Deck Lplayer;
+	getstatic Main/Deck LList;
 	ldc 1
-	invokevirtual player/take(I)LList;
+	invokevirtual List/take(I)LList;
 	putfield player/hand LList;
 	goto done19
 done19:
@@ -631,8 +631,8 @@ done24:
 .limit stack 3
 .limit locals 1
 	aload 0
-	invokestatic Game/MessageAll(Ljava/lang/String;)V
-	invokestatic Game/Read()Ljava/lang/String;
+	invokestatic Main/MessageAll(Ljava/lang/String;)V
+	invokestatic Main/Read()Ljava/lang/String;
 	areturn
 .end method
 
@@ -641,8 +641,8 @@ done24:
 .limit locals 2
 	aload 0
 	aload 1
-	invokestatic Game/Message(Lplayer;Ljava/lang/String;)V
-	invokestatic Game/Read()Ljava/lang/String;
+	invokestatic Main/Message(Lplayer;Ljava/lang/String;)V
+	invokestatic Main/Read()Ljava/lang/String;
 	areturn
 .end method
 
@@ -744,13 +744,13 @@ case28:
 	ldc 1
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 1
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -759,13 +759,13 @@ case29:
 	ldc 2
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 2
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -774,13 +774,13 @@ case30:
 	ldc 3
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 3
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -789,13 +789,13 @@ case31:
 	ldc 4
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 4
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -804,13 +804,13 @@ case32:
 	ldc 5
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 5
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -819,13 +819,13 @@ case33:
 	ldc 6
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 6
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -834,13 +834,13 @@ case34:
 	ldc 7
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 7
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -849,13 +849,13 @@ case35:
 	ldc 8
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 8
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -864,13 +864,13 @@ case36:
 	ldc 9
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	iadd
 	ldc 9
 	ldc 10
 	aload 3
-	invokestatic Game/Power(II)I
+	invokestatic Main/Power(II)I
 	imul
 	istore 1
 	goto done28
@@ -931,9 +931,9 @@ true43:
 done43:
 	ifeq done42
 	aload 2
-	aload 0
+	getstatic Main/n LI;
 	idiv
-	aload 0
+	getstatic Main/n LI;
 	istore 2
 	aload 3
 	ldc 1
@@ -948,7 +948,7 @@ true39:
 	ireturn
 	goto done39
 else40:
-	aload 0
+	getstatic Main/n LI;
 	istore 2
 	ldc 1
 	istore 3
@@ -963,9 +963,9 @@ true45:
 done45:
 	ifeq done44
 	aload 2
-	aload 0
+	getstatic Main/n LI;
 	imul
-	aload 0
+	getstatic Main/n LI;
 	istore 2
 	aload 3
 	ldc 1
