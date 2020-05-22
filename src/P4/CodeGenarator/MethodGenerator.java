@@ -82,9 +82,10 @@ public class MethodGenerator extends CodeGenerator {
         emit(")V\n");
         emit(".limit stack " + sc.Count(node) + "\n");
         //TODO: count locals
-        emit(".limit locals " +((Function)st.retrieveSymbol(current, Function.class)).getLocals() + "\n");
+        emit(".limit locals " +(((Function)st.retrieveSymbol(current, Function.class)).getLocals()+1) + "\n");
 
-
+        emit("  aload 0\n" +
+                "  invokenonvirtual java/lang/Object/<init>()V\n");
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
@@ -141,7 +142,7 @@ public class MethodGenerator extends CodeGenerator {
             fun = ((SubClass)c).containsMethod(node.getName().getText());
 
         }
-        emit(".limit locals " +((Function)fun).getLocals() + "\n");
+        emit(".limit locals " +(((Function)fun).getLocals()+1) + "\n");
         // emit body
         for(PStmt st : node.getBody()){
             st.apply(this);
@@ -152,7 +153,8 @@ public class MethodGenerator extends CodeGenerator {
 
     @Override
     public void outAConstruct(AConstruct node) {
-        emit(".end method\n\n");
+        emit("\treturn\n" +
+                ".end method\n\n");
         closeScope();
     }
 

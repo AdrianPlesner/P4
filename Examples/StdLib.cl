@@ -114,3 +114,7 @@ Function Power(int n, int power) typeof int{
     }
     return result;
 }
+
+Function Message(player p, string s) typeof void{
+    MessageAll(p.name + ": " + s);
+}

@@ -10,6 +10,12 @@ Setup{
             this.name = name;
             this.ai = ai;
         }
+        Function whatevs() typeof void{
+            List typeof int l = {1;2;3;};
+            for i in l {
+                i += 1;
+            }
+        }
     }
 //public er “spillepladen” (tilgængelig for alle spillere)
     Game{
@@ -43,7 +49,7 @@ Moves{
                 result = true;
             }
         }
-        CheckForTrick(p.hand);
+        CheckForTrick(p);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
         if(p.hand.length == 0){
             p.hand = Deck.take(1);
@@ -57,7 +63,7 @@ Turn{
     player chosen;
     while current.hand.length > 0 & continue {
         chosen = choosePlayer(Players);
-        continue = ChooseMove(chooseCard(current.hand),chosen,Deck);
+        continue = ChooseMove(chooseCard(current.hand),chosen);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
@@ -80,11 +86,23 @@ EndCondition{
 }
 
 Function choosePlayer(List typeof player l) typeof player{
-    return null;
+    int i = 0;
+    MessageAll("Choose a player by number:\n");
+    for p in l {
+        MessageAll( i + ": " + p.name + "\n");
+        i += 1;
+    }
+    return l.index(ParseInt(Read()));
 }
 
 Function chooseCard(List typeof card l) typeof card{
-    return null;
+    int i = 0;
+        MessageAll("Choose a card by number:\n");
+        for c in l {
+            MessageAll( i + ": " + c.suit + ", " + c.value + "\n");
+            i += 1;
+        }
+        return l.index(ParseInt(Read()));
 }
 
 
@@ -113,7 +131,7 @@ Function InitPlayers() typeof List typeof player {
     while(input == "y"){
         MessageAll("Already in the game is:");
         for p in result {
-            Message(p,p.ai);
+            MessageAll(p.name);
         }
         string name = AskAll("Next players name: ");
         string aiS = AskAll("Are they an ai (y/n)");

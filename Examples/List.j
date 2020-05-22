@@ -25,7 +25,7 @@
     aload 0
     getfield List/list Ljava/util/LinkedList;
     aload 1
-    invokevirtual java/util/LinkedList/add(Ljava/lang/Object)Z
+    invokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z
     pop
     aload 0
     dup
@@ -42,7 +42,7 @@
     aload 0
     getfield List/list Ljava/util/LinkedList;
     aload 1
-    invokevirtual java/util/LinkedList/remove(Ljava/lang/Object)Z
+    invokevirtual java/util/LinkedList/remove(Ljava/lang/Object;)Z
     pop
     aload 0
     dup
@@ -84,7 +84,7 @@ loop:
     invokevirtual Ljava/util/LinkedList/removeFirst()Ljava/lang/Object;
     aload 2
     swap
-    invokevirtual List/add(Ljava/lang/Object)V
+    invokevirtual List/add(Ljava/lang/Object;)V
     iload 3
     iconst_1
     iadd

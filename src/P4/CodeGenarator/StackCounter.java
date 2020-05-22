@@ -13,12 +13,9 @@ public class StackCounter extends DepthFirstAdapter {
 
     public int Count(Node node) throws TypeException, SemanticException {
         count = 0;
-        if(!(node instanceof AMethodDcl)) {
-            System.out.println("WARNING! Applying StackCounter to a node that is not a method declaration");
-        }
         node.apply(this);
         if(count < 0){
-            //TODO: something went wrong
+            throw new SemanticException(node,"Could not count stack size of given node.");
         }
         return count;
     }
@@ -47,16 +44,17 @@ public class StackCounter extends DepthFirstAdapter {
     public void caseASingleDcl(ASingleDcl node) throws TypeException, SemanticException {
         var exp = node.getExpr();
         if(exp == null){
-            count = 0;
+            count = 2;
         }
         else{
             exp.apply(this);
         }
+        count++;
     }
 
     @Override
     public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException {
-        int c = 2; //Stack needed for comparison
+        int c = -1;
         node.getPredicate().apply(this);
         c = Math.max(count, c);
         c = Math.max(visitList(node.getThen()),c);
@@ -73,7 +71,7 @@ public class StackCounter extends DepthFirstAdapter {
         int c = -1;
         node.getVariable().apply(this);
         c = Math.max(count,c);
-        c = Math.max(visitList(node.getCases()),c);
+        c = Math.max(visitList(node.getCases()) ,c);
         count = c;
     }
 
@@ -81,7 +79,7 @@ public class StackCounter extends DepthFirstAdapter {
     public void caseACaseCase(ACaseCase node) throws TypeException, SemanticException {
         int c = -1;
         node.getCase().apply(this);
-        c = Math.max(count,c);
+        c = Math.max(count + 3,c); //3 is minimum switch compare size
         c = Math.max(visitList(node.getThen()),c);
         count = c;
     }
@@ -126,10 +124,10 @@ public class StackCounter extends DepthFirstAdapter {
 
     @Override
     public void caseAForeachStmt(AForeachStmt node) throws TypeException, SemanticException {
-        int c = 2; // 2 registers needed for comparison
+        int c = 5; // 5 stack needed for list iteration
         node.getList().apply(this);
-        c = Math.max(count,c);
-        c = Math.max(visitList(node.getThen()),c);
+        c += count;
+        c = Math.max(visitList(node.getThen())+1,c);
         count = c;
     }
 
@@ -147,7 +145,7 @@ public class StackCounter extends DepthFirstAdapter {
         node.getVar().apply(this);
         c = Math.max(count,c);
         node.getExpr().apply(this);
-        c = Math.max(count,c);
+        c = Math.max(count+1,c);
         if(!node.getOperation().getText().trim().equals("=")){
             // compound assignment needs at least 3 stack space
             c = Math.max(c,3);
@@ -182,7 +180,7 @@ public class StackCounter extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException, SemanticException {
         count = 1;
     }
 
@@ -193,8 +191,8 @@ public class StackCounter extends DepthFirstAdapter {
 
     @Override
     public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
-        //Initiate new list, takes at least 2 stack space
-        count = Math.max(visitList(node.getElements()),2);
+        //Initiate new list, takes at least 5 stack space
+        count = Math.max(visitList(node.getElements())+2,5);
     }
 
     @Override

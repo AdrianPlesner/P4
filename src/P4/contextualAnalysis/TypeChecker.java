@@ -155,7 +155,10 @@ public class TypeChecker extends DepthFirstAdapter {
             //Operands are of different types
             if (L.type.equals("int") && R.type.equals("float") || L.type.equals("float") && R.type.equals("int")){
                 node.type = "float";
-            } else {
+            } else if(L.type.equals("string") || R.type.equals("string") && L.type.equals("int") || L.type.equals("float") || R.type.equals("int") || R.type.equals("float") ){
+                node.type = "string";
+            }
+            else {
                 throw new TypeException(node.getOperator(), "Operation cannot be done on operands of type " + L.type + " and " + R.type);
             }
         }
