@@ -201,7 +201,12 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PExpr p : node.getElements()){
             p.apply(this);
         }
-        node.type = node.getElements().getFirst().type;
+        if(node.getElements().isEmpty()){
+            node.type = "list";
+        }
+        else {
+            node.type = node.getElements().getFirst().type;
+        }
     }
 
     @Override
@@ -552,6 +557,9 @@ public class TypeChecker extends DepthFirstAdapter {
             }
             pType += parentType.toString().trim();
             if(expr instanceof AListExpr){
+                if(((AListExpr) expr).getElements().isEmpty()){
+                    expr.type = pType;
+                }
                 for (PExpr p : ((AListExpr) expr).getElements()){
                     if(!parentType.toString().trim().equals(p.type)) {
                         throw new TypeException(node.getId(), "Variable type does not match the expression type");

@@ -73,7 +73,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         else{
             name = n;
         }
-        files.put("Main","");
+        files.put("Game/Main","");
         fg = new FieldGenerator(files);
         mg = new MethodGenerator(files,st);
         sg = new SubClassGenerator(files);
@@ -89,7 +89,7 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     public final void writeFiles(String path) throws IOException {
         if(path.equals("")){
-            path = System.getProperty("user.dir") + "/" + name;
+            path = System.getProperty("user.dir") + "/";
         }
         File dir = new File(path);
         dir.mkdirs();
@@ -135,7 +135,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                         emit("\t" + extractPrefix(c.type) + "store " + getLocal(((AFieldCallField) c).getId().getText()) + "\n");
                     }
                     else{
-                        emit("\tputstatic " + "Main" +"/" + ((AFieldCallField)c).getId().getText().trim() +
+                        emit("\tputstatic " + "Game/Main" +"/" + ((AFieldCallField)c).getId().getText().trim() +
                                 " " + extractType(c,true) + "\n"
                         );
                     }
@@ -177,7 +177,14 @@ public class CodeGenerator extends DepthFirstAdapter {
                     return "Ljava/lang/Object;";
                 }
                 return "java/lang/Object";
-
+            case "card":
+                if (type)
+                    return "LGame/card;";
+                return "Game/card";
+            case "player":
+                if (type)
+                    return "LGame/player;";
+                return "Game/player";
             default:
                 if(type)
                     return "L"+s+";";
@@ -193,7 +200,15 @@ public class CodeGenerator extends DepthFirstAdapter {
     private String extractClass(PCallField node){
         if(node instanceof ACallCallField){
             var mdcl =(AMethodDcl)((ACallCallField) node).getId().declarationNode;
-            return mdcl.getReturntype().toString().trim();
+            var ret = mdcl.getReturntype().toString().trim();
+            if(ret.equals("card")){
+                return "Game/card";
+            }
+            else if(ret.equals("player")){
+                return "Game/player";
+            }
+            else
+                return ret;
         }
         else if(node instanceof AFieldCallField){
             var dcl = ((AFieldCallField) node).getId().declarationNode;
@@ -211,7 +226,7 @@ public class CodeGenerator extends DepthFirstAdapter {
     }
     private String extractClass(PType node){
         if(node instanceof AListType){
-            return "List";
+            return "Game/List";
         }
         else if (node instanceof AVarType){
             return ((AVarType) node).getType().getText().trim();
@@ -360,21 +375,19 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     @Override
     public void inAProg(AProg node) {
-        current = "Main";
-        String s = ".class Main" + "\n"
+        current = "Game/Main";
+        String s = ".class Game/Main" + "\n"
                 + ".super java/lang/Object\n";
         emit(s);
 
-
-
-        files.put("player","");
-        s = ".class player\n"
+        files.put("Game/player","");
+        s = ".class Game/player\n"
             + ".super java/lang/Object\n";
-        emit("player",s);
-        files.put("card","");
-        s = ".class card\n"
+        emit("Game/player",s);
+        files.put("Game/card","");
+        s = ".class Game/card\n"
             + ".super java/lang/Object\n";
-        emit("card",s);
+        emit("Game/card",s);
 
     }
 
@@ -412,6 +425,18 @@ public class CodeGenerator extends DepthFirstAdapter {
 
 
         emit(".limit stack " + stackSize + "\n");
+        int loc = 0;
+        for(PStmt s: ((ASetup)node.getSetup()).getGame()){
+            if(s instanceof AForeachStmt){
+                loc++;
+            }
+        }
+        for(PStmt s: node.getTurn()){
+            if(s instanceof AForeachStmt){
+                loc++;
+            }
+        }
+        emit(".limit locals " + stackSize + "\n");
         // fields fase
         node.apply(fg);
         // Methods fase
@@ -428,7 +453,7 @@ public class CodeGenerator extends DepthFirstAdapter {
         for(PStmt s : node.getTurn()){
             s.apply(this);
         }
-        emit("\tinvokestatic " + "Main" + "/EndConditon()Z\n"+
+        emit("\tinvokestatic " + "Game/Main" + "/EndCondition()Z\n"+
                 "\tifeq Turn\n"
         );
 
@@ -442,15 +467,26 @@ public class CodeGenerator extends DepthFirstAdapter {
             stackSize = Math.max(stackSize,sc.Count(s));
         }
         emit(".limit stack " + stackSize + "\n");
+        loc = 0;
+        for(PStmt s : node.getEndCondition()){
+            if(s instanceof ADclStmt){
+                loc += ((ADclStmt) s).getDcls().size();
+            }
+            else if(s instanceof AForeachStmt){
+                loc++;
+            }
+        }
+        emit(".limit locals " + loc + "\n");
         for(PStmt s : node.getEndCondition()){
             s.apply(this);
         }
         emit(".end method\n\n");
+
         emit(".method public static MessageAll(Ljava/lang/String;)V\n" +
                 ".limit stack 2\n" +
                 ".limit locals 1 \n" +
-                "   aload 0\n" +
                 "   getstatic java/lang/System/out Ljava/io/PrintStream;\n" +
+                "   aload 0\n" +
                 "   invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\n" +
                 "   return\n" +
                 ".end method\n" +
@@ -462,7 +498,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                 "   invokevirtual java/io/Console/readLine()Ljava/lang/String;\n" +
                 "   areturn\n" +
                 ".end method\n\n" );
-        mg.current = "Main";
+        mg.current = "Game/Main";
         mg.locals = locals;
         mg.scope = scope;
         mg.SetStatic(true);
@@ -499,7 +535,7 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     @Override
     public void caseAListType(AListType node) {
-        emit("LList;");
+        emit("LGame/List;");
     }
 
     @Override
@@ -674,14 +710,20 @@ public class CodeGenerator extends DepthFirstAdapter {
             LHSVisitor(node.getVar());
             int size = ((AVal)node.getVar()).getCallField().size();
             if(size > 1) {
-                emit("\tputfield ");
+                emit("\tswap\n" +
+                        "\tputfield ");
                 var v = ((AVal) node.getVar()).getCallField().get(size - 2);
-                emit(extractType(v) + "/");
+                if(v.type.equals("card")){
+                    v.type = "Game/card";
+                }
+                else if(v.type.equals("player")){
+                    v.type = "Game/player";
+                }
+                emit(v.type + "/");
 
                 // emit field name
                 var field = (AFieldCallField) ((AVal) node.getVar()).getCallField().getLast();
                 emit(field.getId().getText() + " ");
-
                 // emit field type
                 var fdcl = field.getId().declarationNode;
                 if (fdcl instanceof ADclStmt) {
@@ -701,7 +743,13 @@ public class CodeGenerator extends DepthFirstAdapter {
                 node.getExpr().apply(this);
                 emit("\tputfield ");
                 var v = ((AVal) node.getVar()).getCallField().get(size-2);
-                emit(extractType(v)+"/");
+                if(v.type.equals("card")){
+                    v.type = "Game/card";
+                }
+                else if(v.type.equals("player")){
+                    v.type = "Game/player";
+                }
+                emit(v.type +"/");
 
                 // emit field name
                 var field = (AFieldCallField)((AVal) node.getVar()).getCallField().getLast();
@@ -741,25 +789,34 @@ public class CodeGenerator extends DepthFirstAdapter {
         if(first instanceof ACallCallField){
             var dcl = ((ACallCallField) first).getId().declarationNode;
             if(dcl instanceof AMethodDcl){
-                boolean instance = st.retrieveSymbol(((AMethodDcl) dcl).getName().getText().trim())==null;
-                if(instance){
-                    // get object reference
-                    emit("\taload 0\n");
-                    typeOnStack = current;
+                var fname = ((AMethodDcl) dcl).getName().getText().trim();
+                if(fname.equals("RandomInt") || fname.equals("RandomFloat") ||fname.equals("RandomIntRange")||fname.equals("RandomFloatRange")){
+                    for(PExpr e : ((ACallCallField) first).getParams()){
+                        e.apply(this);
+                    }
+                    emit("\tinvokestatic Game/Random/" + fname + "(");
                 }
-                for(PExpr e : ((ACallCallField) first).getParams()){
-                    e.apply(this);
-                }
-                if(instance){
-                    // instance method
-                    emit("\tinvokevirtual ");
-                }
-                else{
-                    // static method
-                    emit("\tinvokestatic ");
+                else {
+                    boolean instance = st.retrieveSymbol(fname) == null;
 
+                    if (instance) {
+                        // get object reference
+                        emit("\taload 0\n");
+                        typeOnStack = current;
+                    }
+                    for (PExpr e : ((ACallCallField) first).getParams()) {
+                        e.apply(this);
+                    }
+                    if (instance) {
+                        // instance method
+                        emit("\tinvokevirtual ");
+                    } else {
+                        // static method
+                        emit("\tinvokestatic ");
+
+                    }
+                    emit(current + "/" + fname + "(");
                 }
-                emit(current + "/" + ((AMethodDcl) dcl).getName().getText() + "(");
                 for(PParamDcl p : ((AMethodDcl) dcl).getParams()){
                     ((AParamDcl)p).getType().apply(this);
                 }
@@ -768,7 +825,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                 emit("\n");
             }
             else if(dcl instanceof AConstruct){
-                String type = ((AConstruct) dcl).getName().getText().trim();
+                String type = extractType(((AConstruct) dcl).getName().getText().trim(),false);
                 emit("\tnew " + type + "\n"+
                         "\tdup\n");
                 for(PExpr e : ((ACallCallField) first).getParams()){
@@ -787,10 +844,10 @@ public class CodeGenerator extends DepthFirstAdapter {
         else if(first instanceof AFieldCallField){
             var dcl = ((AFieldCallField) first).getId().declarationNode;
             String Fname = ((AFieldCallField) first).getId().getText().trim();
-            boolean staticfield = current.equals("Main") && (!Fname.equals("this") && !Fname.equals("null"));
+            boolean staticfield = current.equals("Game/Main") && (!Fname.equals("this") && !Fname.equals("null"));
             if(staticfield && st.retrieveSymbol(Fname) != null){
                 typeOnStack = extractDclType(dcl,false);
-                emit("\tgetstatic " + "Main" + "/" + ((AFieldCallField) first).getId().getText().trim() +
+                emit("\tgetstatic " + "Game/Main" + "/" + ((AFieldCallField) first).getId().getText().trim() +
                         " " + typeOnStack + "\n"
                 );
             }
@@ -799,11 +856,12 @@ public class CodeGenerator extends DepthFirstAdapter {
                 if (type != null) {
                     var localnr = getLocal(((AFieldCallField) first).getId().getText().trim());
                     if(localnr == -1){
-                        emit("\tgetstatic " + current + "/" + Fname + " " + typeOnStack + "\n");
+                        emit("\tgetstatic " + current + "/" + Fname + " " + type + "\n");
+                        typeOnStack = type;
                     }
                     else {
                         emit("\t" + extractPrefix(type) + "load " + localnr + "\n");
-                        typeOnStack = type;
+                        typeOnStack = extractType(type,false);
                     }
                 } else if (first.type.equals("null")) {
                     emit("\taconst_null\n");
@@ -819,7 +877,19 @@ public class CodeGenerator extends DepthFirstAdapter {
         for(PSingleDcl s :node.getDcls()){
             var dcl = (ASingleDcl)s;
             if(dcl.getExpr() != null){
-                dcl.getExpr().apply(this);
+                if(dcl.getExpr() instanceof AListExpr){
+                    if(((AListExpr) dcl.getExpr()).getElements().isEmpty()){
+                        emit("\tnew Game/List\n"+
+                                "\tdup\n" +
+                                "\tinvokespecial Game/List/<init>()V\n");
+                    }
+                    else{
+                        dcl.getExpr().apply(this);
+                    }
+                }
+                else {
+                    dcl.getExpr().apply(this);
+                }
             }
             else{
                 String type = extractType(node.getType());
@@ -833,23 +903,21 @@ public class CodeGenerator extends DepthFirstAdapter {
                     case "java/lang/String":
                         emit("\tldc \"\"\n");
                         break;
-                    case "List":
-                        emit("\tnew List\n"+
+                    case "Game/List":
+                        emit("\tnew Game/List\n"+
                                 "\tdup\n" +
-                                "\tinvokespecial List/<init>()V\n");
+                                "\tinvokespecial Game/List/<init>()V\n");
                         break;
                     default :
-                        emit("\tnew " + type + "\n");
+                        emit("\taconst_null\n");
                         break;
                 }
             }
 
-            if(current.equals("Main") && st.retrieveSymbol(dcl.getId().getText().trim()) != null){
-                if(dcl.getExpr() != null){
-                    emit("\tputstatic " + "Main" +"/" + dcl.getId().getText().trim() +
-                            " " + extractType(node.getType(),true) + "\n"
-                    );
-                }
+            if(current.equals("Game/Main") && st.retrieveSymbol(dcl.getId().getText().trim()) != null){
+                emit("\tputstatic " + "Game/Main" +"/" + dcl.getId().getText().trim() +
+                        " " + extractType(node.getType(),true) + "\n"
+                );
             }
             else {
                 emit("\t" + extractPrefix(node.getType()) + "store " +
@@ -963,11 +1031,11 @@ public class CodeGenerator extends DepthFirstAdapter {
         node.getList().apply(this);
         // retrieve item from list
         emit("\tdup2\n" +
-                "\tgetfield List/length I\n" +
+                "\tgetfield Game/List/length I\n" +
                 "\tisub\n" +
-                "\tifgt done" + loopLbl + "\n" +
+                "\tifge done" + loopLbl + "\n" +
                 "\tswap\n" +
-                "\tinvokevirtual List/index(I)Ljava/lang/Object;\n"+
+                "\tinvokevirtual Game/List/index(I)Ljava/lang/Object;\n"+
                 "\tcheckcast "
                 );
         // retrieve list type
@@ -989,7 +1057,15 @@ public class CodeGenerator extends DepthFirstAdapter {
                         "\tastore ");
                 break;
             case "list":
-                emit("List\n"+
+                emit("Game/List\n"+
+                        "\tastore ");
+                break;
+            case "card":
+                emit("Game/card\n" +
+                        "\tastore ");
+                break;
+            case "player":
+                emit("Game/player\n" +
                         "\tastore ");
                 break;
             default:
@@ -1073,6 +1149,7 @@ public class CodeGenerator extends DepthFirstAdapter {
             if(! (c instanceof ADefaultCase)){
                 scope++;
                 emit("case" + (labelOffset+i) + ":\n");
+                emit("\tpop\n");
                 for(PStmt s : ((ACaseCase)c).getThen()){
                     s.apply(this);
                 }
@@ -1300,9 +1377,9 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     @Override
     public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
-        emit("\tnew List\n"+
+        emit("\tnew Game/List\n"+
                 "\tdup\n"+
-                "\tinvokespecial List/<init>()V\n"
+                "\tinvokespecial Game/List/<init>()V\n"
         );
         for(PExpr e : node.getElements()){
             emit("\tdup\n");
@@ -1313,7 +1390,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                             "\tdup_x1\n"+
                             "\tswap\n"+
                             "\tinvokespecial java/lang/Integer/<init>(I)V\n"+
-                            "\tinvokevirtual List/add(Ljava/lang/Object;)V\n"
+                            "\tinvokevirtual Game/List/add(Ljava/lang/Object;)V\n"
                     );
                     break;
                 case "float":
@@ -1321,11 +1398,11 @@ public class CodeGenerator extends DepthFirstAdapter {
                             "\tdup_x1\n"+
                             "\tswap\n"+
                             "\tinvokespecial java/lang/Float/<init>(F)V\n"+
-                            "\tinvokevirtual List/add(Ljava/lang/Object;)V\n"
+                            "\tinvokevirtual Game/List/add(Ljava/lang/Object;)V\n"
                     );
                     break;
                 default:
-                    emit("\tinvokevirtual List/add(Ljava/lang/Object;)V\n");
+                    emit("\tinvokevirtual Game/List/add(Ljava/lang/Object;)V\n");
                     break;
             }
         }
@@ -1378,43 +1455,58 @@ public class CodeGenerator extends DepthFirstAdapter {
     public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException {
         var nextStackType = extractDclType(node.getId().declarationNode,true);
         var currentStackType = typeOnStack.endsWith(";") ? typeOnStack.substring(1,typeOnStack.length()-1) : typeOnStack;
+
         for(PExpr e : node.getParams()){
             e.apply(this);
         }
-        emit("\tinvokevirtual " + currentStackType + "/" + node.getId().getText().trim() +
-                "(");
-        var dcl = node.getId().declarationNode;
-        if(dcl instanceof AMethodDcl){
-            for(PParamDcl p : ((AMethodDcl) dcl).getParams()){
-                emit(extractType(((AParamDcl)p).getType(),true));
-            }
+        if(node.getId().getText().trim().equals("index") && currentStackType.equals("java/lang/String")){
+            emit("\tdup\n" +
+                    "\ticonst_1\n" +
+                    "\tiadd\n" +
+                    "\tinvokevirtual java/lang/String/substring(II)Ljava/lang/String;\n");
+
         }
-        else if(dcl instanceof AConstruct){
-            for(PParamDcl p : ((AConstruct) dcl).getParams()){
-                emit(extractType(((AParamDcl)p).getType(),true));
+        else {
+            emit("\tinvokevirtual " + currentStackType + "/" + node.getId().getText().trim() +
+                    "(");
+            var dcl = node.getId().declarationNode;
+            if (dcl instanceof AMethodDcl) {
+                for (PParamDcl p : ((AMethodDcl) dcl).getParams()) {
+                    emit(extractType(((AParamDcl) p).getType(), true));
+                }
+            } else if (dcl instanceof AConstruct) {
+                for (PParamDcl p : ((AConstruct) dcl).getParams()) {
+                    emit(extractType(((AParamDcl) p).getType(), true));
+                }
             }
-        }
-        emit(")" + nextStackType + "\n");
-        typeOnStack = nextStackType;
-        if(typeOnStack.contains("java/lang/Object")){
-            emit("\tcheckcast ");
-            switch(node.type){
-                case "int":
-                    emit("java/lang/Integer\n"+
-                            "\tinvokevirtual java/lang/Integer/intValue()I\n"
-                    );
-                    break;
-                case "float":
-                    emit("java/lang/Float\n"+
-                            "\tinvokevirtual java/lang/Float/floatValue()F\n"
-                    );
-                    break;
-                case "string":
-                    emit("java/lang/String\n");
-                    break;
-                default:
-                    emit(node.type + "\n");
-                    break;
+            emit(")" + nextStackType + "\n");
+            typeOnStack = nextStackType;
+            if (typeOnStack.contains("java/lang/Object")) {
+                emit("\tcheckcast ");
+                switch (node.type) {
+                    case "int":
+                        emit("java/lang/Integer\n" +
+                                "\tinvokevirtual java/lang/Integer/intValue()I\n"
+                        );
+                        break;
+                    case "float":
+                        emit("java/lang/Float\n" +
+                                "\tinvokevirtual java/lang/Float/floatValue()F\n"
+                        );
+                        break;
+                    case "string":
+                        emit("java/lang/String\n");
+                        break;
+                    case "card":
+                        emit("Game/card\n");
+                        break;
+                    case "player":
+                        emit("Game/player\n");
+                        break;
+                    default:
+                        emit(node.type + "\n");
+                        break;
+                }
             }
         }
     }

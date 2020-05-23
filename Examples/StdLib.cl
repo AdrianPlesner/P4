@@ -28,7 +28,7 @@ EndCondition{
 Function GetStdDeck(int jokers) typeof List typeof card {
     List typeof string suits = {"hearts"; "diamonds"; "clubs"; "spades";};
     List typeof card result;
-    for int i = 0; i < 13 ; i+=1 {
+    for int i = 1; i < 14 ; i+=1 {
         for int j = 0; j < 4 ; j+=1 {
             card c = card(suits.index(j),i);
             result.add(c);
@@ -38,6 +38,16 @@ Function GetStdDeck(int jokers) typeof List typeof card {
         result.add(card("joker",0));
     }
     return result;
+}
+
+Function ShuffleDeck(List typeof card input) typeof List typeof card {
+    List typeof card output;
+    while(input.length > 0){
+        card c = input.index(RandomIntRange(0,input.length - 1));
+        input.remove(c);
+        output.add(c);
+    }
+    return output;
 }
 
 Function AskAll(string s) typeof string{
@@ -52,8 +62,8 @@ Function Ask(player p, string s) typeof string{
 
 Function ParseInt(string s) typeof int{
     int result = 0;
-    for int i = s.length-1; i >= 0; i-=1 {
-        int power = s.length - 1 - i;
+    for int i = s.length()-1; i >= 0; i-=1 {
+        int power = s.length() - 1 - i;
         switch s.index(i) {
             case "1": {
                 result += 1 * Power(10,power);

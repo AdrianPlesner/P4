@@ -14,13 +14,17 @@
     dup
     ldc "suit"
     ldc 2
-    invokespecial card/<init>(Ljava/lang/String;I)V
+    invokespecial Game/card/<init>(Ljava/lang/String;I)V
     new player
     dup
     ldc "hejsa"
     iconst_0
-    invokespecial player/<init>(Ljava/lang/String;Z)V
+    invokespecial Game/player/<init>(Ljava/lang/String;Z)V
     invokestatic ehhh/add(Lcard;Lplayer;)I
+    pop
+    new List
+    dup
+    invokespecial List/<init>()V
     pop
     return
 .end method

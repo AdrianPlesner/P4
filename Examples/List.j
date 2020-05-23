@@ -1,7 +1,8 @@
-.class List
+.class Game/List
 .super java/lang/Object
 .field public length I
-.field private list Ljava/util/LinkedList;
+.field private first LGame/Node;
+.field private last LGame/Node;
 
 .method public <init>()V
     .limit locals 1
@@ -10,29 +11,54 @@
     dup
     invokenonvirtual java/lang/Object/<init>()V
     dup
-    new java/util/LinkedList
+    aconst_null
+    putfield Game/List/first LGame/Node;
     dup
-    invokespecial java/util/LinkedList/<init>()V
-    putfield List/list Ljava/util/LinkedList;
+    aconst_null
+    putfield Game/List/last LGame/Node;
+    dup
     iconst_0
-    putfield List/length I
+    putfield Game/List/length I
     return
 .end method
 
 .method public add(Ljava/lang/Object;)V
-    .limit locals 2
+    .limit locals 4
     .limit stack 3
-    aload 0
-    getfield List/list Ljava/util/LinkedList;
+    new Game/Node
+    dup
     aload 1
-    invokevirtual java/util/LinkedList/add(Ljava/lang/Object;)Z
-    pop
+    invokespecial Game/Node/<init>(Ljava/lang/Object)V
+    astore 2
+    aload 0
+    getfield Game/List/length I
+    ifeq empty
+    aload 0
+    getfield Game/List/last LGame/Node;
+    astore 3
+    aload 3
+    aload 2
+    setfield Game/Node/next LGame/Node;
+    aload 2
+    aload 3
+    setfield Game/Node/prev LGame/Node;
+    aload 0
+    aload 2
+    putfield Game/Node/Last LGame/Node;
+    goto added
+empty:
+    aload 0
+    aload 2
+    dup2
+    putfield Game/List/first LGame/Node;
+    putfield Game/List/last LGame/Node;
+added:
     aload 0
     dup
-    getfield List/length I
+    getfield Game/List/length I
     iconst_1
     iadd
-    putfield List/length I
+    putfield Game/List/length I
     return
 .end method
 
@@ -40,16 +66,16 @@
     .limit locals 2
     .limit stack 3
     aload 0
-    getfield List/list Ljava/util/LinkedList;
+    getfield Game/List/list Ljava/util/LinkedList;
     aload 1
     invokevirtual java/util/LinkedList/remove(Ljava/lang/Object;)Z
     pop
     aload 0
     dup
-    getfield List/length I
+    getfield Game/List/length I
     iconst_1
     isub
-    putfield List/length I
+    putfield Game/List/length I
     return
 .end method
 
@@ -58,22 +84,22 @@
     .limit stack 2
     aload 0
     dup
-    getfield List/list Ljava/util/LinkedList;
+    getfield GameList/list Ljava/util/LinkedList;
     invokevirtual java/util/LinkedList/clear()V
     iconst_0
-    putfield List/length I
+    putfield Game/List/length I
     return
 .end method
 
 .method public take(I)LList;
     .limit locals 4
     .limit stack 5
-    new List
+    new Game/List
     dup
-    invokespecial List/<init>()V
+    invokespecial Game/List/<init>()V
     astore 2
     aload 0
-    getfield List/list Ljava/util/LinkedList;
+    getfield Game/List/list Ljava/util/LinkedList;
     iconst_0
     istore 3
 loop:
@@ -84,7 +110,7 @@ loop:
     invokevirtual Ljava/util/LinkedList/removeFirst()Ljava/lang/Object;
     aload 2
     swap
-    invokevirtual List/add(Ljava/lang/Object;)V
+    invokevirtual Game/List/add(Ljava/lang/Object;)V
     iload 3
     iconst_1
     iadd
@@ -92,10 +118,10 @@ loop:
     goto loop
 done:
     dup
-    getfield List/length I
+    getfield Game/List/length I
     iload 1
     isub
-    putfield List/length I
+    putfield Game/List/length I
     return
 .end method
 
@@ -103,7 +129,7 @@ done:
     .limit locals 2
     .limit stack 2
     aload 0
-    getfield List/list Ljava/util/LinkedList;
+    getfield Game/List/list Ljava/util/LinkedList;
     iload 1
     invokevirtual java/util/LinkedList/get(I)Ljava/lang/Object;
     areturn

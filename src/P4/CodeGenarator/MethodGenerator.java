@@ -45,9 +45,9 @@ public class MethodGenerator extends CodeGenerator {
     @Override
     public void caseASetup(ASetup node) throws TypeException, SemanticException {
         SetStatic(false);
-        current = "card";
+        current = "Game/card";
         node.getCard().apply(this);
-        current = "player";
+        current = "Game/player";
         node.getPlayer().apply(this);
     }
 
@@ -82,7 +82,7 @@ public class MethodGenerator extends CodeGenerator {
         emit(")V\n");
         emit(".limit stack " + sc.Count(node) + "\n");
         //TODO: count locals
-        emit(".limit locals " +(((Function)st.retrieveSymbol(current, Function.class)).getLocals()+1) + "\n");
+        emit(".limit locals " +(((Function)st.retrieveSymbol(current.substring(5), Function.class)).getLocals()+1) + "\n");
 
         emit("  aload 0\n" +
                 "  invokenonvirtual java/lang/Object/<init>()V\n");
@@ -132,9 +132,9 @@ public class MethodGenerator extends CodeGenerator {
         emit(".limit stack " + sc.Count(node) + "\n");
         var fun = st.retrieveSymbol(node.getName().getText());
         if(fun == null){
-            var c = st.retrieveSymbol(current,SubClass.class);
+            var c = st.retrieveSymbol(current.substring(5),SubClass.class);
             if(c == null){
-                c = st.retrieveSymbol(current, GenericClass.class);
+                c = st.retrieveSymbol(current.substring(5), GenericClass.class);
                 if(c == null){
                     throw new SemanticException(node,"Function " + node.getName().getText() + " not found");
                 }

@@ -26,10 +26,10 @@ public class FieldGenerator extends CodeGenerator {
     @Override
     public void caseASetup(ASetup node) throws TypeException, SemanticException {
         // Card fields
-        current = "card";
+        current = "Game/card";
         node.getCard().apply(this);
         // player fields
-        current = "player";
+        current = "Game/player";
         node.getPlayer().apply(this);
     }
 

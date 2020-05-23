@@ -14,6 +14,7 @@ import java.io.PushbackReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class STBuilder extends DepthFirstAdapter {
 
@@ -83,7 +84,7 @@ public class STBuilder extends DepthFirstAdapter {
 
         var string = new SubClass("string",null,null);
         st.enterSymbol(string);
-        string.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
+        string.addMethod(new Function("length",new AMethodDcl(new TId("length"),new LinkedList<>(),new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
         var stringIndex = new Function("index",new AMethodDcl(new TId("index"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("string")),new LinkedList<>()),"string");
         string.addMethod(stringIndex);
@@ -121,6 +122,11 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(new SubClass("null",null,null));
         st.enterSymbol(new Variable("null",null,"null"));
         st.enterSymbol(new SubClass("element",null,null));
+        st.enterSymbol(new Function("RandomInt", new AMethodDcl(new TId("RandomInt"),new LinkedList<PParamDcl>(),new AVarType(new TId("int")),new LinkedList<>()),"int"));
+        st.enterSymbol(new Function("RandomFloat", new AMethodDcl(new TId("RandomFloat"),new LinkedList<PParamDcl>(),new AVarType(new TId("float")),new LinkedList<>()),"float"));
+        st.enterSymbol(new Function("RandomIntRange", new AMethodDcl(new TId("RandomIntRange"),new LinkedList<PParamDcl>(List.of(new AParamDcl(new AVarType(new TId("int")),new TId("min")), new AParamDcl(new AVarType(new TId("int")),new TId("max")))),new AVarType(new TId("int")),new LinkedList<>()), "int"));
+        st.enterSymbol(new Function("RandomFloatRange", new AMethodDcl(new TId("RandomFloatRange"),new LinkedList<PParamDcl>(List.of(new AParamDcl(new AVarType(new TId("float")),new TId("min")), new AParamDcl(new AVarType(new TId("float")),new TId("max")))),new AVarType(new TId("float")),new LinkedList<>()), "float"));
+
     }
 
     @Override
@@ -488,7 +494,7 @@ public class STBuilder extends DepthFirstAdapter {
 
                 if(classV.equals("element")){
                     // unknown classvariable
-                    type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
+                    type = "list";
                 }
                 else {
                     // known class variable

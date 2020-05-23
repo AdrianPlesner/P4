@@ -26,11 +26,11 @@ public class SubClassGenerator extends CodeGenerator {
 
     @Override
     public void caseASetup(ASetup node) throws TypeException, SemanticException {
-        current = "player";
+        current = "Game/player";
         for(PSubclass s : ((AClassBody) node.getPlayer()).getSubclasses()){
             s.apply(this);
         }
-        current = "card";
+        current = "Game/card";
         for(PSubclass s : ((AClassBody) node.getCard()).getSubclasses()){
             s.apply(this);
         }
@@ -40,7 +40,7 @@ public class SubClassGenerator extends CodeGenerator {
     public void caseASubclass(ASubclass node) throws TypeException, SemanticException {
         var name = node.getName().getText();
         files.put(name,"");
-        String s = ".class " + name + "\n"
+        String s = ".class Game/" + name + "\n"
                 + ".super " + current + "\n";
         current = name;
         emit(s);

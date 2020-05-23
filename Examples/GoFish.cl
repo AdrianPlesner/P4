@@ -10,28 +10,20 @@ Setup{
             this.name = name;
             this.ai = ai;
         }
-        Function whatevs() typeof void{
-            List typeof int l = {1;2;3;};
-            for i in l {
-                i += 1;
-            }
-        }
     }
 //public er “spillepladen” (tilgængelig for alle spillere)
     Game{
         player current;
         // Der er en bunke i spillet, trækbunken til når man fisker
-        List typeof card Deck = GetStdDeck(0);
+        List typeof card Deck = ShuffleDeck(GetStdDeck(0));
         // Definer spillere, initaliserer en List<Player> Players
         List typeof player Players = InitPlayers();
         while Players == null | Players.length < 2 {
             MessageAll("You need at least 2 players to play");
             Players = InitPlayers();
         }
-        List typeof int nums = {1;2;3;};
-        int n = nums.index(2);
         //Sæt start spiller
-        current = find("Adrian", Players);
+        current = Players.index(0);
         for p in Players {
             p.hand = Deck.take(7);
         }
@@ -45,11 +37,12 @@ Moves{
         bool result = false;
         for pCard in p.hand {
             if pCard.value == c.value {
+                Message(current, p.name + " had " + pCard.suit + ", " + pCard.value + "\n");
                 pCard.transfer(p, current);
                 result = true;
             }
         }
-        CheckForTrick(p);
+        CheckForTrick(current);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
         if(p.hand.length == 0){
             p.hand = Deck.take(1);
@@ -59,19 +52,27 @@ Moves{
 }
 // Definer en tur. Efter Setup vil denne kode loopes indtil endcondition
 Turn{
+    Message(current,"It is your turn!\n");
     bool continue = true;
-    player chosen;
+    player chosenPlayer;
+    card chosenCard;
     while current.hand.length > 0 & continue {
-        chosen = choosePlayer(Players);
-        continue = ChooseMove(chooseCard(current.hand),chosen);
+        chosenPlayer = choosePlayer(current, Players);
+        chosenCard = chooseCard(current.hand);
+        continue = ChooseMove(chosenCard,chosenPlayer);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
-    current.hand.add(Deck.take(1));
-    current = chosen;
+    Message(current, chosenPlayer.name + " did not have any card of value "+ chosenCard.value +"! Go Fish!!\n");
+    current.hand.add(Deck.take(1).index(0));
+    current = chosenPlayer;
 }
 EndCondition{
 	// Spillet slutter hvis alle spillere har en hånd med 0 kort.
+	MessageAll("The Score is:\n");
+	for p in Players{
+	    MessageAll(p.name + ": " + p.score + "\n");
+	}
     bool end = true;
 	for p in Players {
 		if p.hand.length == 0 {
@@ -85,14 +86,20 @@ EndCondition{
 	// Vinderen(e) er de(n) spiller(e) med flest point
 }
 
-Function choosePlayer(List typeof player l) typeof player{
+Function choosePlayer(player c, List typeof player l) typeof player{
     int i = 0;
-    MessageAll("Choose a player by number:\n");
+    List typeof player n;
     for p in l {
+        if p != c {
+            n.add(p);
+        }
+    }
+    MessageAll("Choose a player by number:\n");
+    for p in n {
         MessageAll( i + ": " + p.name + "\n");
         i += 1;
     }
-    return l.index(ParseInt(Read()));
+    return n.index(ParseInt(Read()));
 }
 
 Function chooseCard(List typeof card l) typeof card{
@@ -107,7 +114,7 @@ Function chooseCard(List typeof card l) typeof card{
 
 
 Function CheckForTrick(player p) typeof void{
-    List typeof card trick;
+    List typeof card trick = {};
     for int i = 1; i < 14 ; i += 1 {
         trick.clear();
         for c in p.hand {
@@ -125,29 +132,33 @@ Function CheckForTrick(player p) typeof void{
 }
 
 Function InitPlayers() typeof List typeof player {
-    List typeof player result;
+    List typeof player result = {};
     MessageAll("So who is playing today?");
     string input = "y";
-    while(input == "y"){
+    while input == "y" {
         MessageAll("Already in the game is:");
         for p in result {
             MessageAll(p.name);
         }
         string name = AskAll("Next players name: ");
-        string aiS = AskAll("Are they an ai (y/n)");
         bool ai;
-        if aiS == "y" {
-            ai = true;
-        }
-        else if aiS == "n" {
-            ai = false;
-        }
-        else {
-            MessageAll("Thats not right");
-            return null;
+
+        string aiS = "";
+        while aiS == ""{
+            aiS = AskAll("Are they an ai (y/n)");
+            if aiS == "y" {
+                ai = true;
+            }
+            else if aiS == "n" {
+                ai = false;
+            }
+            else {
+                MessageAll("Thats not right");
+                aiS = "";
+            }
         }
         result.add(player(name,ai));
-        input = AskAll("Are there any more players?");
+        input = AskAll("Are there any more players?(y/n)");
     }
     return result;
 }
