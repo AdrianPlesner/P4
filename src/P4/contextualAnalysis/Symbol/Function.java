@@ -9,6 +9,8 @@ public class Function extends Symbol {
 
     private String returnType;
 
+    private int locals = 0;
+
     public Function(String id, Node dcl, String returnType) {
         super(id, dcl);
         this.returnType = returnType;
@@ -16,7 +18,16 @@ public class Function extends Symbol {
 
     public void addArg(Variable v){
         args.add(v);
+        locals++;
     }
+
+    public void addLocal(){
+        locals++;
+    }
+    public int getLocals(){
+        return locals;
+    }
+
 
     public String getReturnType(){
         return this.returnType;

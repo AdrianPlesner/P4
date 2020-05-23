@@ -3,6 +3,8 @@
 package P4.Sable.node;
 
 import java.util.*;
+
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.analysis.*;
 import P4.contextualAnalysis.TypeException;
 
@@ -42,7 +44,7 @@ public final class ASetup extends PSetup
     }
 
     @Override
-    public void apply(Switch sw) throws TypeException {
+    public void apply(Switch sw) throws TypeException, SemanticException {
         ((Analysis) sw).caseASetup(this);
     }
 

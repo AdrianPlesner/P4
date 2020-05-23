@@ -2,6 +2,7 @@
 
 package P4.Sable.node;
 
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.analysis.*;
 
 @SuppressWarnings("nls")
@@ -30,8 +31,7 @@ public final class ABoolLiteral extends PLiteral
     }
 
     @Override
-    public void apply(Switch sw)
-    {
+    public void apply(Switch sw) throws SemanticException {
         ((Analysis) sw).caseABoolLiteral(this);
     }
 

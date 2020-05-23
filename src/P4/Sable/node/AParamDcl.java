@@ -2,6 +2,7 @@
 
 package P4.Sable.node;
 
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.analysis.*;
 import P4.contextualAnalysis.TypeException;
 
@@ -36,7 +37,7 @@ public final class AParamDcl extends PParamDcl
     }
 
     @Override
-    public void apply(Switch sw) throws TypeException {
+    public void apply(Switch sw) throws TypeException, SemanticException {
         ((Analysis) sw).caseAParamDcl(this);
     }
 

@@ -1,4 +1,5 @@
 package P4.contextualAnalysis;
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.node.*;
 
@@ -11,12 +12,12 @@ public class TokenFinder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
     }
 
     @Override
-    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException, SemanticException {
         node.getVar().apply(this);
     }
 
@@ -26,57 +27,57 @@ public class TokenFinder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
     }
 
     @Override
-    public void caseACallCallField(ACallCallField node) throws TypeException {
+    public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException {
         t = node.getId();
     }
 
     @Override
-    public void caseACallStmt(ACallStmt node) throws TypeException {
+    public void caseACallStmt(ACallStmt node) throws TypeException, SemanticException {
         node.getVal().apply(this);
     }
 
     @Override
-    public void caseACaseCase(ACaseCase node) throws TypeException {
+    public void caseACaseCase(ACaseCase node) throws TypeException, SemanticException {
         node.getCase().apply(this);
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException {
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException {
         node.getDcls().getFirst().apply(this);
     }
 
     @Override
-    public void caseAConstruct(AConstruct node) throws TypeException {
+    public void caseAConstruct(AConstruct node) throws TypeException, SemanticException {
         t = node.getName();
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node) throws TypeException {
+    public void caseADclStmt(ADclStmt node) throws TypeException, SemanticException {
         node.getType().apply(this);
     }
 
     @Override
-    public void caseADefaultCase(ADefaultCase node) throws TypeException {
+    public void caseADefaultCase(ADefaultCase node) throws TypeException, SemanticException {
         node.getThen().getFirst().apply(this);
     }
 
     @Override
-    public void caseAElseIf(AElseIf node) throws TypeException {
+    public void caseAElseIf(AElseIf node) throws TypeException, SemanticException {
         node.getPredicate().apply(this);
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
     }
 
     @Override
-    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException {
         t = node.getId();
     }
 
@@ -86,17 +87,17 @@ public class TokenFinder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException, SemanticException {
         t = node.getId();
     }
 
     @Override
-    public void caseAForStmt(AForStmt node) throws TypeException {
+    public void caseAForStmt(AForStmt node) throws TypeException, SemanticException {
         node.getInit().apply(this);
     }
 
     @Override
-    public void caseAIfStmt(AIfStmt node) throws TypeException {
+    public void caseAIfStmt(AIfStmt node) throws TypeException, SemanticException {
         node.getPredicate().apply(this);
     }
 
@@ -106,57 +107,57 @@ public class TokenFinder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAListExpr(AListExpr node) throws TypeException {
+    public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
         node.getElements().getFirst().apply(this);
     }
 
     @Override
-    public void caseAListType(AListType node) throws TypeException {
+    public void caseAListType(AListType node) throws TypeException, SemanticException {
         t = node.getType();
     }
 
     @Override
-    public void caseALiteralExpr(ALiteralExpr node) throws TypeException {
+    public void caseALiteralExpr(ALiteralExpr node) throws TypeException, SemanticException {
         node.getValue().apply(this);
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException {
         t = node.getName();
     }
 
     @Override
-    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException {
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
     }
 
     @Override
-    public void caseAParamDcl(AParamDcl node) throws TypeException {
+    public void caseAParamDcl(AParamDcl node) throws TypeException, SemanticException {
         node.getType().apply(this);
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
         t = node.getIncludes().getFirst();
     }
 
     @Override
-    public void caseARelationExpr(ARelationExpr node) throws TypeException {
+    public void caseARelationExpr(ARelationExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
     }
 
     @Override
-    public void caseAReturnStmt(AReturnStmt node) throws TypeException {
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException, SemanticException {
         node.getExpr().apply(this);
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         node.getCard().apply(this);
     }
 
     @Override
-    public void caseASingleDcl(ASingleDcl node) throws TypeException {
+    public void caseASingleDcl(ASingleDcl node) throws TypeException, SemanticException {
         t = node.getId();
     }
 
@@ -166,32 +167,32 @@ public class TokenFinder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseASubclass(ASubclass node) throws TypeException {
+    public void caseASubclass(ASubclass node) throws TypeException, SemanticException {
         t = node.getName();
     }
 
     @Override
-    public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException, SemanticException {
         node.getVariable().apply(this);
     }
 
     @Override
-    public void caseAVal(AVal node) throws TypeException {
+    public void caseAVal(AVal node) throws TypeException, SemanticException {
         node.getCallField().getFirst().apply(this);
     }
 
     @Override
-    public void caseAValueExpr(AValueExpr node) throws TypeException {
+    public void caseAValueExpr(AValueExpr node) throws TypeException, SemanticException {
         node.getVal().apply(this);
     }
 
     @Override
-    public void caseAVarType(AVarType node) throws TypeException {
+    public void caseAVarType(AVarType node) throws TypeException, SemanticException {
         t = node.getType();
     }
 
     @Override
-    public void caseAWhileStmt(AWhileStmt node) throws TypeException {
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException {
         node.getPredicate().apply(this);
     }
 
@@ -436,7 +437,7 @@ public class TokenFinder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseStart(Start node) throws TypeException {
+    public void caseStart(Start node) throws TypeException, SemanticException {
         node.getPProg().apply(this);
     }
 

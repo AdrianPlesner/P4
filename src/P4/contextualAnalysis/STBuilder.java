@@ -1,5 +1,6 @@
 package P4.contextualAnalysis;
 
+import P4.CodeGenarator.SemanticException;
 import P4.Sable.analysis.DepthFirstAdapter;
 import P4.Sable.lexer.Lexer;
 import P4.Sable.node.*;
@@ -7,21 +8,29 @@ import P4.Sable.parser.Parser;
 import P4.contextualAnalysis.Symbol.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.PushbackReader;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class STBuilder extends DepthFirstAdapter {
 
-    private Start ast;
+    protected Start ast;
 
-    private SymbolTable st;
+    protected SymbolTable st;
 
-    private Symbol current;
+    protected Symbol current;
 
     private String path;
 
     private TokenFinder tf = new TokenFinder();
+
+    public STBuilder(Start ast){
+        this.ast = ast;
+    }
 
     public STBuilder(Start ast, String contentPath) {
         this.ast = ast;
@@ -29,16 +38,17 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     // Construct the given symbol table from the ast
-    public SymbolTable BuildST(SymbolTable st) throws TypeException {
+    public SymbolTable BuildST(SymbolTable st) throws TypeException, SemanticException {
         this.st = st;
         // Add standard environment
         createStdEnv();
+
         ast.apply(this);
 
         return this.st;
     }
 
-    private void addToCurrent(Variable v) throws TypeException {
+    private void addToCurrent(Variable v) throws TypeException, SemanticException {
         if(current == null){
             st.enterSymbol(v);
         }
@@ -52,7 +62,7 @@ public class STBuilder extends DepthFirstAdapter {
             throw new TypeException(null,"An unknown type error occurred");
         }
     }
-    private void addToCurrent(Function f) throws TypeException {
+    protected void addToCurrent(Function f) throws TypeException, SemanticException {
         if(current == null){
             st.enterSymbol(f);
         }
@@ -74,65 +84,68 @@ public class STBuilder extends DepthFirstAdapter {
 
         var string = new SubClass("string",null,null);
         st.enterSymbol(string);
-        string.addLocal(new Variable("length",null,"int"));
+        string.addMethod(new Function("length",new AMethodDcl(new TId("length"),new LinkedList<>(),new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var stringIndex = new Function("index",null,"string");
+        var stringIndex = new Function("index",new AMethodDcl(new TId("index"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("string")),new LinkedList<>()),"string");
         string.addMethod(stringIndex);
         stringIndex.addArg(new Variable("i",null,"int"));
 
         var list = new GenericClass("list",null,null);
         st.enterSymbol(list);
-        list.addLocal(new Variable("length",null,"int"));
+        list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var take = new Function("take",null,"list of void");
+        var take = new Function("take",new AMethodDcl(new TId("take"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("list of element")),new LinkedList<>()),"list of element");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
-        var add = new Function("add",null,"void");
+        var add = new Function("add",new AMethodDcl(new TId("add"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(add);
         add.addArg(new Variable("e",null,"void"));
 
-        var remove = new Function("remove",null,"void");
+        var remove = new Function("remove",new AMethodDcl(new TId("remove"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("element")),new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         list.addMethod(remove);
         remove.addArg(new Variable("e",null,"void"));
 
-        list.addMethod(new Function("clear",null,"void"));
+        list.addMethod(new Function("clear",new AMethodDcl(new TId("clear"),new LinkedList<>(),new AVarType(new TId("void")),new LinkedList<>()),"void"));
 
-        var index = new Function("index",null,"element");
+        var index = new Function("index",new AMethodDcl(new TId("index"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("element")),new LinkedList<>()),"element");
         list.addMethod(index);
         index.addArg(new Variable("i",null,"int"));
 
-        var Turn = new SubClass("Turn",null,null);
-        st.enterSymbol(Turn);
-        Turn.addLocal(new Variable("current",null,"player"));
-        st.enterSymbol(new Variable("turn",null,"Turn"));
-
-        var message = new Function("Message",null,"void");
-        st.enterSymbol(message);
-        message.addArg(new Variable("p",null,"player"));
-        message.addArg(new Variable("m",null,"string"));
-
-        var messageAll = new Function("MessageAll",null,"void");
+        var messageAll = new Function("MessageAll",new AMethodDcl(new TId("MessageAll"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("string")),new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(messageAll);
         messageAll.addArg(new Variable("m",null,"string"));
 
 
-        st.enterSymbol(new Function("Read",null,"string"));
+        st.enterSymbol(new Function("Read",new AMethodDcl(new TId("Read"),new LinkedList<PParamDcl>(),new AVarType(new TId("string")),new LinkedList<>()),"string"));
 
         st.enterSymbol(new SubClass("null",null,null));
         st.enterSymbol(new Variable("null",null,"null"));
+        st.enterSymbol(new SubClass("element",null,null));
+        st.enterSymbol(new Function("RandomInt", new AMethodDcl(new TId("RandomInt"),new LinkedList<PParamDcl>(),new AVarType(new TId("int")),new LinkedList<>()),"int"));
+        st.enterSymbol(new Function("RandomFloat", new AMethodDcl(new TId("RandomFloat"),new LinkedList<PParamDcl>(),new AVarType(new TId("float")),new LinkedList<>()),"float"));
+        st.enterSymbol(new Function("RandomIntRange", new AMethodDcl(new TId("RandomIntRange"),new LinkedList<PParamDcl>(List.of(new AParamDcl(new AVarType(new TId("int")),new TId("min")), new AParamDcl(new AVarType(new TId("int")),new TId("max")))),new AVarType(new TId("int")),new LinkedList<>()), "int"));
+        st.enterSymbol(new Function("RandomFloatRange", new AMethodDcl(new TId("RandomFloatRange"),new LinkedList<PParamDcl>(List.of(new AParamDcl(new AVarType(new TId("float")),new TId("min")), new AParamDcl(new AVarType(new TId("float")),new TId("max")))),new AVarType(new TId("float")),new LinkedList<>()), "float"));
+
     }
 
     @Override
-    public void caseAProg(AProg node) throws TypeException {
+    public void caseAProg(AProg node) throws TypeException, SemanticException {
 
         var includes = node.getIncludes();
         int i = 0;
         try {
             for (TId inc : includes) {
+                // TODO: only include each file once
                 // Read included .cl file
-                //TODO: check if file exists
-                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(path.concat(inc.getText()).concat(".cl"))), 1024));
+                File f = new File(path.concat(inc.getText()).concat(".cl"));
+                if(f.exists()){
+                    System.out.println("Found include: " + f.getAbsolutePath());
+                }
+                else{
+                    throw new TypeException(inc,"Could not find file to include: " + f.getPath());
+                }
+                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(f)), 1024));
 
                 // parser program
                 Parser parser = new Parser(lexer);
@@ -143,8 +156,8 @@ public class STBuilder extends DepthFirstAdapter {
             }
             i = 0;
 
-            for (Start ast : node.includes) {
-                ast.apply(this);
+            for (Start s : node.includes) {
+                s.apply(this);
                 i++;
             }
         }
@@ -152,22 +165,10 @@ public class STBuilder extends DepthFirstAdapter {
             System.out.println("In "+includes.get(i).getText()+ "\n" + e);
         }
 
-        // Do method declarations
-        var methods = node.getMethods();
-        for(PMethodDcl m : methods){
-            m.apply(this);
-        }
-
+        this.st = new DeclarationBuilder((Start)node.parent()).BuildST(st);
         // Do Setup
         if(node.getSetup() != null){
             node.getSetup().apply(this);
-        }
-
-        // Do Move declarations
-        var moves = node.getMoves();
-        for(PMethodDcl move : moves)
-        {
-            move.apply(this);
         }
 
         // Do Turn
@@ -177,17 +178,19 @@ public class STBuilder extends DepthFirstAdapter {
         }
 
         // Do EndCondition
+        st.openScope();
         var endcon = node.getEndCondition();
         for(PStmt stmt : endcon){
             stmt.apply(this);
         }
+        st.closeScope();
 
         // Check method bodies
-        for(PMethodDcl m : methods){
+        for(PMethodDcl m : node.getMethods()){
             m.apply(this);
         }
         // check move bodies
-        for(PMethodDcl move : moves)
+        for(PMethodDcl move : node.getMoves())
         {
             move.apply(this);
         }
@@ -195,13 +198,12 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseASetup(ASetup node) throws TypeException {
+    public void caseASetup(ASetup node) throws TypeException, SemanticException {
         // Add card
         SubClass card;
         card = (SubClass) st.retrieveSymbol("card", SubClass.class);
         if(card == null) {
-            card = new SubClass("card", node.getCard(), null);
-            st.enterSymbol(card);
+            throw new TypeException(null,"An unknown type error occurred");
         }
         current = card;
         node.getCard().apply(this);
@@ -211,8 +213,7 @@ public class STBuilder extends DepthFirstAdapter {
         SubClass player;
         player = (SubClass) st.retrieveSymbol("player", SubClass.class);
         if(player == null) {
-            player = new SubClass("player", node.getPlayer(), null);
-            st.enterSymbol(player);
+            throw new TypeException(null,"An unknown type error occurred");
         }
         current = player;
         node.getPlayer().apply(this);
@@ -222,16 +223,17 @@ public class STBuilder extends DepthFirstAdapter {
         for(PStmt ps : node.getGame()){
             ps.apply(this);
         }
-
-
     }
 
     @Override
-    public void caseAMethodDcl(AMethodDcl node) throws TypeException {
+    public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException {
         // get name
         var name = node.getName().getText();
         // check if name already exists
         Symbol local = st.retrieveSymbol(name);
+        if(current instanceof SubClass){
+            local = ((SubClass) current).containsMethod(name);
+        }
         if(local instanceof Function){
             // function with name exists
             var fun = (Function)local;
@@ -248,7 +250,7 @@ public class STBuilder extends DepthFirstAdapter {
                 // Check body
                 var prev = current;
 
-                current = null;
+                current = local;
                 for (PStmt stmt : node.getBody()) {
                     stmt.apply(this);
                 }
@@ -259,35 +261,6 @@ public class STBuilder extends DepthFirstAdapter {
                 throw new IdentifierAlreadyExistsException(node.getName(), fun + " already exsists");
             }
         }
-        else if(local == null ) {
-            // Declare function
-            var returnType = node.getReturntype();
-            //Check returntype
-            returnType.apply(this);
-            var type = returnType.toString();
-            // Handle list return type
-            if(returnType instanceof AListType){
-                if(type.equals("void")){
-                    type = "list";
-                }
-                else{
-                    type = "list of " + type;
-                }
-            }
-            // Create method symbol
-            var method = new Function(name, node, type);
-
-            var prev = current;
-            current = method;
-            // Check arguments
-            for (PParamDcl pd : node.getParams()) {
-                pd.apply(this);
-            }
-            // Globl function in current scope
-            current = prev;
-            // Add function to current scope
-            addToCurrent(method);
-        }
         else{
             throw new IdentifierAlreadyExistsException(node.getName(),"");
         }
@@ -295,7 +268,7 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAParamDcl(AParamDcl node) throws TypeException {
+    public void caseAParamDcl(AParamDcl node) throws TypeException, SemanticException {
         // Check type is valid
         var typeNode = node.getType();
         typeNode.apply(this);
@@ -321,32 +294,14 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAClassBody(AClassBody node) throws TypeException {
+    public void caseAClassBody(AClassBody node) throws TypeException, SemanticException {
         if(current != null){
-            st.openScope();
-            st.enterSymbol(new Variable("this",null,current.getIdentifier()));
-            // Add locals
-            for(PStmt dcl : node.getDcls()){
-                // Check if statement is a declare
-                if(dcl instanceof ADclStmt){
-                    // Each var in declare statement
-                    dcl.apply(this);
-                }
-                else{
-                    // Statement is not a declare
-                    throw new TypeException(null,"A subclass can only have declare statements.");
-                }
-            }
 
             var construct = node.getConstruct();
             if(construct != null){
                 construct.apply(this);
             }
 
-            // Add method declarations
-            for(PMethodDcl md : node.getMethods()){
-                md.apply(this);
-            }
             // Do method bodies
             for(PMethodDcl md : node.getMethods()){
                 md.apply(this);
@@ -364,34 +319,38 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseASubclass(ASubclass node) throws TypeException {
-        // check name
+    public void caseASubclass(ASubclass node) throws TypeException, SemanticException {
         var name = node.getName().getText();
-        if(st.containsClass(name)){
-            // Name already exists
-            throw new TypeException(node.getName(),"A (sub)class named " + name + " already exists.");
-        }
         // Do class body
-        var sub = new SubClass(name,node, (SubClass) current);
-        st.enterSymbol(sub);
-        current = sub;
-        node.getBody().apply(this);
-        current = sub.getSuperClass();
-        // Add subclass to superclass
-        ((SubClass)current).addSubclass(sub);
+        var sub = st.retrieveSymbol(name);
+        if(sub instanceof SubClass) {
+            current = sub;
+            node.getBody().apply(this);
+            current = ((SubClass) sub).getSuperClass();
+        }
+        else{
+            throw new TypeException(node.getName(), "An unknown type error occurred.");
+        }
 
     }
 
     @Override
-    public void caseAConstruct(AConstruct node) throws TypeException {
-        var name = node.getName();
-        if( !name.getText().equals(current.getIdentifier())){
-            throw new TypeException(name,"Constructor must have same name as class");
+    public void caseAConstruct(AConstruct node) throws TypeException, SemanticException {
+        Function construct;
+        var sub = st.retrieveSymbol(node.getName().getText());
+        if(!(sub instanceof Function)){
+            if(sub instanceof SubClass){
+                construct = ((SubClass) sub).containsMethod(node.getName().getText());
+            }
+            else{
+                throw new TypeException(node.getName(), "An unknown type error occurred.");
+            }
         }
-        var construct = new Function(name.getText(),node,name.getText());
+        else{
+            construct = (Function)sub;
+        }
         var prev = current;
         current = null;
-        st.enterSymbol(construct);
         st.openScope();
         current = construct;
 
@@ -402,16 +361,16 @@ public class STBuilder extends DepthFirstAdapter {
         for(Symbol s : construct.getArgs()){
             st.enterSymbol(s);
         }
-        st.enterSymbol(new Variable("this",null,name.getText()));
+        current = prev;
         for(PStmt s : node.getBody()){
             s.apply(this);
         }
         st.closeScope();
-        current = prev;
+
     }
 
     @Override
-    public void caseADclStmt(ADclStmt node) throws TypeException {
+    public void caseADclStmt(ADclStmt node) throws TypeException, SemanticException {
         // Validate type
         var typeNode = node.getType();
         typeNode.apply(this);
@@ -426,17 +385,26 @@ public class STBuilder extends DepthFirstAdapter {
             }
             else if(typeNode instanceof AListType){
                 // variable is a list
-                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list",type);
+
+                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list of " + type,type);
             }
             else{
                 throw new TypeException(null,"An unknown type error occurred");
             }
-            addToCurrent(v);
+            if(current instanceof Function){
+                var prev = current;
+                current = null;
+                addToCurrent(v);
+                current = prev;
+            }
+            else {
+                addToCurrent(v);
+            }
         }
     }
 
     @Override
-    public void caseAVarType(AVarType node) throws TypeException {
+    public void caseAVarType(AVarType node) throws TypeException, SemanticException {
         var s = st.retrieveSymbol(node.getType().getText(),SubClass.class);
         if(! (s instanceof SubClass)){
             //Type is not a valid type
@@ -445,16 +413,17 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAListType(AListType node) throws TypeException {
+    public void caseAListType(AListType node) throws TypeException, SemanticException {
         var s = st.retrieveSymbol(node.getType().getText(),SubClass.class);
         if(! (s instanceof SubClass)){
             //Type is not a valid type
             throw new InvalidTypeException(node.getType(),"");
         }
+
     }
 
     @Override
-    public void caseASingleDcl(ASingleDcl node) throws TypeException {
+    public void caseASingleDcl(ASingleDcl node) throws TypeException, SemanticException {
         // Check if ID exists locally
         if( st.declaredLocally(node.getId().getText())){
             throw new TypeException(node.getId(),"Identifier already exists locally");
@@ -463,16 +432,19 @@ public class STBuilder extends DepthFirstAdapter {
         if(node.getExpr() != null) {
             node.getExpr().apply(this);
         }
+        if(current instanceof Function)
+            ((Function) current).addLocal();
+
     }
 
     @Override
-    public void caseAAssignStmt(AAssignStmt node) throws TypeException {
+    public void caseAAssignStmt(AAssignStmt node) throws TypeException, SemanticException {
         node.getVar().apply(this);
         node.getExpr().apply(this);
     }
 
     @Override
-    public void caseAVal(AVal node) throws TypeException {
+    public void caseAVal(AVal node) throws TypeException, SemanticException {
         var prev = current;
         for(PCallField cf : node.getCallField()){
             //Check call/field is valid
@@ -489,10 +461,10 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACallCallField(ACallCallField node) throws TypeException {
+    public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException {
         var name = node.getId().getText();
         Symbol dcl;
-        if(current == null){
+        if(current == null ||current instanceof Function){
             // Base call, lookup at symbol table
             dcl = st.retrieveSymbol(name);
         }
@@ -520,9 +492,9 @@ public class STBuilder extends DepthFirstAdapter {
                 // get class variabel
                 var classV = type.substring(8).trim();
 
-                if(classV.equals("void")){
+                if(classV.equals("element")){
                     // unknown classvariable
-                    type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
+                    type = "list";
                 }
                 else {
                     // known class variable
@@ -538,10 +510,6 @@ public class STBuilder extends DepthFirstAdapter {
             if(current == null){
                 current = st.retrieveSymbol(type,GenericClass.class);
             }
-            if(current == null){
-                // Return type dont exist
-                throw new InvalidTypeException(node.getId(),((Function) dcl).getReturnType());
-            }
         }
         else{
             throw new TypeException(node.getId(),"Method " + node.getId().getText() + " does not exists in the current context");
@@ -552,10 +520,10 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAFieldCallField(AFieldCallField node) throws TypeException {
+    public void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException {
         var name = node.getId().getText();
         Symbol dcl = null;
-        if(current == null){
+        if(current == null ||current instanceof Function){
             // Base call, lookup at symboltable
             dcl = st.retrieveSymbol(name);
         }
@@ -573,7 +541,7 @@ public class STBuilder extends DepthFirstAdapter {
         }
         current = st.retrieveSymbol(dcl.getType(),SubClass.class);
         if(current==null){
-            current = st.retrieveSymbol(dcl.getType(),GenericClass.class);
+            current = st.retrieveSymbol("list",GenericClass.class);
         }
         // Handle generics(list)
         if(current instanceof GenericClass && dcl instanceof GenerecVariable){
@@ -584,17 +552,17 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAReturnStmt(AReturnStmt node) throws TypeException {
+    public void caseAReturnStmt(AReturnStmt node) throws TypeException, SemanticException {
         node.getExpr().apply(this);
     }
 
     @Override
-    public void caseACallStmt(ACallStmt node) throws TypeException {
+    public void caseACallStmt(ACallStmt node) throws TypeException, SemanticException {
         node.getVal().apply(this);
     }
 
     @Override
-    public void caseAIfStmt(AIfStmt node) throws TypeException {
+    public void caseAIfStmt(AIfStmt node) throws TypeException, SemanticException {
         node.getPredicate().apply(this);
 
         st.openScope();
@@ -614,7 +582,7 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAForeachStmt(AForeachStmt node) throws TypeException {
+    public void caseAForeachStmt(AForeachStmt node) throws TypeException, SemanticException {
 
         node.getList().apply(this);
         var type = node.getList().type;
@@ -635,6 +603,9 @@ public class STBuilder extends DepthFirstAdapter {
 
         st.openScope();
         st.enterSymbol(new Variable(node.getId().getText(),node,type.trim()));
+        if(current instanceof Function){
+            ((Function) current).addLocal();
+        }
         for(PStmt s : node.getThen()){
             s.apply(this);
         }
@@ -642,9 +613,8 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAForStmt(AForStmt node) throws TypeException {
+    public void caseAForStmt(AForStmt node) throws TypeException, SemanticException {
         st.openScope();
-
         node.getInit().apply(this);
 
         node.getPredicate().apply(this);
@@ -659,7 +629,7 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseASwitchStmt(ASwitchStmt node) throws TypeException {
+    public void caseASwitchStmt(ASwitchStmt node) throws TypeException, SemanticException {
         node.getVariable().apply(this);
         for(PCase c : node.getCases()){
             c.apply(this);
@@ -667,7 +637,7 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseACaseCase(ACaseCase node) throws TypeException {
+    public void caseACaseCase(ACaseCase node) throws TypeException, SemanticException {
         node.getCase().apply(this);
         st.openScope();
         for(PStmt s : node.getThen()){
@@ -677,7 +647,7 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseADefaultCase(ADefaultCase node) throws TypeException {
+    public void caseADefaultCase(ADefaultCase node) throws TypeException, SemanticException {
         st.openScope();
         for(PStmt s : node.getThen()){
             s.apply(this);
@@ -686,7 +656,7 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAWhileStmt(AWhileStmt node) throws TypeException {
+    public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException {
         node.getPredicate().apply(this);
         st.openScope();
         for(PStmt s : node.getThen()){
@@ -696,7 +666,7 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAElseIf(AElseIf node) throws TypeException {
+    public void caseAElseIf(AElseIf node) throws TypeException, SemanticException {
         node.getPredicate().apply(this);
         st.openScope();
         for(PStmt s : node.getThen()){
@@ -706,45 +676,48 @@ public class STBuilder extends DepthFirstAdapter {
     }
 
     @Override
-    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException {
+    public void caseAEqualityExpr(AEqualityExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         node.getR().apply(this);
     }
 
     @Override
-    public void caseARelationExpr(ARelationExpr node) throws TypeException {
+    public void caseARelationExpr(ARelationExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         node.getR().apply(this);
     }
 
     @Override
-    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException {
+    public void caseAAddOpExpr(AAddOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         node.getR().apply(this);
     }
 
     @Override
-    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException {
+    public void caseABoolOpExpr(ABoolOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         node.getR().apply(this);
     }
 
     @Override
-    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException {
+    public void caseAMultOpExpr(AMultOpExpr node) throws TypeException, SemanticException {
         node.getL().apply(this);
         node.getR().apply(this);
     }
 
     @Override
-    public void caseAListExpr(AListExpr node) throws TypeException {
+    public void caseAListExpr(AListExpr node) throws TypeException, SemanticException {
         for(PExpr e : node.getElements()){
             e.apply(this);
         }
     }
 
     @Override
-    public void caseAValueExpr(AValueExpr node) throws TypeException {
+    public void caseAValueExpr(AValueExpr node) throws TypeException, SemanticException {
+        var prev = current;
+        current = null;
         node.getVal().apply(this);
+        current = prev;
     }
 
 }

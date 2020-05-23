@@ -4,5 +4,6 @@ package P4.Sable.node;
 
 public abstract class PLiteral extends Node
 {
+    public String type;
     // Empty body
 }
