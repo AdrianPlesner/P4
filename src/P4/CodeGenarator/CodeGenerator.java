@@ -444,11 +444,8 @@ public class CodeGenerator extends DepthFirstAdapter {
         // Subclasses fase
         node.apply(sg);
 
-        //todo: emit stack and locals sizes
-
         node.getSetup().apply(this);
 
-        //TODO: turn - endcondition loop
         emit("Turn:\n");
         for(PStmt s : node.getTurn()){
             s.apply(this);

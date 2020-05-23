@@ -114,7 +114,7 @@ Function chooseCard(List typeof card l) typeof card{
 
 
 Function CheckForTrick(player p) typeof void{
-    List typeof card trick = {};
+    List typeof card trick;
     for int i = 1; i < 14 ; i += 1 {
         trick.clear();
         for c in p.hand {

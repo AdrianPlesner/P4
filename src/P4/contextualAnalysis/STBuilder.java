@@ -26,6 +26,8 @@ public class STBuilder extends DepthFirstAdapter {
 
     private String path;
 
+    private LinkedList<String> includenames = new LinkedList<>();
+
     private TokenFinder tf = new TokenFinder();
 
     public STBuilder(Start ast){
@@ -94,7 +96,7 @@ public class STBuilder extends DepthFirstAdapter {
         st.enterSymbol(list);
         list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var take = new Function("take",new AMethodDcl(new TId("take"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("list of element")),new LinkedList<>()),"list of element");
+        var take = new Function("take",new AMethodDcl(new TId("take"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("element")),new LinkedList<>()),"list of element");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
@@ -133,26 +135,29 @@ public class STBuilder extends DepthFirstAdapter {
     public void caseAProg(AProg node) throws TypeException, SemanticException {
 
         var includes = node.getIncludes();
+
         int i = 0;
         try {
             for (TId inc : includes) {
-                // TODO: only include each file once
-                // Read included .cl file
-                File f = new File(path.concat(inc.getText()).concat(".cl"));
-                if(f.exists()){
-                    System.out.println("Found include: " + f.getAbsolutePath());
-                }
-                else{
-                    throw new TypeException(inc,"Could not find file to include: " + f.getPath());
-                }
-                Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(f)), 1024));
+                if(!includenames.contains(inc.getText().trim())) {
+                    includenames.add(inc.getText().trim());
+                    // Read included .cl file
+                    File f = new File(path.concat(inc.getText()).concat(".cl"));
+                    if (f.exists()) {
+                        System.out.println("Found include: " + f.getAbsolutePath());
+                    } else {
+                        throw new TypeException(inc, "Could not find file to include: " + f.getPath());
+                    }
+                    Lexer lexer = new Lexer(new PushbackReader(new BufferedReader(new FileReader(f)), 1024));
 
-                // parser program
-                Parser parser = new Parser(lexer);
+                    // parser program
+                    Parser parser = new Parser(lexer);
 
-                Start ast = parser.parse();
-                node.includes.add(ast);
-                i++;
+                    Start ast = parser.parse();
+                    node.includes.add(ast);
+                    i++;
+
+                }
             }
             i = 0;
 
