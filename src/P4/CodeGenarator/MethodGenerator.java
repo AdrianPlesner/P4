@@ -81,7 +81,6 @@ public class MethodGenerator extends CodeGenerator {
         }
         emit(")V\n");
         emit(".limit stack " + sc.Count(node) + "\n");
-        //TODO: count locals
         emit(".limit locals " +(((Function)st.retrieveSymbol(current.substring(5), Function.class)).getLocals()+1) + "\n");
 
         emit("  aload 0\n" +

@@ -8,6 +8,7 @@ import P4.contextualAnalysis.SymbolTable;
 
 import java.lang.reflect.Type;
 import java.nio.MappedByteBuffer;
+import java.util.LinkedList;
 
 public class TypeChecker extends DepthFirstAdapter {
 
@@ -19,10 +20,22 @@ public class TypeChecker extends DepthFirstAdapter {
         ast.apply(this);
     }
 
-    @Override
-    public void caseStart(Start node) throws TypeException, SemanticException {
-        // Check everything. No need to change anything
-        super.caseStart(node);
+    private void CheckParams(LinkedList<PParamDcl> dclparams, LinkedList<PExpr> actparams) throws SemanticException, TypeException {
+        if(dclparams.size() == actparams.size()){
+            for(int i = 0; i < dclparams.size(); i++){
+                String dclType = "";
+                String actType = actparams.get(i).type;
+                var pdtype = ((AParamDcl)dclparams.get(i)).getType();
+                if(pdtype instanceof AListType){
+                    dclType = "list of ";
+                }
+                dclType += pdtype.toString().trim();
+                if(!dclType.equals(actType) && !dclType.equals("element")){
+                    actparams.get(i).apply(tf);
+                    throw new TypeException(tf.getToken(),"Actual parameter type does not correspond to the type of formal parameter");
+                }
+            }
+        }
     }
 
     @Override
@@ -46,8 +59,6 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PMethodDcl methods : node.getMethods()){
             methods.apply(this);
         }
-
-        //TODO: What to do with linked list of TId?
     }
 
     @Override
@@ -78,8 +89,6 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PParamDcl pParamDcl : node.getParams()){
             pParamDcl.apply(this);
         }
-
-        //TODO: Probably not done
     }
 
     @Override
@@ -147,15 +156,17 @@ public class TypeChecker extends DepthFirstAdapter {
                 }
                 default:{
                     // incompatible types
-                    throw new TypeException(node.getOperator(),"Operation cannot be done on operands of type " + L.type);
+                    throw new TypeException(node.getOperator(),"Operation cannot be done with operands of type " + L.type);
                 }
             }
         }
         else{
             //Operands are of different types
+            //mix of int and float results in float
             if (L.type.equals("int") && R.type.equals("float") || L.type.equals("float") && R.type.equals("int")){
                 node.type = "float";
-            } else if(L.type.equals("string") || R.type.equals("string") && L.type.equals("int") || L.type.equals("float") || R.type.equals("int") || R.type.equals("float") ){
+            } // String can mix with int and float, results in string
+            else if(L.type.equals("string") || R.type.equals("string") && L.type.equals("int") || L.type.equals("float") || R.type.equals("int") || R.type.equals("float") ){
                 node.type = "string";
             }
             else {
@@ -201,11 +212,19 @@ public class TypeChecker extends DepthFirstAdapter {
         for (PExpr p : node.getElements()){
             p.apply(this);
         }
-        if(node.getElements().isEmpty()){
-            node.type = "list";
-        }
-        else {
-            node.type = node.getElements().getFirst().type;
+
+        node.type = "list";
+
+        if(!node.getElements().isEmpty()){
+            // check if all elements are of the same type
+            String type = node.getElements().getFirst().type;
+            for(int i = 1; i < node.getElements().size(); i++){
+                if(!type.equals(node.getElements().get(i).type)){
+                    node.getElements().get(i).apply(tf);
+                    throw new TypeException(tf.getToken(),"Elements in list are not of the same type");
+                }
+            }
+            node.type += " of " + type;
         }
     }
 
@@ -261,9 +280,8 @@ public class TypeChecker extends DepthFirstAdapter {
         var R = node.getR();
         R.apply(this);
 
-        //TODO: Reference types?
         //Only possible if operands are of same type
-        if (L.type.equals(R.type) || R.type.equals("null")){
+        if (L.type.equals(R.type) || R.type.equals("null") || L.type.equals("null")){
             node.type = "bool";
         }
         else{
@@ -286,8 +304,18 @@ public class TypeChecker extends DepthFirstAdapter {
         }
         // Node type = type of last element in call sequence
         node.type = node.getCallField().getLast().type;
+        if(node.type.contains("element")){
+            boolean cont = true;
+            int i = 0;
+            PCallField c = null;
+            while(cont) {
+                c = cfs.get(i);
+                cont = !c.type.contains("element");
+            }
+            c.apply(tf);
+            throw new TypeException(tf.getToken(),"Unable to determine type");
+        }
     }
-
 
     @Override
     public void caseAFieldCallField(AFieldCallField node) throws TypeException, SemanticException {
@@ -303,7 +331,7 @@ public class TypeChecker extends DepthFirstAdapter {
                 typeTxt = "list of ";
             }
             typeTxt += type.toString().trim();
-            node.type = typeTxt.trim();
+            node.type = typeTxt;
         }
         else if(dcl instanceof AParamDcl){
             // Type of variable is type of declaration node
@@ -321,14 +349,13 @@ public class TypeChecker extends DepthFirstAdapter {
                 node.type = x.substring(8);
             }
             else{
-                throw new TypeException(node.getId(), "Must be a collection");
+                throw new TypeException(node.getId(), "Must be a list");
             }
         }
         else if(dcl2 != null && dcl2.getType().equals("null")){
             node.type = "null";
         }
         else{
-            // if declaration node is not a ASINGLEDCL something went wrong
             throw new TypeException(node.getId(),"An unknown type error occurred");
         }
 
@@ -337,18 +364,22 @@ public class TypeChecker extends DepthFirstAdapter {
     @Override
     public void caseACallCallField(ACallCallField node) throws TypeException, SemanticException{
         // Apply on parameters
+        node.type = "";
         for (PExpr p: node.getParams()){
             p.apply(this);
         }
         var dclnode = node.getId().declarationNode;
-        // Get declaration node
-        var dcl = st.retrieveSymbol(node.getId().getText());
 
-        if (dcl instanceof Function) {
-            node.type = ((Function) dcl).getReturnType();
+        if (dclnode instanceof AMethodDcl){
+            CheckParams(((AMethodDcl) dclnode).getParams(),node.getParams());
+            if(((AMethodDcl) dclnode).getReturntype() instanceof AListType){
+                node.type = "list of ";
+            }
+            node.type += ((AMethodDcl) dclnode).getReturntype().toString().trim();
         }
-        else if (dclnode instanceof AMethodDcl){
-            node.type = ((AMethodDcl) dclnode).getReturntype().toString().trim();
+        else if(dclnode instanceof AConstruct){
+            CheckParams(((AConstruct) dclnode).getParams(),node.getParams());
+            node.type = ((AConstruct) dclnode).getName().getText().trim();
         }
         else {
             throw new TypeException(node.getId(), "An unknown type error has occurred");
@@ -358,8 +389,31 @@ public class TypeChecker extends DepthFirstAdapter {
     @Override
     public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException{
         // Apply on method body
+        LinkedList<AReturnStmt> returns = new LinkedList<>();
         for(PStmt s: node.getBody()){
             s.apply(this);
+            if(s instanceof AReturnStmt){
+                returns.add((AReturnStmt) s);
+            }
+        }
+        if(returns.isEmpty() && !node.getReturntype().toString().trim().equals("void")){
+            throw new SemanticException(node,"Method does not return a value");
+        }
+        else{
+            String returntype = "";
+            if(node.getReturntype() instanceof AListType){
+                returntype = "list of ";
+            }
+            returntype += node.getReturntype().toString().trim();
+            for(AReturnStmt s : returns){
+                if(!s.getExpr().type.equals(returntype)){
+                    if(s.getExpr().type.equals("null") && (returntype.equals("int") || returntype.equals("float") || returntype.startsWith("list"))) {
+                        // returning null is allowed, but only with reference typed
+                        s.apply(tf);
+                        throw new TypeException(tf.getToken(), "Type of return statement does not correspond to return type of function");
+                    }
+                }
+            }
         }
     }
 
@@ -381,49 +435,44 @@ public class TypeChecker extends DepthFirstAdapter {
 
         if (!pVal.type.equals(pExpr.type)){
             // If types are incompatible, throw exception.
-            throw new TypeException(node.getOperation(), "Cannot assign type " + pVal.type + " to type " + pExpr.type);
+            throw new TypeException(node.getOperation(), "Cannot assign type " + pExpr.type + " to type " + pVal.type);
         }
 
-        //TODO: Finish AAssignStmt
     }
-
 
     @Override
     public void caseAReturnStmt(AReturnStmt node) throws TypeException, SemanticException{
         var expr = node.getExpr();
         expr.apply(this);
-        //TODO: Fix this
     }
 
     @Override
     public void caseAForStmt(AForStmt node) throws TypeException, SemanticException{
-        // Apply to the statement body
-        for (PStmt s : node.getThen()){
-            s.apply(this);
-        }
-
         // init is an assign statement. Has already been type checked.
         var initStmt = node.getInit();
         initStmt.apply(this);
-        // Update is a statement.
-        var update = node.getUpdate();
-        update.apply(this);
 
         // Predicate is an expression.
         var predicate = node.getPredicate();
         predicate.apply(this);
         if (!predicate.type.equals("bool")){
             node.apply(tf);
-            throw new TypeException(tf.getToken(), "Predicate does not return type boolean");
+            throw new TypeException(tf.getToken(), "Predicate is not of type boolean");
         }
+
+        // Apply to the statement body
+        for (PStmt s : node.getThen()){
+            s.apply(this);
+        }
+
+        // Update is a statement.
+        var update = node.getUpdate();
+        update.apply(this);
+
     }
 
     @Override
     public void caseAWhileStmt(AWhileStmt node) throws TypeException, SemanticException{
-        // Apply on statement body
-        for (PStmt s : node.getThen()){
-            s.apply(this);
-        }
         // Predicate is an expression.
         var predicate = node.getPredicate();
         predicate.apply(this);
@@ -431,29 +480,47 @@ public class TypeChecker extends DepthFirstAdapter {
             node.apply(tf);
             throw new TypeException(tf.getToken(), "Predicate does not return type boolean");
         }
+
+        // Apply on statement body
+        for (PStmt s : node.getThen()){
+            s.apply(this);
+        }
+
     }
 
     @Override
     public void caseASwitchStmt(ASwitchStmt node) throws TypeException, SemanticException{
+
+        node.getVariable().apply(this);
+
+        var vartype = node.getVariable().type;
+        if(!(vartype.equals("int") || vartype.equals("float") || vartype.equals("string"))){
+            throw new SemanticException(node,"Switch can only be performed on variables of type int, float or string");
+        }
+
         // Apply on each case
         for (PCase pc : node.getCases()){
             pc.apply(this);
+            if(pc instanceof ACaseCase){
+                if(!((ACaseCase) pc).getCase().type.equals(vartype)){
+                    pc.apply(tf);
+                    throw new TypeException(tf.getToken(),"Type of case statement does not correspond to type of switch variable");
+                }
+            }
         }
-
-        //TODO: Do we care about the type of the value?
     }
 
     @Override
     public void caseACaseCase(ACaseCase node) throws TypeException, SemanticException{
+        // Each case is an expression
+        var pExpr = node.getCase();
+        pExpr.apply(this);
+
         // Apply on body of each case
         for (PStmt s : node.getThen()){
             s.apply(this);
         }
 
-        // Each case is an expression
-        var pExpr = node.getCase();
-        pExpr.apply(this);
-        //TODO: Make correct.
     }
 
     @Override
@@ -469,8 +536,8 @@ public class TypeChecker extends DepthFirstAdapter {
         // Foreach stmt only works on collections
         var pVal = node.getList();
         pVal.apply(this);
-        if (!pVal.type.contains("list")){
-            throw new TypeException(node.getId(), pVal.type + " is not a collection");
+        if (!pVal.type.startsWith("list")){
+            throw new TypeException(node.getId(), pVal.type + " is not a list");
         }
         // Apply on statement body
         for (PStmt ps : node.getThen()){
@@ -517,11 +584,25 @@ public class TypeChecker extends DepthFirstAdapter {
 
     @Override
     public void caseADclStmt(ADclStmt node) throws TypeException, SemanticException{
+        node.getType().apply(this);
+
+        String type = "";
+        if(node.getType() instanceof AListType){
+            type = "list of ";
+        }
+        type += node.getType().toString().trim();
+
         for (PSingleDcl dcl : node.getDcls()){
             dcl.apply(this);
+            var expr = ((ASingleDcl)dcl).getExpr();
+
+            if(expr !=null && !expr .type.equals(type)){
+                if(expr instanceof AListExpr && !((AListExpr) expr).getElements().isEmpty()){
+                    dcl.apply(tf);
+                    throw new TypeException(tf.getToken(),"Type of expression does not match type of declaration");
+                }
+            }
         }
-        var type = node.getType();
-        type.apply(this);
     }
 
     @Override
@@ -540,37 +621,14 @@ public class TypeChecker extends DepthFirstAdapter {
         for(PStmt p : node.getGame()){
             p.apply(this);
         }
-
     }
-
 
     @Override
     public void caseASingleDcl(ASingleDcl node) throws TypeException, SemanticException{
         var expr = node.getExpr();
-
         if (expr != null){
             expr.apply(this);
-            var parentType = ((ADclStmt)node.parent()).getType();
-            String pType = "";
-            if (parentType instanceof AListType){
-                pType = "list of ";
-            }
-            pType += parentType.toString().trim();
-            if(expr instanceof AListExpr){
-                if(((AListExpr) expr).getElements().isEmpty()){
-                    expr.type = pType;
-                }
-                for (PExpr p : ((AListExpr) expr).getElements()){
-                    if(!parentType.toString().trim().equals(p.type)) {
-                        throw new TypeException(node.getId(), "Variable type does not match the expression type");
-                    }
-                }
-            }
-            else if(!pType.equals(expr.type)){
-                throw new TypeException(node.getId(), "Variable type does not match the expression type");
-            }
         }
-
     }
 
     @Override
@@ -578,6 +636,4 @@ public class TypeChecker extends DepthFirstAdapter {
         var val = node.getVal();
         val.apply(this);
     }
-
-
 }
