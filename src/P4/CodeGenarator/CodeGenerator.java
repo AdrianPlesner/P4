@@ -111,12 +111,8 @@ public class CodeGenerator extends DepthFirstAdapter {
     public CodeGenerator(Start ast, SymbolTable st, String n) {
         this.ast = ast;
         this.st = st;
-        if(n == null){
-            name = "Game";
-        }
-        else{
-            name = n;
-        }
+        name = n;
+
         files.put("Game/Main","");
         fg = new FieldGenerator(files);
         mg = new MethodGenerator(files,st);
@@ -133,13 +129,12 @@ public class CodeGenerator extends DepthFirstAdapter {
 
     public final void writeFiles(String path) throws IOException {
         if(path.equals("")){
-            path = System.getProperty("user.dir") + "/";
+            path = System.getProperty("user.dir") + "/" + name;
         }
-        File dir = new File(path);
+        File dir = new File(path + "/Game");
         dir.mkdirs();
         for(var key : files.keySet()){
             File f = new File(path +"/" + key + ".j");
-
             if(f.exists()){
                 if(!f.delete()){
                     throw new IOException("Could not delete " + f.getAbsolutePath());
@@ -536,9 +531,7 @@ public class CodeGenerator extends DepthFirstAdapter {
             s.apply(mg);
         }
         for(Start s : node.includes){
-            for(PMethodDcl m : ((AProg)s.getPProg()).getMoves()){
-                m.apply(mg);
-            }
+
             mg.setMove(false);
             for(PMethodDcl m : ((AProg)s.getPProg()).getMethods()){
                 m.apply(mg);
@@ -1336,6 +1329,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                     } else {
                         throw new SemanticException(node, "An unknown error occurred");
                     }
+                    break;
                 default:
                     throw new SemanticException(node, "An unknown error occurred");
             }

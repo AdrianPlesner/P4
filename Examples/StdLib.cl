@@ -1,3 +1,4 @@
+include StdLib;
 Setup{
     Card {
         string suit;

@@ -27,6 +27,7 @@ Setup{
         for p in Players {
             p.hand = Deck.take(7);
         }
+        int f = 5+3*8, h = 78 % 43 + 43 / (234-43);
     }
 }
 // Mulige træk
@@ -44,7 +45,7 @@ Moves{
         }
         CheckForTrick(current);
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
-        if(p.hand.length == 0){
+        if p.hand.length == 0 {
             p.hand = Deck.take(1);
          }
          return result;

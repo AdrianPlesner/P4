@@ -3,6 +3,8 @@
 .field public static current LGame/player;
 .field public static Deck LGame/List;
 .field public static Players LGame/List;
+.field public static f I
+.field public static h I
 .field public static continue Z
 .field public static chosenPlayer LGame/player;
 .field public static chosenCard LGame/card;
@@ -15,7 +17,7 @@
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 7
-.limit locals 7
+.limit locals 9
 	aconst_null
 	putstatic Game/Main/current LGame/player;
 	ldc 0
@@ -80,6 +82,22 @@ loop4:
 done4:
 	pop2
 	pop
+	ldc 5
+	ldc 3
+	ldc 8
+	imul
+	iadd
+	putstatic Game/Main/f I
+	ldc 78
+	ldc 43
+	irem
+	ldc 43
+	ldc 234
+	ldc 43
+	isub
+	idiv
+	iadd
+	putstatic Game/Main/h I
 Turn:
 	getstatic Game/Main/current LGame/player;
 	ldc "It is your turn!\n"

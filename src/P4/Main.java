@@ -1,6 +1,7 @@
 package P4;
 
 import P4.CodeGenarator.CodeGenerator;
+import P4.PrettyPrinter.PrettyPrinter;
 import P4.Sable.parser.*;
 import P4.Sable.lexer.*;
 import P4.Sable.node.*;
@@ -14,7 +15,7 @@ public class Main {
         long start_time, stop_time; //times compilation
         if (args.length < 1) {
             System.out.println("Usage:");
-            System.out.println(" java P4.Main <filename> [GameName]");
+            System.out.println(" java P4.Main <filename> [options]");
         }
         try {
             start_time = System.currentTimeMillis();
@@ -31,6 +32,24 @@ public class Main {
             for(int i = 0; i < path.length-1; i++){
                 contentPath = contentPath.concat(path[i]).concat("/");
             }
+            String newName = path[path.length-1];
+            newName = newName.substring(0,newName.length()-3);
+
+            int i = 1;
+            while(i < args.length){
+                String op = args[i];
+                switch(op){
+                    case "-PP":
+                        new PrettyPrinter(newName,contentPath).Print(ast);
+                        i++;
+                        break;
+                    case "-n" :{
+                        newName = args[++i];
+                        i++;
+                    }
+                }
+            }
+
             // Construct symbol table
             STBuilder stBuilder = new STBuilder(ast,contentPath);
             SymbolTable st = stBuilder.BuildST(new SymbolTable());
@@ -38,12 +57,9 @@ public class Main {
             TypeChecker tc = new TypeChecker(ast,st);
 
             CodeGenerator cg;
-            if(args.length == 2){
-                cg = new CodeGenerator(ast,st,args[2]);
-            }
-            else{
-                cg = new CodeGenerator(ast,st,null);
-            }
+
+            cg = new CodeGenerator(ast,st,newName);
+
             cg.generate();
             cg.writeFiles();
 
