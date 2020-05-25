@@ -3,7 +3,6 @@
 .field public name Ljava/lang/String;
 .field public hand LGame/List;
 .field public ai Z
-.field public score I
 .method public <init>()V 
     aload_0
     invokenonvirtual java/lang/Object/<init>()V

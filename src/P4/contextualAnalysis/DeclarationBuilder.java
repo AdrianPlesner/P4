@@ -115,10 +115,10 @@ public class DeclarationBuilder extends STBuilder {
         // Handle list return type
         if(returnType instanceof AListType){
             if(type.equals("void")){
-                type = "list";
+                type = "List";
             }
             else{
-                type = "list of " + type;
+                type = "List of " + type;
             }
         }
         // Create method symbol

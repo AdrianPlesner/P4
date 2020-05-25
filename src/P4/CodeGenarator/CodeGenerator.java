@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 
 public class CodeGenerator extends DepthFirstAdapter {
@@ -37,6 +38,49 @@ public class CodeGenerator extends DepthFirstAdapter {
             }
         }
         return -1;
+    }
+
+    private int countLocals(LinkedList<PStmt> stmts){
+        int result = 0;
+        for(PStmt s : stmts){
+            if(s instanceof ADclStmt){
+                result += ((ADclStmt) s).getDcls().size();
+            }
+            else if(s instanceof AForeachStmt){
+                result++;
+                result += countLocals(((AForeachStmt) s).getThen());
+            }
+            else if(s instanceof AIfStmt){
+                result += countLocals(((AIfStmt) s).getThen());
+                result += countLocals(((AIfStmt) s).getElse());
+                for(PElseIf f :((AIfStmt) s).getElseifs()){
+                    result += countLocals(((AElseIf)f).getThen());
+                }
+            }
+            else if(s instanceof ASwitchStmt){
+
+                for(PCase p : ((ASwitchStmt) s).getCases()){
+                    if(p instanceof ACaseCase){
+                        result += countLocals(((ACaseCase) p).getThen());
+                    }
+                    else if(p instanceof ADefaultCase){
+                        result += countLocals(((ADefaultCase) p).getThen());
+                    }
+                }
+            }
+            else if(s instanceof AForStmt){
+                result += countLocals(((AForStmt) s).getThen());
+                if (((AForStmt) s).getInit() instanceof ADclStmt){
+                    result ++;
+                }
+            }
+            else if (s instanceof AWhileStmt){
+                result += countLocals(((AWhileStmt) s).getThen());
+            }
+
+        }
+
+        return result;
     }
 
     protected int addLocal(String name){
@@ -425,18 +469,9 @@ public class CodeGenerator extends DepthFirstAdapter {
 
 
         emit(".limit stack " + stackSize + "\n");
-        int loc = 0;
-        for(PStmt s: ((ASetup)node.getSetup()).getGame()){
-            if(s instanceof AForeachStmt){
-                loc++;
-            }
-        }
-        for(PStmt s: node.getTurn()){
-            if(s instanceof AForeachStmt){
-                loc++;
-            }
-        }
-        emit(".limit locals " + stackSize + "\n");
+        int loc = countLocals(((ASetup)node.getSetup()).getGame()) + countLocals(node.getTurn());
+
+        emit(".limit locals " + loc + "\n");
         // fields fase
         node.apply(fg);
         // Methods fase
@@ -464,15 +499,8 @@ public class CodeGenerator extends DepthFirstAdapter {
             stackSize = Math.max(stackSize,sc.Count(s));
         }
         emit(".limit stack " + stackSize + "\n");
-        loc = 0;
-        for(PStmt s : node.getEndCondition()){
-            if(s instanceof ADclStmt){
-                loc += ((ADclStmt) s).getDcls().size();
-            }
-            else if(s instanceof AForeachStmt){
-                loc++;
-            }
-        }
+        loc =  countLocals(node.getEndCondition());
+
         emit(".limit locals " + loc + "\n");
         for(PStmt s : node.getEndCondition()){
             s.apply(this);
@@ -1224,6 +1252,7 @@ public class CodeGenerator extends DepthFirstAdapter {
                 if (op.equals("!=")) {
                     emit("\ticonst_1\n" +
                             "\tisub\n" +
+                            "\tdup\n" +
                             "\tifeq done" + ++labelcounter + "\n" +
                             "\tineg\n" +
                             "done" + labelcounter + ":\n"
@@ -1464,7 +1493,24 @@ public class CodeGenerator extends DepthFirstAdapter {
 
         }
         else {
-            emit("\tinvokevirtual " + currentStackType + "/" + node.getId().getText().trim() +
+            var mname = node.getId().getText().trim();
+            if((mname.equals("add") || mname.equals("remove") || mname.equals("set") )&& currentStackType.equals("Game/List")){
+                if(node.getParams().size() <= 2){
+                    if(node.getParams().getLast().type.equals("int")){
+                        emit("\tnew java/lang/Integer\n" +
+                                "\tdup_x1\n" +
+                                "\tswap\n" +
+                                "\tinvokespecial java/lang/Integer/<init>(I)V\n");
+                    }
+                    else if(node.getParams().getLast().type.equals("float")){
+                        emit("\tnew java/lang/Float\n" +
+                                "\tdup_x1\n" +
+                                "\tswap\n" +
+                                "\tinvokespecial java/lang/Float/<init>(I)V\n");
+                    }
+                }
+            }
+            emit("\tinvokevirtual " + currentStackType + "/" + mname +
                     "(");
             var dcl = node.getId().declarationNode;
             if (dcl instanceof AMethodDcl) {
@@ -1485,23 +1531,29 @@ public class CodeGenerator extends DepthFirstAdapter {
                         emit("java/lang/Integer\n" +
                                 "\tinvokevirtual java/lang/Integer/intValue()I\n"
                         );
+                        typeOnStack = "int";
                         break;
                     case "float":
                         emit("java/lang/Float\n" +
                                 "\tinvokevirtual java/lang/Float/floatValue()F\n"
                         );
+                        typeOnStack = "float";
                         break;
                     case "string":
                         emit("java/lang/String\n");
+                        typeOnStack = "java/lang/String";
                         break;
                     case "card":
                         emit("Game/card\n");
+                        typeOnStack = "Game/card";
                         break;
                     case "player":
                         emit("Game/player\n");
+                        typeOnStack = "Game/player";
                         break;
                     default:
                         emit(node.type + "\n");
+                        typeOnStack = node.type;
                         break;
                 }
             }

@@ -92,11 +92,11 @@ public class STBuilder extends DepthFirstAdapter {
         string.addMethod(stringIndex);
         stringIndex.addArg(new Variable("i",null,"int"));
 
-        var list = new GenericClass("list",null,null);
+        var list = new GenericClass("List",null,null);
         st.enterSymbol(list);
         list.addLocal(new Variable("length",new ADclStmt(new AVarType(new TId("int")),new LinkedList<>()),"int"));
 
-        var take = new Function("take",new AMethodDcl(new TId("take"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("element")),new LinkedList<>()),"list of element");
+        var take = new Function("take",new AMethodDcl(new TId("take"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("num")))),new AListType(new TId("element")),new LinkedList<>()),"List of element");
         take.addArg(new Variable("num",null,"int"));
         list.addMethod(take);
 
@@ -113,6 +113,10 @@ public class STBuilder extends DepthFirstAdapter {
         var index = new Function("index",new AMethodDcl(new TId("index"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("int")),new TId("i")))),new AVarType(new TId("element")),new LinkedList<>()),"element");
         list.addMethod(index);
         index.addArg(new Variable("i",null,"int"));
+
+        var set = new Function("set",new AMethodDcl(new TId("set"),new LinkedList<PParamDcl>(List.of(new AParamDcl(new AVarType(new TId("int")), new TId("index")), new AParamDcl(new AVarType(new TId("element")), new TId("e")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
+        list.addMethod(set);
+        index.addArg(new Variable("e",null,"void"));
 
         var messageAll = new Function("MessageAll",new AMethodDcl(new TId("MessageAll"),new LinkedList<PParamDcl>(Collections.singletonList(new AParamDcl(new AVarType(new TId("string")),new TId("m")))),new AVarType(new TId("void")),new LinkedList<>()),"void");
         st.enterSymbol(messageAll);
@@ -290,7 +294,7 @@ public class STBuilder extends DepthFirstAdapter {
         }
         else if(typeNode instanceof AListType){
             // variable is a list
-            v = new GenerecVariable(name, node,"list",type);
+            v = new GenerecVariable(name, node,"List",type);
         }
         else{
             throw new TypeException(null,"An unknown type error occurred");
@@ -391,7 +395,7 @@ public class STBuilder extends DepthFirstAdapter {
             else if(typeNode instanceof AListType){
                 // variable is a list
 
-                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"list of " + type,type);
+                v = new GenerecVariable(((ASingleDcl) sDcl).getId().getText(), node,"List of " + type,type);
             }
             else{
                 throw new TypeException(null,"An unknown type error occurred");
@@ -493,22 +497,22 @@ public class STBuilder extends DepthFirstAdapter {
             current = prev;
             var type = ((Function) dcl).getReturnType().trim();
 
-            if(type.startsWith("list of")){
+            if(type.startsWith("List of")){
                 // get class variabel
                 var classV = type.substring(8).trim();
 
                 if(classV.equals("element")){
                     // unknown classvariable
-                    type = "list";
+                    type = "List";
                 }
                 else {
                     // known class variable
-                    ((GenericClass) st.retrieveSymbol("list")).setClassVariable(classV);
-                    type = "list";
+                    ((GenericClass) st.retrieveSymbol("List")).setClassVariable(classV);
+                    type = "List";
                 }
             }
             else if(type.equals("element")){
-                type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
+                type = ((GenericClass)st.retrieveSymbol("List")).getClassVariable();
             }
 
             current = st.retrieveSymbol(type,SubClass.class);
@@ -546,7 +550,7 @@ public class STBuilder extends DepthFirstAdapter {
         }
         current = st.retrieveSymbol(dcl.getType(),SubClass.class);
         if(current==null){
-            current = st.retrieveSymbol("list",GenericClass.class);
+            current = st.retrieveSymbol("List",GenericClass.class);
         }
         // Handle generics(list)
         if(current instanceof GenericClass && dcl instanceof GenerecVariable){
@@ -591,11 +595,11 @@ public class STBuilder extends DepthFirstAdapter {
 
         node.getList().apply(this);
         var type = node.getList().type;
-        if(type.equals("list")){
+        if(type.equals("List")){
             // Generic list
-            type = ((GenericClass)st.retrieveSymbol("list")).getClassVariable();
+            type = ((GenericClass)st.retrieveSymbol("List")).getClassVariable();
         }
-        else if(type.startsWith("list of")){
+        else if(type.startsWith("List of")){
             // Known list type
             type = type.substring(7);
 

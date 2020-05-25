@@ -76,4 +76,33 @@ public class List {
         last = null;
         length = 0;
     }
+
+    public void set(int index, Object o){
+        Node n = new Node(o);
+        if(index >= 0 && index < length){
+            Node c = first;
+            for ( int i = 0; i < index; i++ ){
+                if(c != null) {
+                    c = c.next;
+                }
+            }
+            if (c == first){
+                n.next = c.next;
+                n.next.prev = n;
+                first = n;
+            }
+            else if (c == last){
+                n.prev = c.prev;
+                n.prev.next = n;
+                last = n;
+            }
+            else if (c != null){
+                n.next = c.next;
+                n.next.prev = n;
+                n.prev = c.prev;
+                n.prev.next = n;
+            }
+        }
+
+    }
 }
