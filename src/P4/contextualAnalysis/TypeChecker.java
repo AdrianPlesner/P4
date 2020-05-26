@@ -36,6 +36,15 @@ public class TypeChecker extends DepthFirstAdapter {
                 }
             }
         }
+        else{
+            if(dclparams.isEmpty()){
+                actparams.getFirst().apply(tf);
+            }
+            else{
+                dclparams.getFirst().apply(tf);
+            }
+            throw new SemanticException(tf.getToken(),"Number of actual parameters does not correspond to the number of formal parameters");
+        }
     }
 
     @Override
