@@ -51,12 +51,12 @@ public class List {
     public List take(int i){
         List result = new List();
         while(i > 0){
-            result.add(first.value);
-            first = first.next;
-            first.prev = null;
+            if(first != null) {
+                result.add(first.value);
+                remove(first.value);
+            }
             i--;
         }
-        length -= i;
         return result;
     }
 

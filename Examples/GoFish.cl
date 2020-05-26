@@ -36,18 +36,24 @@ Moves{
     Function ChooseMove(card c, player p) typeof bool{
         // Tjek alle kort i den anden spiller hånd om de har samme værdi og overræk dem der er til den spiller hvis tur det er
         bool result = false;
+        List typeof card TakeList = {};
         for pCard in p.hand {
+
             if pCard.value == c.value {
                 Message(current, p.name + " had " + pCard.suit + ", " + pCard.value + "\n");
-                pCard.transfer(p, current);
+                TakeList.add(pCard);
                 result = true;
             }
         }
-        CheckForTrick(current);
+        for pCard in TakeList{
+            pCard.transfer(p, current);
+        }
+
         //Hvis hånden på den spiller man trak fra nu er tom, trækker de et kort fra bunken.
-        if p.hand.length == 0 {
+        if p.hand.length == 0 & Deck.length > 0{
             p.hand = Deck.take(1);
          }
+
          return result;
     }
 }
@@ -57,15 +63,20 @@ Turn{
     bool continue = true;
     player chosenPlayer;
     card chosenCard;
+    CheckForTrick(current);
     while current.hand.length > 0 & continue {
         chosenPlayer = choosePlayer(current, Players);
         chosenCard = chooseCard(current.hand);
         continue = ChooseMove(chosenCard,chosenPlayer);
+        CheckForTrick(current);
     }
     // Når man kommer ud af loopet har man endten ikke flere kort, eller man har fået fisk. I begge tilfælde trækker
     // man et kort fra bunken og turen går videre til den spiller man sidst har spurgt
     Message(current, chosenPlayer.name + " did not have any card of value "+ chosenCard.value +"! Go Fish!!\n");
-    current.hand.add(Deck.take(1).index(0));
+    if Deck.length > 0{
+        current.hand.add(Deck.take(1).index(0));
+    }
+    CheckForTrick(current);
     current = chosenPlayer;
 }
 EndCondition{
@@ -128,6 +139,7 @@ Function CheckForTrick(player p) typeof void{
                 p.hand.remove(c);
             }
             p.score += 1;
+            MessageAll(p.name + " got trick of " + trick.index(0).value);
         }
     }
 }
