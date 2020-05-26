@@ -1,6 +1,7 @@
 package P4;
 
 import P4.CodeGenarator.CodeGenerator;
+import P4.CodeGenarator.SemanticException;
 import P4.PrettyPrinter.PrettyPrinter;
 import P4.Sable.parser.*;
 import P4.Sable.lexer.*;
@@ -10,7 +11,7 @@ import P4.contextualAnalysis.*;
 import java.io.*;
 
 public class Main {
-    public static void main( String[] args){
+    public static void main( String[] args) throws SemanticException, TypeException {
         System.out.println("Compiling..");
         long start_time, stop_time; //times compilation
         if (args.length < 1) {
@@ -85,6 +86,14 @@ public class Main {
             if(token != null){
                 message = patchMessage(message,token);
                 message += "identifier already excists locally";
+            }
+            System.out.println(message);
+        }
+        catch (SemanticException e){
+            String message = e.getMessage();
+            var token = e.getToken();
+            if(token != null){
+                message = patchMessage(message,token);
             }
             System.out.println(message);
         }
