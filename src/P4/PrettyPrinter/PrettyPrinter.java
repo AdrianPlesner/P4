@@ -397,9 +397,9 @@ public class PrettyPrinter extends DepthFirstAdapter {
         emit("{ ");
         for(PExpr e : node.getElements()){
             e.apply(this);
-            if(e != node.getElements().getLast()){
-                emit("; ");
-            }
+
+            emit("; ");
+
         }
         emit("}");
     }
