@@ -386,15 +386,38 @@ public class TypeChecker extends DepthFirstAdapter {
         }
     }
 
+    private LinkedList<AReturnStmt> getReturns(LinkedList<PStmt> list ){
+        LinkedList<AReturnStmt> result = new LinkedList<>();
+        for(PStmt s : list){
+            if(s instanceof AReturnStmt){
+                result.add((AReturnStmt) s);
+            }
+            else if( s instanceof AIfStmt){
+                result.addAll(getReturns(((AIfStmt) s).getThen()));
+                result.addAll(getReturns(((AIfStmt) s).getElse()));
+                for(PElseIf e : ((AIfStmt) s).getElseifs()){
+                    result.addAll(getReturns(((AElseIf)e).getThen()));
+                }
+            }
+            else if( s instanceof AWhileStmt){
+                result.addAll(getReturns(((AWhileStmt) s).getThen()));
+            }
+            else if(s instanceof AForStmt){
+                result.addAll(getReturns(((AForStmt) s).getThen()));
+            }
+            else if(s instanceof AForeachStmt){
+                result.addAll((getReturns(((AForeachStmt) s).getThen())));
+            }
+        }
+        return result;
+    }
+
     @Override
     public void caseAMethodDcl(AMethodDcl node) throws TypeException, SemanticException{
         // Apply on method body
-        LinkedList<AReturnStmt> returns = new LinkedList<>();
-        for(PStmt s: node.getBody()){
+        LinkedList<AReturnStmt> returns = getReturns(node.getBody());
+        for(PStmt s : node.getBody() ){
             s.apply(this);
-            if(s instanceof AReturnStmt){
-                returns.add((AReturnStmt) s);
-            }
         }
         if(returns.isEmpty() && !node.getReturntype().toString().trim().equals("void")){
             throw new SemanticException(node,"Method does not return a value");
@@ -407,7 +430,7 @@ public class TypeChecker extends DepthFirstAdapter {
             returntype += node.getReturntype().toString().trim();
             for(AReturnStmt s : returns){
                 if(!s.getExpr().type.equals(returntype)){
-                    if(s.getExpr().type.equals("null") && (returntype.equals("int") || returntype.equals("float") || returntype.startsWith("list"))) {
+                    if(!s.getExpr().type.equals("null") || ( (returntype.equals("int") || returntype.equals("float") || returntype.startsWith("list")))) {
                         // returning null is allowed, but only with reference typed
                         s.apply(tf);
                         throw new TypeException(tf.getToken(), "Type of return statement does not correspond to return type of function");
