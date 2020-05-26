@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class MethodGenerator extends CodeGenerator {
     public MethodGenerator(HashMap<String,String> h){
-        new MethodGenerator(h,null);
+        this(h,null);
     }
 
     public MethodGenerator(HashMap<String,String> h, SymbolTable st){

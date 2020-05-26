@@ -38,9 +38,9 @@ public class SubClassGenerator extends CodeGenerator {
 
     @Override
     public void caseASubclass(ASubclass node) throws TypeException, SemanticException {
-        var name = node.getName().getText();
-        files.put(name,"");
-        String s = ".class Game/" + name + "\n"
+        var name = "Game/" +node.getName().getText();
+        files.put( name,"");
+        String s = ".class " + name + "\n"
                 + ".super " + current + "\n";
         current = name;
         emit(s);

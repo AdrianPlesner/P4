@@ -10,6 +10,9 @@ Setup{
             this.name = name;
             this.ai = ai;
         }
+        Subclass AI {
+            int last = 0;
+        }
     }
 //public er “spillepladen” (tilgængelig for alle spillere)
     Game{
