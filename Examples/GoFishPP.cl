@@ -22,7 +22,6 @@ Setup{
 		for p in Players {
 			p.hand = Deck.take(7);
 		}
-		int f = (5 + (3 * 8)),  h = ((78 % 43) + (43 / (234 - 43)));
 	}
 }
 Moves{
